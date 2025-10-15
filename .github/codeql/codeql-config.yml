@@ -1,0 +1,11 @@
+name: "CodeQL Config"
+
+paths-ignore:
+  - '**/obj/**'
+  - '**/bin/**'
+  - '**/*.g.cs'
+  - '**/GeneratedFiles/**'
+  - 'SynthEHR.SourceGenerators/**'
+
+queries:
+  - uses: security-and-quality
