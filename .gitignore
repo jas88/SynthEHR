@@ -10,4 +10,6 @@ SynthEHRTests/obj/
 SynthEHRTests/bin/
 SynthEHR.Core/obj/
 SynthEHR.Core/bin/
+SynthEHR.SourceGenerators/obj/
+SynthEHR.SourceGenerators/bin/
 .idea/
