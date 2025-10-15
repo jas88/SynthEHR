@@ -333,7 +333,7 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
                 {
                     offsets.Add(stringBlob.Length);
                     var value = colIndex < row.Length ? (row[colIndex] ?? string.Empty) : string.Empty;
-                    if (value == "NULL") value = string.Empty;
+                    // Keep "NULL" as-is for string columns - tests expect this literal
                     stringBlob.Append(value);
                     stringBlob.Append('\0');
                 }
