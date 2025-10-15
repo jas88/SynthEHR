@@ -73,6 +73,11 @@ internal static class CsvDataParser
         return lines;
     }
 
+    public static string[] ParseHeaderLine(string line)
+    {
+        return ParseLine(line);
+    }
+
     private static string[] ParseLine(string line)
     {
         var fields = new List<string>();
