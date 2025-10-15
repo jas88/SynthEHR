@@ -39,11 +39,11 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
                 try
                 {
                     var csvData = CsvDataParser.Parse(content, fileName);
-                    return (fileName, csvData.Headers, rows: csvData.Rows);
+                    return (fileName, csvData.Headers, csvData.Rows);
                 }
                 catch
                 {
-                    return (fileName: string.Empty, headers: Array.Empty<string>(), rows: Array.Empty<string[]>());
+                    return (string.Empty, Array.Empty<string>(), Array.Empty<string[]>());
                 }
             });
 
