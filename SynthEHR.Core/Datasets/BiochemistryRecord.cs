@@ -56,11 +56,12 @@ public sealed class BiochemistryRecord
     static BiochemistryRecord()
     {
         // Use compile-time generated data instead of runtime CSV parsing
+        // Data is already pre-sorted by RecordCount (descending) by the source generator
         var rows = BiochemistryData.AllRows;
 
         BucketList = [];
 
-        foreach (var row in rows.OrderByDescending(static row => int.Parse(row.RecordCount)))
+        foreach (var row in rows)
             BucketList.Add(int.Parse(row.RecordCount), new BiochemistryRandomDataRow(row));
     }
 

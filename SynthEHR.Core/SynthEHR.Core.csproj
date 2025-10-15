@@ -48,10 +48,11 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
-    <!-- Reference the source generator as an analyzer -->
+    <!-- Reference the source generator as an analyzer (disabled for CodeQL to avoid OOM) -->
     <ProjectReference Include="..\SynthEHR.SourceGenerators\SynthEHR.SourceGenerators.csproj"
                       OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false" />
+                      ReferenceOutputAssembly="false"
+                      Condition="'$(DISABLE_SOURCE_GENERATOR)' != 'true'" />
   </ItemGroup>
   <ItemGroup>
     <!-- CSV files for source generation -->

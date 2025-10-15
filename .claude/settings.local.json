@@ -32,7 +32,11 @@
       "Bash(time dotnet test:*)",
       "Bash(awk:*)",
       "Bash(dotnet --version)",
-      "Bash(dotnet --list-sdks)"
+      "Bash(dotnet --list-sdks)",
+      "Bash(dotnet script:*)",
+      "Bash(dotnet-script:*)",
+      "Bash(csc:*)",
+      "Bash(mono:*)"
     ],
     "deny": [],
     "ask": []

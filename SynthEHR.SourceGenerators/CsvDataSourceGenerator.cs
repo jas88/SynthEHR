@@ -107,6 +107,13 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         // Analyze column types
         var columnTypes = InferColumnTypes(headers, rows);
 
+        // Pre-sort rows if a count column is detected
+        var sortColumnIndex = DetectSortColumn(headers, columnTypes);
+        if (sortColumnIndex >= 0)
+        {
+            rows = PreSortRows(rows, sortColumnIndex, columnTypes[sortColumnIndex]);
+        }
+
         // File header
         code.AppendFileHeader();
         code.AppendLine("using System;");
@@ -119,7 +126,10 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         code.AppendNamespace("SynthEHR.Core.Data");
 
         // Class documentation
-        code.AppendXmlDocComment($"Generated data class for {fileName}.csv containing {rows.Length} rows using columnar storage.");
+        var sortNote = sortColumnIndex >= 0
+            ? $" Data is pre-sorted by {headers[sortColumnIndex]} (descending) for optimal performance."
+            : "";
+        code.AppendXmlDocComment($"Generated data class for {fileName}.csv containing {rows.Length} rows using columnar storage.{sortNote}");
         code.AppendGeneratedCodeAttribute();
         code.AppendLine($"[CsvDataSource(FileName = \"{fileName}.csv\", RowCount = {rows.Length})]");
         code.AppendClass(className, isStatic: true);
@@ -172,6 +182,46 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         code.CloseBrace();
 
         return code.ToString();
+    }
+
+    private static int DetectSortColumn(string[] headers, ColumnTypeInfo[] columnTypes)
+    {
+        // Look for columns named "Count", "RecordCount", or similar that are integer type
+        for (int i = 0; i < headers.Length; i++)
+        {
+            var headerLower = headers[i].ToLowerInvariant();
+            if (columnTypes[i].Type == ColumnDataType.Int &&
+                (headerLower.Contains("count") || headerLower.Contains("records")))
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static string[][] PreSortRows(string[][] rows, int sortColumnIndex, ColumnTypeInfo columnType)
+    {
+        // Sort rows in descending order by the specified column
+        // This allows consuming code to skip runtime sorting
+        return columnType.Type switch
+        {
+            ColumnDataType.Int => rows.OrderByDescending(row =>
+            {
+                if (sortColumnIndex >= row.Length) return int.MinValue;
+                var value = row[sortColumnIndex];
+                return int.TryParse(value, out var result) ? result : int.MinValue;
+            }).ToArray(),
+
+            ColumnDataType.Double => rows.OrderByDescending(row =>
+            {
+                if (sortColumnIndex >= row.Length) return double.MinValue;
+                var value = row[sortColumnIndex];
+                return double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var result)
+                    ? result : double.MinValue;
+            }).ToArray(),
+
+            _ => rows // No sorting for non-numeric types
+        };
     }
 
     private static ColumnTypeInfo[] InferColumnTypes(string[] headers, string[][] rows)
