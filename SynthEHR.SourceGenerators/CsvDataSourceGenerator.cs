@@ -430,8 +430,8 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
                 string access = $"_{propertyName}Data[index]";
                 if (columnType.IsNullable)
                 {
-                    // Empty string for nulls, not "NULL" - existing code expects empty strings
-                    assignment = $"_{propertyName}Nulls[index] ? string.Empty : {access}.ToString()";
+                    // Return "NULL" string for nulls - existing code expects this literal
+                    assignment = $"_{propertyName}Nulls[index] ? \"NULL\" : {access}.ToString()";
                 }
                 else
                 {
