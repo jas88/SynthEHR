@@ -5,8 +5,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using CsvHelper;
-using CsvHelper.Configuration;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
@@ -29,9 +27,9 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         // Get all CSV files from AdditionalFiles
         var csvFiles = context.AdditionalTextsProvider
             .Where(static file => file.Path.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
-            .Select((file, cancellationToken) =>
+            .Select(static (file, cancellationToken) =>
             {
-                // Use CsvHelper for proper CSV parsing (handles quotes, multiline, etc.)
+                // Use CsvDataParser for proper CSV parsing (handles quotes, multiline, etc.)
                 var content = file.GetText(cancellationToken)?.ToString() ?? string.Empty;
                 var fileName = Path.GetFileNameWithoutExtension(file.Path);
 
@@ -40,31 +38,8 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
 
                 try
                 {
-                    using var reader = new StringReader(content);
-                    using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
-                    {
-                        Delimiter = ",",
-                        HasHeaderRecord = true,
-                        TrimOptions = TrimOptions.Trim,
-                        BadDataFound = null // Ignore bad data
-                    });
-
-                    csv.Read();
-                    csv.ReadHeader();
-                    var headers = csv.HeaderRecord ?? Array.Empty<string>();
-
-                    var rows = new List<string[]>();
-                    while (csv.Read())
-                    {
-                        var row = new string[headers.Length];
-                        for (int i = 0; i < headers.Length; i++)
-                        {
-                            row[i] = csv.GetField(i) ?? string.Empty;
-                        }
-                        rows.Add(row);
-                    }
-
-                    return (fileName, headers, rows: rows.ToArray());
+                    var csvData = CsvDataParser.Parse(content, fileName);
+                    return (fileName, csvData.Headers, rows: csvData.Rows);
                 }
                 catch
                 {
