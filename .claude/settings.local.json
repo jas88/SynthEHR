@@ -26,7 +26,13 @@
       "Bash(git ls-tree:*)",
       "Bash(ildasm:*)",
       "Bash(dotnet-ildasm:*)",
-      "Bash(gh run watch:*)"
+      "Bash(gh run watch:*)",
+      "Bash(dotnet run:*)",
+      "Bash(time dotnet build:*)",
+      "Bash(time dotnet test:*)",
+      "Bash(awk:*)",
+      "Bash(dotnet --version)",
+      "Bash(dotnet --list-sdks)"
     ],
     "deny": [],
     "ask": []

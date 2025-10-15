@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
@@ -26,27 +29,47 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         // Get all CSV files from AdditionalFiles
         var csvFiles = context.AdditionalTextsProvider
             .Where(static file => file.Path.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
-            .Select(static (file, cancellationToken) =>
+            .Select((file, cancellationToken) =>
             {
-                // Read content and parse into structured data
+                // Use CsvHelper for proper CSV parsing (handles quotes, multiline, etc.)
                 var content = file.GetText(cancellationToken)?.ToString() ?? string.Empty;
                 var fileName = Path.GetFileNameWithoutExtension(file.Path);
 
-                // Parse only headers first to check if valid
-                var lines = content.Split('\n');
-                if (lines.Length == 0) return (fileName: string.Empty, headers: Array.Empty<string>(), rows: Array.Empty<string[]>());
+                if (string.IsNullOrEmpty(content))
+                    return (fileName: string.Empty, headers: Array.Empty<string>(), rows: Array.Empty<string[]>());
 
-                var headers = CsvDataParser.ParseHeaderLine(lines[0]);
-
-                // Parse rows (this is the expensive part, but happens at compile time only once)
-                var rows = new List<string[]>();
-                for (int i = 1; i < lines.Length; i++)
+                try
                 {
-                    if (string.IsNullOrWhiteSpace(lines[i])) continue;
-                    rows.Add(CsvDataParser.ParseHeaderLine(lines[i]));
-                }
+                    using var reader = new StringReader(content);
+                    using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
+                    {
+                        Delimiter = ",",
+                        HasHeaderRecord = true,
+                        TrimOptions = TrimOptions.Trim,
+                        BadDataFound = null // Ignore bad data
+                    });
 
-                return (fileName, headers, rows: rows.ToArray());
+                    csv.Read();
+                    csv.ReadHeader();
+                    var headers = csv.HeaderRecord ?? Array.Empty<string>();
+
+                    var rows = new List<string[]>();
+                    while (csv.Read())
+                    {
+                        var row = new string[headers.Length];
+                        for (int i = 0; i < headers.Length; i++)
+                        {
+                            row[i] = csv.GetField(i) ?? string.Empty;
+                        }
+                        rows.Add(row);
+                    }
+
+                    return (fileName, headers, rows: rows.ToArray());
+                }
+                catch
+                {
+                    return (fileName: string.Empty, headers: Array.Empty<string>(), rows: Array.Empty<string[]>());
+                }
             });
 
         // Generate code for each CSV file
@@ -432,7 +455,8 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
                 string access = $"_{propertyName}Data[index]";
                 if (columnType.IsNullable)
                 {
-                    assignment = $"_{propertyName}Nulls[index] ? \"NULL\" : {access}.ToString()";
+                    // Empty string for nulls, not "NULL" - existing code expects empty strings
+                    assignment = $"_{propertyName}Nulls[index] ? string.Empty : {access}.ToString()";
                 }
                 else
                 {
