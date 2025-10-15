@@ -19,7 +19,14 @@
       "Bash(SynthEHR/bin/Debug/net8.0/SynthEHR:*)",
       "Bash(git add:*)",
       "Bash(git rm:*)",
-      "Bash(git rebase:*)"
+      "Bash(git rebase:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(gh api:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(ildasm:*)",
+      "Bash(dotnet-ildasm:*)",
+      "Bash(gh run watch:*)"
     ],
     "deny": [],
     "ask": []

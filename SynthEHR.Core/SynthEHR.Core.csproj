@@ -40,7 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\Datasets.doc.xml" Link="Datasets.doc.xml" />
-    <!-- CSV files and zip removed - now using compile-time source generation from ../data/ -->
+    <!-- CSV files embedded as resources with proper naming for runtime access -->
+    <EmbeddedResource Include="..\data\*.csv" LogicalName="SynthEHR.Core.Datasets.%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
     <!-- CsvHelper removed - now using compile-time source generation instead -->

@@ -28,14 +28,25 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
             .Where(static file => file.Path.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
             .Select(static (file, cancellationToken) =>
             {
-                // Only read first line to get headers - don't parse entire file!
-                var text = file.GetText(cancellationToken);
-                if (text == null) return (fileName: string.Empty, headers: Array.Empty<string>());
-
+                // Read content and parse into structured data
+                var content = file.GetText(cancellationToken)?.ToString() ?? string.Empty;
                 var fileName = Path.GetFileNameWithoutExtension(file.Path);
-                var firstLine = text.Lines.FirstOrDefault().ToString();
-                var headers = CsvDataParser.ParseHeaderLine(firstLine);
-                return (fileName, headers);
+
+                // Parse only headers first to check if valid
+                var lines = content.Split('\n');
+                if (lines.Length == 0) return (fileName: string.Empty, headers: Array.Empty<string>(), rows: Array.Empty<string[]>());
+
+                var headers = CsvDataParser.ParseHeaderLine(lines[0]);
+
+                // Parse rows (this is the expensive part, but happens at compile time only once)
+                var rows = new List<string[]>();
+                for (int i = 1; i < lines.Length; i++)
+                {
+                    if (string.IsNullOrWhiteSpace(lines[i])) continue;
+                    rows.Add(CsvDataParser.ParseHeaderLine(lines[i]));
+                }
+
+                return (fileName, headers, rows: rows.ToArray());
             });
 
         // Generate code for each CSV file
@@ -43,12 +54,12 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         {
             try
             {
-                var (fileName, headers) = csvFile;
+                var (fileName, headers, rows) = csvFile;
 
                 if (string.IsNullOrEmpty(fileName) || headers.Length == 0)
                     return; // Skip empty files
 
-                var sourceCode = GenerateClassForCsv(fileName, headers);
+                var sourceCode = GenerateClassForCsv(fileName, headers, rows);
                 ctx.AddSource($"{fileName}Data.g.cs", SourceText.From(sourceCode, Encoding.UTF8));
             }
             catch (Exception ex)
@@ -90,7 +101,7 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         return code.ToString();
     }
 
-    private static string GenerateClassForCsv(string fileName, string[] headers)
+    private static string GenerateClassForCsv(string fileName, string[] headers, string[][] rows)
     {
         var className = CsvDataParser.SanitizeIdentifier(fileName) + "Data";
         var code = new CodeBuilder();
@@ -109,9 +120,9 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         code.AppendNamespace("SynthEHR.Core.Data");
 
         // Class documentation
-        code.AppendXmlDocComment($"Generated data class for {fileName}.csv. Data is loaded from embedded resources on first access.");
+        code.AppendXmlDocComment($"Generated data class for {fileName}.csv containing {rows.Length} rows.");
         code.AppendGeneratedCodeAttribute();
-        code.AppendLine($"[CsvDataSource(FileName = \"{fileName}.csv\", RowCount = -1)]");
+        code.AppendLine($"[CsvDataSource(FileName = \"{fileName}.csv\", RowCount = {rows.Length})]");
         code.AppendClass(className, isStatic: true);
         code.OpenBrace();
 
@@ -132,123 +143,36 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         code.CloseBrace();
         code.AppendLine();
 
-        // Generate header names array for runtime parsing
-        code.AppendLine("private static readonly string[] _headerNames = new[]");
+        // Static data array - inline all rows
+        code.AppendXmlDocComment("All rows from the CSV file.");
+        code.AppendLine("public static readonly IReadOnlyList<Row> AllRows = new[]");
         code.OpenBrace();
-        for (int i = 0; i < headers.Length; i++)
+
+        // Generate row data
+        for (int rowIndex = 0; rowIndex < rows.Length; rowIndex++)
         {
-            var comma = i < headers.Length - 1 ? "," : "";
-            code.AppendLine($"\"{headers[i]}\"{comma}");
+            var row = rows[rowIndex];
+            var isLast = rowIndex == rows.Length - 1;
+
+            code.AppendLine($"new Row");
+            code.OpenBrace();
+
+            for (int colIndex = 0; colIndex < headers.Length && colIndex < row.Length; colIndex++)
+            {
+                var propertyName = CsvDataParser.SanitizeIdentifier(headers[colIndex]);
+                var value = row[colIndex] ?? string.Empty;
+                var escapedValue = value.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", "\\n").Replace("\r", "\\r");
+                code.AppendLine($"{propertyName} = \"{escapedValue}\",");
+            }
+
+            code.CloseBrace(semicolon: false);
+            if (!isLast)
+                code.AppendLine(",");
+            else
+                code.AppendLine();
         }
+
         code.CloseBrace(semicolon: true);
-        code.AppendLine();
-
-        // Generate property name mapping
-        code.AppendLine("private static readonly string[] _propertyNames = new[]");
-        code.OpenBrace();
-        for (int i = 0; i < headers.Length; i++)
-        {
-            var propertyName = CsvDataParser.SanitizeIdentifier(headers[i]);
-            var comma = i < headers.Length - 1 ? "," : "";
-            code.AppendLine($"\"{propertyName}\"{comma}");
-        }
-        code.CloseBrace(semicolon: true);
-        code.AppendLine();
-
-        // Lazy initialization field
-        code.AppendLine("private static readonly Lazy<IReadOnlyList<Row>> _allRows = new Lazy<IReadOnlyList<Row>>(LoadData);");
-        code.AppendLine();
-
-        // Public property
-        code.AppendXmlDocComment("All rows from the CSV file. Data is loaded lazily from embedded resources on first access.");
-        code.AppendLine("public static IReadOnlyList<Row> AllRows => _allRows.Value;");
-        code.AppendLine();
-
-        // LoadData method
-        code.AppendXmlDocComment("Loads the CSV data from embedded resources.");
-        code.AppendLine("private static IReadOnlyList<Row> LoadData()");
-        code.OpenBrace();
-        code.AppendLine("var assembly = typeof(" + className + ").Assembly;");
-        code.AppendLine($"var resourceName = \"SynthEHR.Core.Datasets.{fileName}.csv\";");
-        code.AppendLine();
-        code.AppendLine("using var stream = assembly.GetManifestResourceStream(resourceName)");
-        code.AppendLine("    ?? throw new InvalidOperationException($\"Embedded resource not found: {resourceName}\");");
-        code.AppendLine();
-        code.AppendLine("using var reader = new StreamReader(stream, Encoding.UTF8);");
-        code.AppendLine("var rows = new List<Row>();");
-        code.AppendLine();
-        code.AppendLine("// Skip header line");
-        code.AppendLine("var headerLine = reader.ReadLine();");
-        code.AppendLine("if (headerLine == null) return rows;");
-        code.AppendLine();
-        code.AppendLine("// Parse data rows");
-        code.AppendLine("string? line;");
-        code.AppendLine("while ((line = reader.ReadLine()) != null)");
-        code.OpenBrace();
-        code.AppendLine("if (string.IsNullOrWhiteSpace(line)) continue;");
-        code.AppendLine();
-        code.AppendLine("var fields = ParseCsvLine(line);");
-        code.AppendLine("var row = new Row();");
-        code.AppendLine();
-
-        // Generate property assignments using property names
-        code.AppendLine("for (int i = 0; i < Math.Min(fields.Length, _propertyNames.Length); i++)");
-        code.OpenBrace();
-        code.AppendLine("switch (i)");
-        code.OpenBrace();
-        for (int i = 0; i < headers.Length; i++)
-        {
-            var propertyName = CsvDataParser.SanitizeIdentifier(headers[i]);
-            code.AppendLine($"case {i}: row.{propertyName} = fields[{i}]; break;");
-        }
-        code.CloseBrace();
-        code.CloseBrace();
-        code.AppendLine();
-        code.AppendLine("rows.Add(row);");
-        code.CloseBrace();
-        code.AppendLine();
-        code.AppendLine("return rows;");
-        code.CloseBrace();
-        code.AppendLine();
-
-        // Simple CSV line parser
-        code.AppendXmlDocComment("Parses a single CSV line, handling quoted fields and escaped quotes.");
-        code.AppendLine("private static string[] ParseCsvLine(string line)");
-        code.OpenBrace();
-        code.AppendLine("var fields = new List<string>();");
-        code.AppendLine("var currentField = new StringBuilder();");
-        code.AppendLine("bool inQuotes = false;");
-        code.AppendLine();
-        code.AppendLine("for (int i = 0; i < line.Length; i++)");
-        code.OpenBrace();
-        code.AppendLine("char c = line[i];");
-        code.AppendLine();
-        code.AppendLine("if (c == '\"')");
-        code.OpenBrace();
-        code.AppendLine("if (inQuotes && i + 1 < line.Length && line[i + 1] == '\"')");
-        code.OpenBrace();
-        code.AppendLine("currentField.Append('\"');");
-        code.AppendLine("i++; // Skip next quote");
-        code.CloseBrace();
-        code.AppendLine("else");
-        code.OpenBrace();
-        code.AppendLine("inQuotes = !inQuotes;");
-        code.CloseBrace();
-        code.CloseBrace();
-        code.AppendLine("else if (c == ',' && !inQuotes)");
-        code.OpenBrace();
-        code.AppendLine("fields.Add(currentField.ToString());");
-        code.AppendLine("currentField.Clear();");
-        code.CloseBrace();
-        code.AppendLine("else");
-        code.OpenBrace();
-        code.AppendLine("currentField.Append(c);");
-        code.CloseBrace();
-        code.CloseBrace();
-        code.AppendLine();
-        code.AppendLine("fields.Add(currentField.ToString());");
-        code.AppendLine("return fields.ToArray();");
-        code.CloseBrace();
         code.AppendLine();
 
         // Helper methods
