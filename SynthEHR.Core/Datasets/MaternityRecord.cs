@@ -108,7 +108,7 @@ public sealed class MaternityRecord
 
     private static void AddRow(string val, string freqStr, BucketList<string> bucketList)
     {
-        if (string.IsNullOrWhiteSpace(freqStr))
+        if (string.IsNullOrWhiteSpace(freqStr) || freqStr == "NULL")
             return;
 
         bucketList.Add(Convert.ToInt32(freqStr), val);
