@@ -1,0 +1,100 @@
+name: Build, Test, Package and Security Analysis
+
+on:
+  push:
+  pull_request:
+    branches: [ "develop", "main" ]
+  schedule:
+    - cron: "33 3 * * 6"
+
+jobs:
+  build-test-package:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+      security-events: write
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore --nologo
+
+      - name: Build
+        run: dotnet build --no-restore --nologo -c Release
+
+      - name: Test
+        run: dotnet test --no-build --nologo -c Release
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: csharp
+          queries: +security-and-quality
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:csharp"
+
+      - name: Package CLI binaries
+        run: |
+          dotnet publish SynthEHR/SynthEHR.csproj -o dist/linux-x64 -r linux-x64 -c Release --self-contained --nologo -p:PublishSingleFile=true -p:GenerateDocumentationFile=false
+          dotnet publish SynthEHR/SynthEHR.csproj -o dist/win-x64 -r win-x64 -c Release --self-contained --nologo -p:PublishSingleFile=true -p:GenerateDocumentationFile=false
+          dotnet publish SynthEHR/SynthEHR.csproj -o dist/osx-x64 -r osx-x64 -c Release --self-contained --nologo -p:PublishSingleFile=true -p:GenerateDocumentationFile=false
+          dotnet publish SynthEHR/SynthEHR.csproj -o dist/osx-arm64 -r osx-arm64 -c Release --self-contained --nologo -p:PublishSingleFile=true -p:GenerateDocumentationFile=false
+
+      - name: Create distribution archives
+        run: |
+          cd dist
+          tar czf ../SynthEHR-cli-linux-x64.tar.gz linux-x64/
+          tar czf ../SynthEHR-cli-osx-x64.tar.gz osx-x64/
+          tar czf ../SynthEHR-cli-osx-arm64.tar.gz osx-arm64/
+          cd ..
+          zip -9rj SynthEHR-cli-win-x64.zip dist/win-x64/
+
+      - name: Package NuGet
+        run: |
+          VERSION=$(grep AssemblyInformationalVersion SharedAssemblyInfo.cs | cut -d'"' -f2)
+          dotnet pack SynthEHR.Core/SynthEHR.Core.csproj \
+            -p:DebugType=full \
+            -p:SymbolPackageFormat=snupkg \
+            -p:PackageVersion=$VERSION \
+            -o . \
+            --include-source \
+            --include-symbols \
+            --nologo \
+            -c Release
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: SynthEHR-binaries
+          path: |
+            SynthEHR-cli-*.tar.gz
+            SynthEHR-cli-*.zip
+            *.nupkg
+            *.snupkg
+
+      - name: Publish to NuGet
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: dotnet nuget push "*.nupkg" --skip-duplicate --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_KEY }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          files: |
+            SynthEHR-cli-*.tar.gz
+            SynthEHR-cli-*.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

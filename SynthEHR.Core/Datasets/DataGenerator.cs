@@ -10,11 +10,8 @@ using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using CsvHelper;
-using CsvHelper.Configuration;
 using Normal = SynthEHR.Statistics.Distributions.Normal;
 
 namespace SynthEHR.Datasets;
@@ -67,27 +64,33 @@ public abstract class DataGenerator : IDataGenerator
         var stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        using (var writer = new CsvWriter(sw, CultureInfo.CurrentCulture))
+        int linesWritten;
+        for (linesWritten = 0; linesWritten < numberOfRecords; linesWritten++)
         {
-            int linesWritten;
-            for (linesWritten = 0; linesWritten < numberOfRecords; linesWritten++)
-            {
-                foreach (var o in GenerateTestDataRow(GetRandomEligiblePerson(cohort.People, r)))
-                    writer.WriteField(o);
+            var row = GenerateTestDataRow(GetRandomEligiblePerson(cohort.People, r));
 
-                writer.NextRecord();
+            // Write CSV row manually (no CsvHelper dependency in Core)
+            sw.WriteLine(string.Join(",", row.Select(EscapeCsvField)));
 
-                if (linesWritten % 1000 != 0) continue;
+            if (linesWritten % 1000 != 0) continue;
 
-                RowsGenerated?.Invoke(this, new RowsGeneratedEventArgs(linesWritten + 1, stopwatch.Elapsed, false));
-                sw.Flush();//flush every 1000
-            }
-
-            //tell them about the last line written
-            RowsGenerated?.Invoke(this, new RowsGeneratedEventArgs(linesWritten, stopwatch.Elapsed, true));
+            RowsGenerated?.Invoke(this, new RowsGeneratedEventArgs(linesWritten + 1, stopwatch.Elapsed, false));
+            sw.Flush();//flush every 1000
         }
 
+        //tell them about the last line written
+        RowsGenerated?.Invoke(this, new RowsGeneratedEventArgs(linesWritten, stopwatch.Elapsed, true));
+
         stopwatch.Stop();
+    }
+
+    private static string EscapeCsvField(object field)
+    {
+        if (field == null) return "";
+        var value = field.ToString();
+        if (value.Contains(',') || value.Contains('"') || value.Contains('\n'))
+            return $"\"{value.Replace("\"", "\"\"")}\"";
+        return value;
     }
 
 
@@ -290,67 +293,15 @@ public abstract class DataGenerator : IDataGenerator
         };
 
     /// <summary>
-    /// Reads an embedded resource csv file that sits side by side (in terms of namespace) with the <paramref name="requestingType"/>.  Will also work
-    /// if you have an embedded resource file called "Aggregates.zip" which contains the <paramref name="resourceFileName"/>.
-    /// 
+    /// [OBSOLETE] This method is deprecated. Use compile-time generated data classes in SynthEHR.Core.Data namespace instead.
+    /// For example, use BiochemistryData.AllRows, PrescribingData.AllRows, etc.
     /// </summary>
-    /// <param name="requestingType"></param>
-    /// <param name="resourceFileName"></param>
-    /// <param name="dt">Optional - provide if you want to strongly type certain Columns.  New columns will be added to this table
-    /// if unmatched columns are read from the csv.</param>
-    /// <returns></returns>
+    [Obsolete("Use compile-time generated data classes (e.g., BiochemistryData.AllRows) instead of runtime CSV parsing")]
     public static DataTable EmbeddedCsvToDataTable(Type requestingType, string resourceFileName, DataTable dt = null)
     {
-        var lookup = GetResourceStream(requestingType, resourceFileName) ?? throw new Exception($"Could not find embedded resource file {resourceFileName}");
-        var toReturn = dt ?? new DataTable();
-
-        using var r = new CsvReader(new StreamReader(lookup), new CsvConfiguration(CultureInfo.CurrentCulture) { Delimiter = "," });
-        r.Read();
-        r.ReadHeader();
-
-        foreach (var header in (r.HeaderRecord ?? []).Where(header => !toReturn.Columns.Contains(header)))
-            toReturn.Columns.Add(header);
-
-        r.Read();
-
-        do
-        {
-            var row = toReturn.Rows.Add();
-            foreach (DataColumn col in toReturn.Columns)
-            {
-                row[col] = r[col.ColumnName];
-            }
-        } while (r.Read());
-
-        return toReturn;
-    }
-
-    private static Stream GetResourceStream(Type requestingType, string resourceFileName)
-    {
-        var toFind = $"{requestingType.Namespace}.{resourceFileName}";
-        //is there an unzipped resource available?
-        var toReturn = requestingType.Assembly.GetManifestResourceStream(toFind);
-
-        // if so, return it
-        if (toReturn != null) return toReturn;
-
-        // if not, see if there is a zipped resource file in the namespaces
-        var toFindZip = $"{requestingType.Namespace}.Aggregates.zip";
-        var zip = requestingType.Assembly.GetManifestResourceStream(toFindZip);
-
-        var memoryStream = new MemoryStream();
-
-        //containing a file named resourceFileNamed
-        if (zip == null) return null;
-
-        using var archive = new ZipArchive(zip);
-        var entry = archive.GetEntry(resourceFileName);
-        if (entry == null) return null;
-
-        using var s = entry.Open();
-        s.CopyTo(memoryStream);
-        memoryStream.Seek(0, SeekOrigin.Begin);
-        return memoryStream;
+        throw new NotSupportedException(
+            "EmbeddedCsvToDataTable is obsolete. Use compile-time generated data classes " +
+            "in SynthEHR.Core.Data namespace (e.g., BiochemistryData.AllRows, PrescribingData.AllRows) instead.");
     }
 
     /// <summary>

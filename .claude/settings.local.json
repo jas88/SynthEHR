@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)",
+      "Bash(mkdir:*)",
+      "Bash(mate:*)",
+      "Bash(gh repo clone:*)",
+      "Read(//Users/jas88/Developer/**)",
+      "Bash(unzip:*)",
+      "Bash(dotnet sln add:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet clean:*)",
+      "Bash(cat:*)",
+      "Bash(/dev/null)",
+      "Bash(find:*)",
+      "Bash(dotnet test:*)",
+      "Bash(SynthEHR/bin/Debug/net8.0/SynthEHR:*)",
+      "Bash(git add:*)",
+      "Bash(git rm:*)",
+      "Bash(git rebase:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

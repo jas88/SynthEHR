@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Title>HIC.SynthEHR</Title>
+    <Title>SynthEHR</Title>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/HicServices/SynthEHR</PackageProjectUrl>
-    <PackageTags>Test Data,Random,Synthetic Data,EHR,Electronic Health Record</PackageTags>
-    <Copyright>Copyright 2019</Copyright>
-    <PackageId>HIC.SynthEHR</PackageId>
+    <PackageProjectUrl>https://github.com/jas88/SynthEHR</PackageProjectUrl>
+    <PackageTags>Test Data,Random,Synthetic Data,EHR,Electronic Health Record,Source Generator</PackageTags>
+    <Copyright>Copyright 2019-2025</Copyright>
+    <PackageId>SynthEHR.Core</PackageId>
     <Authors>Health Informatics Centre - University of Dundee</Authors>
     <TargetFramework>net8.0</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -40,12 +40,22 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\Datasets.doc.xml" Link="Datasets.doc.xml" />
-    <EmbeddedResource Include="Datasets\Aggregates.zip" />
-    <EmbeddedResource Include="Datasets\Maternity.csv" />
+    <!-- CSV files and zip removed - now using compile-time source generation from ../data/ -->
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="33.0.1" />
+    <!-- CsvHelper removed - now using compile-time source generation instead -->
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Reference the source generator as an analyzer -->
+    <ProjectReference Include="..\SynthEHR.SourceGenerators\SynthEHR.SourceGenerators.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- CSV files for source generation -->
+    <AdditionalFiles Include="..\data\*.csv" />
+    <AdditionalFiles Include="..\data\*.zip" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

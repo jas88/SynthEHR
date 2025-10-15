@@ -9,6 +9,7 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using Normal = SynthEHR.Statistics.Distributions.Normal;
+using SynthEHR.Core.Data;
 
 namespace SynthEHR.Datasets;
 
@@ -54,15 +55,13 @@ public sealed class BiochemistryRecord
     private static readonly BucketList<BiochemistryRandomDataRow> BucketList;
     static BiochemistryRecord()
     {
-        using var dt = new DataTable();
-        dt.Columns.Add("RecordCount", typeof(int));
-
-        DataGenerator.EmbeddedCsvToDataTable(typeof(BiochemistryRecord), "Biochemistry.csv", dt);
+        // Use compile-time generated data instead of runtime CSV parsing
+        var rows = BiochemistryData.AllRows;
 
         BucketList = [];
 
-        foreach (var row in dt.Rows.Cast<DataRow>().OrderByDescending(static row => (int)row["RecordCount"]))
-            BucketList.Add((int)row["RecordCount"], new BiochemistryRandomDataRow(row));
+        foreach (var row in rows.OrderByDescending(static row => int.Parse(row.RecordCount)))
+            BucketList.Add(int.Parse(row.RecordCount), new BiochemistryRandomDataRow(row));
     }
 
     /// <summary>
@@ -96,19 +95,19 @@ public sealed class BiochemistryRecord
         return r.Next(0, 2) == 0 ? $"CC{r.Next(0, 1000000)}" : $"BC{r.Next(0, 1000000)}";
     }
 
-    private sealed class BiochemistryRandomDataRow(DataRow row)
+    private sealed class BiochemistryRandomDataRow(BiochemistryData.Row row)
     {
-        public readonly string LocalClinicalCodeValue = (string)row["LocalClinicalCodeValue"];
-        public readonly string ReadCodeValue = (string)row["ReadCodeValue"];
-        public readonly string hb_extract = (string)row["hb_extract"];
-        public readonly string SampleName = (string)row["SampleName"];
-        public readonly string ArithmeticComparator = (string)row["ArithmeticComparator"];
-        public readonly string Interpretation = (string)row["Interpretation"];
-        public readonly string QuantityUnit = (string)row["QuantityUnit"];
-        public double? RangeHighValue = double.TryParse(row["RangeHighValue"].ToString(), out var rangeLow) ? rangeLow : null;
-        public double? RangeLowValue = double.TryParse(row["RangeLowValue"].ToString(), out var rangeHigh) ? rangeHigh : null;
-        private readonly double? QVAverage = double.TryParse(row["QVAverage"].ToString(), out var min) ? min : null;
-        private readonly double? QVStandardDev = double.TryParse(row["QVStandardDev"].ToString(), out var dev) ? dev : null;
+        public readonly string LocalClinicalCodeValue = row.LocalClinicalCodeValue;
+        public readonly string ReadCodeValue = row.ReadCodeValue;
+        public readonly string hb_extract = row.HbExtract;
+        public readonly string SampleName = row.SampleName;
+        public readonly string ArithmeticComparator = row.ArithmeticComparator;
+        public readonly string Interpretation = row.Interpretation;
+        public readonly string QuantityUnit = row.QuantityUnit;
+        public double? RangeHighValue = double.TryParse(row.RangeHighValue, out var rangeLow) ? rangeLow : null;
+        public double? RangeLowValue = double.TryParse(row.RangeLowValue, out var rangeHigh) ? rangeHigh : null;
+        private readonly double? QVAverage = double.TryParse(row.QVAverage, out var min) ? min : null;
+        private readonly double? QVStandardDev = double.TryParse(row.QVStandardDev, out var dev) ? dev : null;
 
         /// <summary>
         /// Returns a new QV value using the <see cref="QVAverage"/> and <see cref="QVStandardDev"/> seeded with the provided

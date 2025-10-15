@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using SynthEHR.Core.Data;
 
 namespace SynthEHR.Datasets;
 
@@ -20,18 +21,19 @@ public sealed class PrescribingRecord
     /// </summary>
     private static readonly Dictionary<int, int> WeightToRow;
     private static readonly int MaxWeight;
-    private static readonly DataTable LookupTable;
+    private static readonly IReadOnlyList<PrescribingData.Row> LookupTable;
 
     static PrescribingRecord()
     {
-        LookupTable = DataGenerator.EmbeddedCsvToDataTable(typeof(PrescribingRecord), "Prescribing.csv");
+        // Use compile-time generated data instead of runtime CSV parsing
+        LookupTable = PrescribingData.AllRows;
 
         WeightToRow = [];
 
         var currentWeight = 0;
-        for (var i = 0; i < LookupTable.Rows.Count; i++)
+        for (var i = 0; i < LookupTable.Count; i++)
         {
-            var frequency = int.Parse(LookupTable.Rows[i]["frequency"].ToString());
+            var frequency = int.Parse(LookupTable[i].Frequency);
 
             if (frequency == 0)
                 continue;
@@ -53,38 +55,38 @@ public sealed class PrescribingRecord
         //get a random row from the lookup table - based on its representation within our biochemistry dataset
         var row = GetRandomRowUsingWeight(r);
 
-        ResSeqNo = row["res_seqno"].ToString();
-        Name = row["name"].ToString();
-        FormulationCode = row["formulation_code"].ToString();
-        Strength = row["strength"].ToString();
-        StrengthNumerical = row["orig_strength"].ToString() == "NULL" ? null : Convert.ToDouble(row["orig_strength"].ToString());
-        MeasureCode = row["measure_code"].ToString();
-        BnfCode = row["BNF_Code"].ToString();
-        FormattedBnfCode = row["formatted_BNF_Code"].ToString();
-        BnfDescription = row["BNF_Description"].ToString();
-        ApprovedName = row["Approved_Name"].ToString();
+        ResSeqNo = row.ResSeqno;
+        Name = row.Name;
+        FormulationCode = row.FormulationCode;
+        Strength = row.Strength;
+        StrengthNumerical = row.OrigStrength == "NULL" ? null : Convert.ToDouble(row.OrigStrength);
+        MeasureCode = row.MeasureCode;
+        BnfCode = row.BNFCode;
+        FormattedBnfCode = row.FormattedBNFCode;
+        BnfDescription = row.BNFDescription;
+        ApprovedName = row.ApprovedName;
 
-        var hasMin = double.TryParse(row["minQuantity"].ToString(), out var min);
-        var hasMax = double.TryParse(row["maxQuantity"].ToString(), out var max);
+        var hasMin = double.TryParse(row.MinQuantity, out var min);
+        var hasMax = double.TryParse(row.MaxQuantity, out var max);
 
         if (hasMin && hasMax)
             Quantity = ((int)(r.NextDouble() * (max - min) + min)).ToString();//it is a number
         else
             if (r.Next(0, 2) == 0)
-            Quantity = row["minQuantity"].ToString();//it isn't a number, randomly select max or min
+            Quantity = row.MinQuantity;//it isn't a number, randomly select max or min
         else
-            Quantity = row["maxQuantity"].ToString();
+            Quantity = row.MaxQuantity;
 
     }
 
-    private static DataRow GetRandomRowUsingWeight(Random r)
+    private static PrescribingData.Row GetRandomRowUsingWeight(Random r)
     {
         var weightToGet = r.Next(MaxWeight);
 
         //get the first key with a cumulative frequency above the one you are trying to get
         var row = WeightToRow.First(kvp => kvp.Key > weightToGet).Value;
 
-        return LookupTable.Rows[row];
+        return LookupTable[row];
     }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/Prescribing/Field[@name="ResSeqNo"]'/>

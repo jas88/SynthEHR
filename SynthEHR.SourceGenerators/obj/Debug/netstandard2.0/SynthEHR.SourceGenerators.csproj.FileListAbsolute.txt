@@ -1,0 +1,11 @@
+/Users/jas88/Developer/SynthEHR/SynthEHR.SourceGenerators/bin/Debug/netstandard2.0/SynthEHR.SourceGenerators.deps.json
+/Users/jas88/Developer/SynthEHR/SynthEHR.SourceGenerators/bin/Debug/netstandard2.0/SynthEHR.SourceGenerators.dll
+/Users/jas88/Developer/SynthEHR/SynthEHR.SourceGenerators/bin/Debug/netstandard2.0/SynthEHR.SourceGenerators.pdb
+/Users/jas88/Developer/SynthEHR/SynthEHR.SourceGenerators/obj/Debug/netstandard2.0/SynthEHR.SourceGenerators.csproj.AssemblyReference.cache
+/Users/jas88/Developer/SynthEHR/SynthEHR.SourceGenerators/obj/Debug/netstandard2.0/SynthEHR.SourceGenerators.GeneratedMSBuildEditorConfig.editorconfig
+/Users/jas88/Developer/SynthEHR/SynthEHR.SourceGenerators/obj/Debug/netstandard2.0/SynthEHR.SourceGenerators.AssemblyInfoInputs.cache
+/Users/jas88/Developer/SynthEHR/SynthEHR.SourceGenerators/obj/Debug/netstandard2.0/SynthEHR.SourceGenerators.AssemblyInfo.cs
+/Users/jas88/Developer/SynthEHR/SynthEHR.SourceGenerators/obj/Debug/netstandard2.0/SynthEHR.SourceGenerators.csproj.CoreCompileInputs.cache
+/Users/jas88/Developer/SynthEHR/SynthEHR.SourceGenerators/obj/Debug/netstandard2.0/SynthEHR.SourceGenerators.sourcelink.json
+/Users/jas88/Developer/SynthEHR/SynthEHR.SourceGenerators/obj/Debug/netstandard2.0/SynthEHR.SourceGenerators.dll
+/Users/jas88/Developer/SynthEHR/SynthEHR.SourceGenerators/obj/Debug/netstandard2.0/SynthEHR.SourceGenerators.pdb

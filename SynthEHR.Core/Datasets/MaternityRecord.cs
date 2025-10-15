@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using SynthEHR.Core.Data;
 
 namespace SynthEHR.Datasets;
 
@@ -93,27 +94,23 @@ public sealed class MaternityRecord
 
     static MaternityRecord()
     {
-        using var dt = new DataTable();
-        dt.BeginLoadData();
-        DataGenerator.EmbeddedCsvToDataTable(typeof(Maternity), "Maternity.csv", dt);
+        // Use compile-time generated data instead of runtime CSV parsing
+        var rows = MaternityData.AllRows;
 
-        foreach (DataRow row in dt.Rows)
+        foreach (var row in rows)
         {
-            AddRow(row, "Location", _locations);
-            AddRow(row, "MaritalStatusNumeric", _maritalStatusOld);
-            AddRow(row, "MaritalStatusAlpha", _maritalStatusNew);
-            AddRow(row, "Specialty", _specialties);
+            AddRow(row.Location, row.LocationRecordCount, _locations);
+            AddRow(row.MaritalStatusNumeric, row.MaritalStatusNumericRecordCount, _maritalStatusOld);
+            AddRow(row.MaritalStatusAlpha, row.MaritalStatusAlphaRecordCount, _maritalStatusNew);
+            AddRow(row.Specialty, row.SpecialtyRecordCount, _specialties);
         }
     }
 
-    private static void AddRow(DataRow row, string key, BucketList<string> bucketList)
+    private static void AddRow(string val, string freqStr, BucketList<string> bucketList)
     {
-        var val = Convert.ToString(row[key]);
-        var freq = row[$"{key}_RecordCount"];
-
-        if (string.IsNullOrWhiteSpace(freq.ToString()))
+        if (string.IsNullOrWhiteSpace(freqStr))
             return;
 
-        bucketList.Add(Convert.ToInt32(freq), val);
+        bucketList.Add(Convert.ToInt32(freqStr), val);
     }
 }

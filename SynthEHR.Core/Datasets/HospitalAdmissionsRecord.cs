@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using SynthEHR.Core.Data;
 
 namespace SynthEHR.Datasets;
 
@@ -148,13 +149,8 @@ public sealed class HospitalAdmissionsRecord
     {
         ICD10Rows = [];
 
-        using var dt = new DataTable();
-        dt.BeginLoadData();
-        dt.Columns.Add("AverageMonthAppearing", typeof(double));
-        dt.Columns.Add("StandardDeviationMonthAppearing", typeof(double));
-        dt.Columns.Add("CountAppearances", typeof(int));
-
-        var lookupTable = DataGenerator.EmbeddedCsvToDataTable(typeof(HospitalAdmissionsRecord), "HospitalAdmissions.csv", dt);
+        // Use compile-time generated data instead of runtime CSV parsing
+        var rows = HospitalAdmissionsData.AllRows;
 
         ICD10MonthHashMap = new Dictionary<string, Dictionary<int, List<int>>>
             {
@@ -183,11 +179,14 @@ public sealed class HospitalAdmissionsRecord
         var rowCount = 0;
 
         //for each row in the sample data
-        foreach (DataRow row in lookupTable.Rows)
+        foreach (var row in rows)
         {
+            var avgMonth = double.Parse(row.AverageMonthAppearing);
+            var stdDev = double.Parse(row.StandardDeviationMonthAppearing);
+
             //calculate 2 standard deviations in months
-            var monthFrom = Convert.ToInt32((double)row["AverageMonthAppearing"] - 2 * (double)row["StandardDeviationMonthAppearing"]);
-            var monthTo = Convert.ToInt32((double)row["AverageMonthAppearing"] + 2 * (double)row["StandardDeviationMonthAppearing"]);
+            var monthFrom = Convert.ToInt32(avgMonth - 2 * stdDev);
+            var monthTo = Convert.ToInt32(avgMonth + 2 * stdDev);
 
             //2 standard deviations might take us beyond the beginning or start so only build hashmap for dates we will be asked for
             monthFrom = Math.Max(monthFrom, from);
@@ -202,35 +201,31 @@ public sealed class HospitalAdmissionsRecord
                 if (monthTo > to)
                     break;
 
-                ICD10MonthHashMap[(string)row["ColumnAppearingIn"]][i].Add(rowCount);
+                ICD10MonthHashMap[row.ColumnAppearingIn][i].Add(rowCount);
             }
 
-            ICD10Rows.Add((int)row["CountAppearances"], (string)row["TestCode"]);
+            ICD10Rows.Add(int.Parse(row.CountAppearances), row.TestCode);
             rowCount++;
         }
 
-        using var operationsTable = new DataTable();
-        operationsTable.BeginLoadData();
-        operationsTable.Columns.Add("CountOfRecords", typeof(int));
+        // Use compile-time generated data for operations
+        var operationsRows = HospitalAdmissionsOperationsData.AllRows;
 
-        DataGenerator.EmbeddedCsvToDataTable(typeof(HospitalAdmissionsRecord), "HospitalAdmissionsOperations.csv", operationsTable);
-        operationsTable.EndLoadData();
-
-        foreach (DataRow r in operationsTable.Rows)
+        foreach (var r in operationsRows)
         {
-            var key = (string)r["MAIN_CONDITION"];
+            var key = r.MAINCONDITION;
             if (!ConditionsToOperationsMap.TryGetValue(key, out var conditionOps))
                 ConditionsToOperationsMap.Add(key, conditionOps = []);
 
-            conditionOps.Add((int)r["CountOfRecords"], [
-                    r["MAIN_OPERATION"] as string,
-                r["MAIN_OPERATION_B"] as string,
-                r["OTHER_OPERATION_1"] as string,
-                r["OTHER_OPERATION_1B"] as string,
-                r["OTHER_OPERATION_2"] as string,
-                r["OTHER_OPERATION_2B"] as string,
-                r["OTHER_OPERATION_3"] as string,
-                r["OTHER_OPERATION_3B"] as string
+            conditionOps.Add(int.Parse(r.CountOfRecords), [
+                    r.MAINOPERATION,
+                r.MAINOPERATIONB,
+                r.OTHEROPERATION1,
+                r.OTHEROPERATION1B,
+                r.OTHEROPERATION2,
+                r.OTHEROPERATION2B,
+                r.OTHEROPERATION3,
+                r.OTHEROPERATION3B
                     ]);
         }
     }
