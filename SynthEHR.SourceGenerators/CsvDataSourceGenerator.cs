@@ -152,11 +152,11 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         code.CloseBrace();
         code.AppendLine();
 
-        // Generate columnar storage arrays
-        GenerateColumnarStorage(code, headers, rows, columnTypes);
+        // Generate columnar storage arrays and collect interning info
+        var internedStrings = GenerateColumnarStorage(code, headers, rows, columnTypes);
 
-        // Generate GetRow method
-        GenerateGetRowMethod(code, headers, columnTypes);
+        // Generate GetRow method with interning support
+        GenerateGetRowMethod(code, headers, columnTypes, internedStrings);
 
         // Generate IReadOnlyList wrapper
         GenerateLazyRowList(code);
@@ -278,7 +278,7 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
                value == "yes" || value == "no" || value == "Yes" || value == "No";
     }
 
-    private static void GenerateColumnarStorage(CodeBuilder code, string[] headers, string[][] rows, ColumnTypeInfo[] columnTypes)
+    private static Dictionary<string, int> GenerateColumnarStorage(CodeBuilder code, string[] headers, string[][] rows, ColumnTypeInfo[] columnTypes)
     {
         // Group columns by type
         var stringColumns = new List<int>();
@@ -286,6 +286,24 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         {
             if (columnTypes[i].Type == ColumnDataType.String)
                 stringColumns.Add(i);
+        }
+
+        // Analyze string frequency for interning
+        var stringFrequency = AnalyzeStringFrequency(rows, stringColumns);
+        var internedStrings = BuildInternedStringPool(stringFrequency, threshold: 10);
+
+        // Generate interned string constants
+        if (internedStrings.Count > 0)
+        {
+            code.AppendXmlDocComment($"Interned strings (appearing 10+ times) - {internedStrings.Count} unique values");
+            foreach (var kvp in internedStrings.OrderBy(x => x.Value))
+            {
+                var constName = $"_InternedStr{kvp.Value}";
+                var escapedValue = EscapeString(kvp.Key);
+                var frequency = stringFrequency[kvp.Key];
+                code.AppendLine($"private const string {constName} = \"{escapedValue}\"; // appears {frequency}x");
+            }
+            code.AppendLine();
         }
 
         // Generate typed column arrays
@@ -370,74 +388,141 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
             code.AppendLine();
         }
 
-        // Generate string blob and offsets
+        // Generate string blob and offsets with interning support
         if (stringColumns.Count > 0)
         {
-            var stringBlob = new StringBuilder();
-            var offsets = new List<int>();
+            GenerateInternedStringStorage(code, rows, stringColumns, internedStrings);
+        }
 
-            for (int rowIndex = 0; rowIndex < rows.Length; rowIndex++)
+        return internedStrings;
+    }
+
+    private static Dictionary<string, int> AnalyzeStringFrequency(string[][] rows, List<int> stringColumns)
+    {
+        var frequency = new Dictionary<string, int>();
+
+        foreach (var row in rows)
+        {
+            foreach (var colIndex in stringColumns)
             {
-                var row = rows[rowIndex];
-                foreach (var colIndex in stringColumns)
+                var value = colIndex < row.Length ? (row[colIndex] ?? string.Empty) : string.Empty;
+                if (!frequency.ContainsKey(value))
+                    frequency[value] = 0;
+                frequency[value]++;
+            }
+        }
+
+        return frequency;
+    }
+
+    private static Dictionary<string, int> BuildInternedStringPool(Dictionary<string, int> frequency, int threshold)
+    {
+        var pool = new Dictionary<string, int>();
+        int internId = 0;
+
+        // Intern strings that appear >= threshold times
+        foreach (var kvp in frequency.OrderByDescending(x => x.Value))
+        {
+            if (kvp.Value >= threshold)
+            {
+                pool[kvp.Key] = internId++;
+            }
+        }
+
+        return pool;
+    }
+
+    private static void GenerateInternedStringStorage(CodeBuilder code, string[][] rows, List<int> stringColumns, Dictionary<string, int> internedStrings)
+    {
+        var stringBlob = new StringBuilder();
+        var offsets = new List<int>();
+        var internedIndices = new List<int>(); // -1 = not interned, >= 0 = interned string ID
+
+        for (int rowIndex = 0; rowIndex < rows.Length; rowIndex++)
+        {
+            var row = rows[rowIndex];
+            foreach (var colIndex in stringColumns)
+            {
+                offsets.Add(stringBlob.Length);
+                var value = colIndex < row.Length ? (row[colIndex] ?? string.Empty) : string.Empty;
+
+                // Check if this string should be interned
+                if (internedStrings.TryGetValue(value, out int internId))
                 {
-                    offsets.Add(stringBlob.Length);
-                    var value = colIndex < row.Length ? (row[colIndex] ?? string.Empty) : string.Empty;
+                    internedIndices.Add(internId);
+                    // Add marker to blob (empty string with special offset handling)
+                    stringBlob.Append('\0');
+                }
+                else
+                {
+                    internedIndices.Add(-1);
                     // Keep "NULL" as-is for string columns - tests expect this literal
                     stringBlob.Append(value);
                     stringBlob.Append('\0');
                 }
             }
-            offsets.Add(stringBlob.Length); // Final offset for bounds
-
-            code.AppendXmlDocComment("UTF8 string data blob for all string columns");
-            // Use byte array instead of u8 literal to avoid escaping issues
-            var blobBytes = Encoding.UTF8.GetBytes(stringBlob.ToString());
-            code.AppendLine($"private static ReadOnlySpan<byte> _stringData => new byte[]");
-            code.OpenBrace();
-
-            // Write bytes in chunks of 20 per line for readability
-            for (int i = 0; i < blobBytes.Length; i++)
-            {
-                if (i > 0 && i % 20 == 0)
-                {
-                    code.AppendLine();
-                }
-
-                if (i > 0 && i % 20 != 0)
-                    code.Append(" ");
-
-                code.Append(blobBytes[i].ToString());
-
-                if (i < blobBytes.Length - 1)
-                    code.Append(",");
-            }
-
-            if (blobBytes.Length > 0)
-                code.AppendLine();
-
-            code.CloseBrace(semicolon: true);
-            code.AppendLine();
-
-            code.AppendXmlDocComment("Offsets into string data blob");
-            code.AppendLine($"private static ReadOnlySpan<int> _stringOffsets => new int[]");
-            code.OpenBrace();
-
-            for (int i = 0; i < offsets.Count; i++)
-            {
-                var isLast = i == offsets.Count - 1;
-                code.AppendLine($"{offsets[i]}{(isLast ? "" : ",")}");
-            }
-
-            code.CloseBrace(semicolon: true);
-            code.AppendLine();
-
-            code.AppendLine($"private const int StringColumnsCount = {stringColumns.Count};");
-            code.AppendLine();
         }
+        offsets.Add(stringBlob.Length); // Final offset for bounds
+
+        code.AppendXmlDocComment("UTF8 string data blob for non-interned string columns");
+        var blobBytes = Encoding.UTF8.GetBytes(stringBlob.ToString());
+        code.AppendLine($"private static ReadOnlySpan<byte> _stringData => new byte[]");
+        code.OpenBrace();
+
+        // Write bytes in chunks of 20 per line for readability
+        for (int i = 0; i < blobBytes.Length; i++)
+        {
+            if (i > 0 && i % 20 == 0)
+            {
+                code.AppendLine();
+            }
+
+            if (i > 0 && i % 20 != 0)
+                code.Append(" ");
+
+            code.Append(blobBytes[i].ToString());
+
+            if (i < blobBytes.Length - 1)
+                code.Append(",");
+        }
+
+        if (blobBytes.Length > 0)
+            code.AppendLine();
+
+        code.CloseBrace(semicolon: true);
+        code.AppendLine();
+
+        code.AppendXmlDocComment("Offsets into string data blob");
+        code.AppendLine($"private static ReadOnlySpan<int> _stringOffsets => new int[]");
+        code.OpenBrace();
+
+        for (int i = 0; i < offsets.Count; i++)
+        {
+            var isLast = i == offsets.Count - 1;
+            code.AppendLine($"{offsets[i]}{(isLast ? "" : ",")}");
+        }
+
+        code.CloseBrace(semicolon: true);
+        code.AppendLine();
+
+        code.AppendXmlDocComment("Interned string indices (-1 = not interned, >= 0 = interned string ID)");
+        code.AppendLine($"private static ReadOnlySpan<int> _internedIndices => new int[]");
+        code.OpenBrace();
+
+        for (int i = 0; i < internedIndices.Count; i++)
+        {
+            var isLast = i == internedIndices.Count - 1;
+            code.AppendLine($"{internedIndices[i]}{(isLast ? "" : ",")}");
+        }
+
+        code.CloseBrace(semicolon: true);
+        code.AppendLine();
+
+        code.AppendLine($"private const int StringColumnsCount = {stringColumns.Count};");
+        code.AppendLine();
     }
 
-    private static void GenerateGetRowMethod(CodeBuilder code, string[] headers, ColumnTypeInfo[] columnTypes)
+    private static void GenerateGetRowMethod(CodeBuilder code, string[] headers, ColumnTypeInfo[] columnTypes, Dictionary<string, int> internedStrings)
     {
         // Generate GetString helper if needed
         var hasStringColumns = columnTypes.Any(ct => ct.Type == ColumnDataType.String);
@@ -447,6 +532,28 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
             code.AppendLine("private static string GetString(int rowIndex, int colIndex)");
             code.OpenBrace();
             code.AppendLine("int offsetIndex = rowIndex * StringColumnsCount + colIndex;");
+            code.AppendLine("int internedId = _internedIndices[offsetIndex];");
+            code.AppendLine();
+            code.AppendLine("// Check if this is an interned string");
+            code.AppendLine("if (internedId >= 0)");
+            code.OpenBrace();
+            code.AppendLine("return internedId switch");
+            code.OpenBrace();
+
+            // Generate switch cases for interned strings
+            if (internedStrings.Count > 0)
+            {
+                foreach (var kvp in internedStrings.OrderBy(x => x.Value))
+                {
+                    code.AppendLine($"{kvp.Value} => _InternedStr{kvp.Value},");
+                }
+            }
+            code.AppendLine("_ => string.Empty");
+
+            code.CloseBrace(semicolon: true);
+            code.CloseBrace();
+            code.AppendLine();
+            code.AppendLine("// Extract from blob for non-interned strings");
             code.AppendLine("int start = _stringOffsets[offsetIndex];");
             code.AppendLine("int end = _stringOffsets[offsetIndex + 1];");
             code.AppendLine("if (end <= start) return string.Empty;");
