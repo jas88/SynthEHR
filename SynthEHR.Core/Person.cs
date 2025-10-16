@@ -6,7 +6,6 @@
 
 #nullable enable
 using System;
-using System.Text;
 using SynthEHR.Datasets;
 
 namespace SynthEHR;
@@ -161,13 +160,18 @@ public sealed record Person
 
     private static string GenerateANOCHI(Random r)
     {
-        var toReturn = new StringBuilder(12);
+        // ANOCHI format: 10 random digits + "_A" = 12 chars total
+        Span<char> buffer = stackalloc char[12];
 
+        // Generate 10 random digits
         for (var i = 0; i < 10; i++)
-            toReturn.Append(r.Next(10));
+            buffer[i] = (char)('0' + r.Next(10));
 
-        toReturn.Append("_A");
-        return toReturn.ToString();
+        // Append "_A" suffix
+        buffer[10] = '_';
+        buffer[11] = 'A';
+
+        return new string(buffer);
     }
 
     /// <summary>
@@ -176,12 +180,32 @@ public sealed record Person
     /// </summary>
     /// <param name="r"></param>
     /// <returns></returns>
-    public string GetRandomCHI( Random r)
+    public string GetRandomCHI(Random r)
     {
-        var toReturn = DateOfBirth.ToString($"ddMMyy{r.Next(10, 99)}");
+        // CHI format: DDMMYY + 2 random digits + gender digit + check digit = 10 chars total
+        Span<char> buffer = stackalloc char[10];
+        int pos = 0;
 
+        // Format date of birth: DDMMYY (6 digits)
+        int day = DateOfBirth.Day;
+        buffer[pos++] = (char)('0' + day / 10);
+        buffer[pos++] = (char)('0' + day % 10);
+
+        int month = DateOfBirth.Month;
+        buffer[pos++] = (char)('0' + month / 10);
+        buffer[pos++] = (char)('0' + month % 10);
+
+        int year = DateOfBirth.Year % 100;
+        buffer[pos++] = (char)('0' + year / 10);
+        buffer[pos++] = (char)('0' + year % 10);
+
+        // Add 2 random digits (10-99)
+        int randomDigits = r.Next(10, 100);
+        buffer[pos++] = (char)('0' + randomDigits / 10);
+        buffer[pos++] = (char)('0' + randomDigits % 10);
+
+        // Gender digit (odd for F, even for M)
         var genderDigit = r.Next(10);
-
         switch (Gender)
         {
             //odd last number for girls
@@ -193,10 +217,13 @@ public sealed record Person
                 genderDigit = 2;
                 break;
         }
+        buffer[pos++] = (char)('0' + genderDigit);
 
-        var checkDigit = r.Next(0, 9);
+        // Check digit
+        var checkDigit = r.Next(0, 10);
+        buffer[pos] = (char)('0' + checkDigit);
 
-        return $"{toReturn}{genderDigit}{checkDigit}";
+        return new string(buffer);
     }
 
 
