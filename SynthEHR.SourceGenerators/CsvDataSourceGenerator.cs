@@ -34,7 +34,7 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
                 var fileName = Path.GetFileNameWithoutExtension(file.Path);
 
                 if (string.IsNullOrEmpty(content))
-                    return (fileName: string.Empty, headers: Array.Empty<string>(), rows: Array.Empty<string[]>());
+                    return (string.Empty, Array.Empty<string>(), Array.Empty<string[]>());
 
                 try
                 {
