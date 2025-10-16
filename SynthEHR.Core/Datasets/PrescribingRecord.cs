@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -19,7 +20,7 @@ public sealed class PrescribingRecord
     /// every row in data table has a weight (the number of records in our biochemistry with this sample type, this dictionary lets you input
     /// a record number 0-maxWeight and be returned an appropriate row from the table based on its weighting
     /// </summary>
-    private static readonly Dictionary<int, int> WeightToRow;
+    private static readonly FrozenDictionary<int, int> WeightToRow;
     private static readonly int MaxWeight;
     private static readonly IReadOnlyList<PrescribingData.Row> LookupTable;
 
@@ -28,7 +29,7 @@ public sealed class PrescribingRecord
         // Use compile-time generated data instead of runtime CSV parsing
         LookupTable = PrescribingData.AllRows;
 
-        WeightToRow = [];
+        var tempWeightToRow = new Dictionary<int, int>();
 
         var currentWeight = 0;
         for (var i = 0; i < LookupTable.Count; i++)
@@ -40,10 +41,13 @@ public sealed class PrescribingRecord
 
             currentWeight += frequency;
 
-            WeightToRow.Add(currentWeight, i);
+            tempWeightToRow.Add(currentWeight, i);
         }
 
         MaxWeight = currentWeight;
+
+        // Freeze the WeightToRow dictionary for optimized lookups
+        WeightToRow = tempWeightToRow.ToFrozenDictionary();
     }
 
     /// <summary>

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Data;
 using SynthEHR.Core.Data;
@@ -68,7 +69,7 @@ public sealed class HospitalAdmissionsRecord
     /// Maps ColumnAppearingIn to each month we might want to generate random data in (Between <see cref="MinimumDate"/> and <see cref="MaximumDate"/>)
     /// to the row numbers which were active at that time (based on AverageMonthAppearing and StandardDeviationMonthAppearing)
     /// </summary>
-    private static readonly Dictionary<string, Dictionary<int, List<int>>> ICD10MonthHashMap;
+    private static readonly FrozenDictionary<string, FrozenDictionary<int, List<int>>> ICD10MonthHashMap;
 
     /// <summary>
     /// Maps Row(Key) to the CountAppearances/TestCode
@@ -79,7 +80,7 @@ public sealed class HospitalAdmissionsRecord
     /// Maps a given MAIN_CONDITION code (doesn't cover other conditions) to popular operations for that condition.  The string array is always length 8 and corresponds to
     /// MAIN_OPERATION,MAIN_OPERATION_B,OTHER_OPERATION_1,OTHER_OPERATION_1B,OTHER_OPERATION_2,OTHER_OPERATION_2B,OTHER_OPERATION_3,OTHER_OPERATION_3B
     /// </summary>
-    private static readonly Dictionary<string, BucketList<string[]>> ConditionsToOperationsMap = [];
+    private static readonly FrozenDictionary<string, BucketList<string[]>> ConditionsToOperationsMap;
 
     /// <summary>
     /// The earliest date from which to generate records (matches HIC aggregate data collected)
@@ -152,7 +153,7 @@ public sealed class HospitalAdmissionsRecord
         // Use compile-time generated data instead of runtime CSV parsing
         var rows = HospitalAdmissionsData.AllRows;
 
-        ICD10MonthHashMap = new Dictionary<string, Dictionary<int, List<int>>>
+        var tempICD10MonthHashMap = new Dictionary<string, Dictionary<int, List<int>>>
             {
                 {"MAIN_CONDITION", new Dictionary<int, List<int>>()},
                 {"OTHER_CONDITION_1", new Dictionary<int,  List<int>>()},
@@ -168,11 +169,11 @@ public sealed class HospitalAdmissionsRecord
         var to = (MaximumDate.Year - 1900) * 12 + MaximumDate.Month;
 
 
-        foreach (var columnKey in ICD10MonthHashMap.Keys)
+        foreach (var columnKey in tempICD10MonthHashMap.Keys)
         {
             for (var i = from; i <= to; i++)
             {
-                ICD10MonthHashMap[columnKey].Add(i, []);
+                tempICD10MonthHashMap[columnKey].Add(i, []);
             }
         }
 
@@ -201,21 +202,29 @@ public sealed class HospitalAdmissionsRecord
                 if (monthTo > to)
                     break;
 
-                ICD10MonthHashMap[row.ColumnAppearingIn][i].Add(rowCount);
+                tempICD10MonthHashMap[row.ColumnAppearingIn][i].Add(rowCount);
             }
 
             ICD10Rows.Add(int.Parse(row.CountAppearances), row.TestCode);
             rowCount++;
         }
 
+        // Freeze the ICD10MonthHashMap - convert inner dictionaries first, then outer
+        ICD10MonthHashMap = tempICD10MonthHashMap.ToFrozenDictionary(
+            kvp => kvp.Key,
+            kvp => kvp.Value.ToFrozenDictionary()
+        );
+
         // Use compile-time generated data for operations
         var operationsRows = HospitalAdmissionsOperationsData.AllRows;
+
+        var tempConditionsToOperationsMap = new Dictionary<string, BucketList<string[]>>();
 
         foreach (var r in operationsRows)
         {
             var key = r.MAINCONDITION;
-            if (!ConditionsToOperationsMap.TryGetValue(key, out var conditionOps))
-                ConditionsToOperationsMap.Add(key, conditionOps = []);
+            if (!tempConditionsToOperationsMap.TryGetValue(key, out var conditionOps))
+                tempConditionsToOperationsMap.Add(key, conditionOps = []);
 
             conditionOps.Add(int.Parse(r.CountOfRecords), [
                     r.MAINOPERATION,
@@ -228,6 +237,9 @@ public sealed class HospitalAdmissionsRecord
                 r.OTHEROPERATION3B
                     ]);
         }
+
+        // Freeze the ConditionsToOperationsMap
+        ConditionsToOperationsMap = tempConditionsToOperationsMap.ToFrozenDictionary();
     }
 
 
