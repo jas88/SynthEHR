@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
@@ -52,17 +53,32 @@ public sealed class BiochemistryRecord
     /// <include file='../../Datasets.doc.xml' path='Datasets/Biochemistry/Field[@name="RangeLowValue"]'/>
     public readonly string RangeLowValue;
 
-    private static readonly BucketList<BiochemistryRandomDataRow> BucketList;
+    /// <summary>
+    /// Sorted array of (cumulative weight, data row) tuples for O(log n) binary search lookup.
+    /// Data is pre-sorted by RecordCount (descending) by the source generator.
+    /// </summary>
+    private static readonly (int CumulativeWeight, BiochemistryRandomDataRow Data)[] WeightedRows;
+    private static readonly int MaxWeight;
+
     static BiochemistryRecord()
     {
         // Use compile-time generated data instead of runtime CSV parsing
         // Data is already pre-sorted by RecordCount (descending) by the source generator
         var rows = BiochemistryData.AllRows;
 
-        BucketList = [];
+        var weights = new List<(int, BiochemistryRandomDataRow)>();
+        var currentWeight = 0;
 
         foreach (var row in rows)
-            BucketList.Add(int.Parse(row.RecordCount), new BiochemistryRandomDataRow(row));
+        {
+            var count = int.Parse(row.RecordCount);
+            currentWeight += count;
+            weights.Add((currentWeight, new BiochemistryRandomDataRow(row)));
+        }
+
+        MaxWeight = currentWeight;
+        // Array is already sorted by construction (cumulative sum is monotonically increasing)
+        WeightedRows = weights.ToArray();
     }
 
     /// <summary>
@@ -72,7 +88,7 @@ public sealed class BiochemistryRecord
     public BiochemistryRecord(Random r)
     {
         //get a random row from the lookup table - based on its representation within our biochemistry dataset
-        var row = BucketList.GetRandom(r);
+        var row = GetRandomRowUsingWeight(r);
         LabNumber = GetRandomLabNumber(r);
         TestCode = row.LocalClinicalCodeValue;
         SampleType = row.SampleName;
@@ -87,6 +103,28 @@ public sealed class BiochemistryRecord
 
         Healthboard = row.hb_extract;
         ReadCodeValue = row.ReadCodeValue;
+    }
+
+    private static BiochemistryRandomDataRow GetRandomRowUsingWeight(Random r)
+    {
+        var weightToGet = r.Next(MaxWeight);
+
+        // Binary search to find first cumulative weight > weightToGet
+        // O(log n) instead of O(n) linear scan
+        int left = 0;
+        int right = WeightedRows.Length - 1;
+
+        while (left < right)
+        {
+            int mid = left + (right - left) / 2;
+
+            if (WeightedRows[mid].CumulativeWeight <= weightToGet)
+                left = mid + 1;
+            else
+                right = mid;
+        }
+
+        return WeightedRows[left].Data;
     }
 
 
