@@ -1,0 +1,2894 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SynthEHR.Core</name>
+    </assembly>
+    <members>
+        <member name="T:SynthEHR.BucketList`1">
+            <summary>
+            Picks random object of Type T based on a specified probability for each element.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:SynthEHR.BucketList`1.#ctor">
+            <summary>
+            Construct an empty BucketList
+            </summary>
+        </member>
+        <member name="M:SynthEHR.BucketList`1.GetRandom(System.Random)">
+            <summary>
+            Returns a random bucket (based on the probability of each bucket)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.BucketList`1.GetRandom(System.Collections.Generic.IEnumerable{System.Int32},System.Random)">
+            <summary>
+            Returns a random bucket from the element indices provided (based on the probability of each bucket)
+            </summary>
+            <param name="usingOnlyIndices"></param>
+            <param name="r"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.BucketList`1.Add(System.Int32,`0)">
+            <summary>
+            Adds a new bucket to the list which will be returned using the total <paramref name="probability"/> ratio (relative
+            to the other buckets).
+            </summary>
+            <param name="probability"></param>
+            <param name="toAdd"></param>
+        </member>
+        <member name="M:SynthEHR.BucketList`1.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="T:SynthEHR.Datasets.Appointment">
+            <summary>
+            Data class describing an appointment including a guid identifier
+            </summary>
+            <remarks>
+            Creates a new randomly generated appointment within the lifetime of the <paramref name="testPerson"/>
+            </remarks>
+            <param name="testPerson"></param>
+            <param name="r"></param>
+        </member>
+        <member name="M:SynthEHR.Datasets.Appointment.#ctor(SynthEHR.Person,System.Random)">
+            <summary>
+            Data class describing an appointment including a guid identifier
+            </summary>
+            <remarks>
+            Creates a new randomly generated appointment within the lifetime of the <paramref name="testPerson"/>
+            </remarks>
+            <param name="testPerson"></param>
+            <param name="r"></param>
+        </member>
+        <member name="P:SynthEHR.Datasets.Appointment.Identifier">
+            <summary>
+            Globally unique identifier for this appointment
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Datasets.Appointment.StartDate">
+            <summary>
+            Random date within the lifetime of the <see cref="T:SynthEHR.Person"/> used for construction
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Datasets.Biochemistry">
+            <Biochemistry>
+    <summary>
+      Tayside and Fife labs biochemistry data.  This data is provided in a format based upon the SCI-Store system.
+    </summary>
+    <Field name="ArithmeticComparator">
+		<summary>  
+			This field represents additional information to be used in conjunction with the numeric result field Result. 
+			The contents should be interpreted along with the Result, for example, some EGFR results may be reported as Result = 60, with ArithmeticComparator = '&gt;'  
+			This means the result is greater than 60.
+		</summary>
+		</Field>
+		<Field name="Interpretation">
+		<summary>  
+      Contains comments regarding the result.
+		</summary>  
+		</Field>
+    <Field name="Healthboard">
+      <summary>
+        This is the alpha and/or numeric Health Board code in which the patient CHI information was extracted from. 
+      </summary>
+    </Field>
+    <Field name="SampleDate">
+      <summary>
+        This is the date and time when the sample was taken from the patient.
+      </summary>
+    </Field>
+    <Field name="SampleType">
+      <summary>
+        The type of sample that was run e.g. 'Blood', 'Serum' etc.
+      </summary>
+    </Field>
+    <Field name="TestCode">
+      <summary>
+        This field store the test code for the test taken/performed (e.g., CHOL = Cholesterol) as used by the providing organisation.  This is the internal lab system identifier for the test being run (See ReadCodeValue for a coded answer).  Includes non clinical/message codes such as ECOM.
+      </summary>
+    </Field>
+    <Field name="Result">
+      <summary>
+        Numerical measure captured during the test (expressed in QuantityUnit units)
+      </summary>
+    </Field><Field name="LabNumber">
+      <summary>
+        This is a unique identifier assigned by the lab system to identify a sample run.  Each sample run can have multiple tests run.
+      </summary>
+    </Field><Field name="QuantityUnit">
+      <summary>
+        The unit of measure that the Result is expressed in e.g. "mmol/L" / "umol/L".
+      </summary>
+    </Field>
+    <Field name="ReadCodeValue">
+      <summary>
+        The read code allocated to the test.  This field is useful as a standardised grouping for the tests, for example, if you are looking in Serum Total Cholesterol, all records marked with 44P. represent this regardless of the TestCode provided.
+      </summary>
+    </Field>
+    <Field name="RangeLowValue">
+      <summary>
+        Minimum guideline value for the test result at the time of testing.  These ranges vary based on relevant criteria such as age, gender, and guidelines will also change over time.
+      </summary>
+    </Field>
+    <Field name="RangeHighValue">
+      <summary>
+        Maximum guideline value for the test result at the time of testing.  These ranges vary based on relevant criteria such as age, gender, and guidelines will also change over time.
+      </summary>
+    </Field>
+	</Biochemistry>
+            <inheritdoc />
+        </member>
+        <member name="M:SynthEHR.Datasets.Biochemistry.#ctor(System.Random)">
+            <Biochemistry>
+    <summary>
+      Tayside and Fife labs biochemistry data.  This data is provided in a format based upon the SCI-Store system.
+    </summary>
+    <Field name="ArithmeticComparator">
+		<summary>  
+			This field represents additional information to be used in conjunction with the numeric result field Result. 
+			The contents should be interpreted along with the Result, for example, some EGFR results may be reported as Result = 60, with ArithmeticComparator = '&gt;'  
+			This means the result is greater than 60.
+		</summary>
+		</Field>
+		<Field name="Interpretation">
+		<summary>  
+      Contains comments regarding the result.
+		</summary>  
+		</Field>
+    <Field name="Healthboard">
+      <summary>
+        This is the alpha and/or numeric Health Board code in which the patient CHI information was extracted from. 
+      </summary>
+    </Field>
+    <Field name="SampleDate">
+      <summary>
+        This is the date and time when the sample was taken from the patient.
+      </summary>
+    </Field>
+    <Field name="SampleType">
+      <summary>
+        The type of sample that was run e.g. 'Blood', 'Serum' etc.
+      </summary>
+    </Field>
+    <Field name="TestCode">
+      <summary>
+        This field store the test code for the test taken/performed (e.g., CHOL = Cholesterol) as used by the providing organisation.  This is the internal lab system identifier for the test being run (See ReadCodeValue for a coded answer).  Includes non clinical/message codes such as ECOM.
+      </summary>
+    </Field>
+    <Field name="Result">
+      <summary>
+        Numerical measure captured during the test (expressed in QuantityUnit units)
+      </summary>
+    </Field><Field name="LabNumber">
+      <summary>
+        This is a unique identifier assigned by the lab system to identify a sample run.  Each sample run can have multiple tests run.
+      </summary>
+    </Field><Field name="QuantityUnit">
+      <summary>
+        The unit of measure that the Result is expressed in e.g. "mmol/L" / "umol/L".
+      </summary>
+    </Field>
+    <Field name="ReadCodeValue">
+      <summary>
+        The read code allocated to the test.  This field is useful as a standardised grouping for the tests, for example, if you are looking in Serum Total Cholesterol, all records marked with 44P. represent this regardless of the TestCode provided.
+      </summary>
+    </Field>
+    <Field name="RangeLowValue">
+      <summary>
+        Minimum guideline value for the test result at the time of testing.  These ranges vary based on relevant criteria such as age, gender, and guidelines will also change over time.
+      </summary>
+    </Field>
+    <Field name="RangeHighValue">
+      <summary>
+        Maximum guideline value for the test result at the time of testing.  These ranges vary based on relevant criteria such as age, gender, and guidelines will also change over time.
+      </summary>
+    </Field>
+	</Biochemistry>
+            <inheritdoc />
+        </member>
+        <member name="M:SynthEHR.Datasets.Biochemistry.GenerateTestDataRow(SynthEHR.Person)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SynthEHR.Datasets.Biochemistry.GetHeaders">
+            <inheritdoc/>
+        </member>
+        <member name="T:SynthEHR.Datasets.BiochemistryRecord">
+            <summary>
+            Data class representing a single row in <see cref="T:SynthEHR.Datasets.Biochemistry"/> (use if you want to use randomly generated data directly
+            rather than generate it into a file).
+            </summary>
+        </member>
+        <member name="F:SynthEHR.Datasets.BiochemistryRecord.LabNumber">
+            <Field name="LabNumber">
+      <summary>
+        This is a unique identifier assigned by the lab system to identify a sample run.  Each sample run can have multiple tests run.
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.BiochemistryRecord.SampleType">
+            <Field name="SampleType">
+      <summary>
+        The type of sample that was run e.g. 'Blood', 'Serum' etc.
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.BiochemistryRecord.TestCode">
+            <Field name="TestCode">
+      <summary>
+        This field store the test code for the test taken/performed (e.g., CHOL = Cholesterol) as used by the providing organisation.  This is the internal lab system identifier for the test being run (See ReadCodeValue for a coded answer).  Includes non clinical/message codes such as ECOM.
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.BiochemistryRecord.Result">
+            <Field name="Result">
+      <summary>
+        Numerical measure captured during the test (expressed in QuantityUnit units)
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.BiochemistryRecord.ReadCodeValue">
+            <Field name="ReadCodeValue">
+      <summary>
+        The read code allocated to the test.  This field is useful as a standardised grouping for the tests, for example, if you are looking in Serum Total Cholesterol, all records marked with 44P. represent this regardless of the TestCode provided.
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.BiochemistryRecord.Healthboard">
+            <Field name="Healthboard">
+      <summary>
+        This is the alpha and/or numeric Health Board code in which the patient CHI information was extracted from. 
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.BiochemistryRecord.ArithmeticComparator">
+            <Field name="ArithmeticComparator">
+		<summary>  
+			This field represents additional information to be used in conjunction with the numeric result field Result. 
+			The contents should be interpreted along with the Result, for example, some EGFR results may be reported as Result = 60, with ArithmeticComparator = '&gt;'  
+			This means the result is greater than 60.
+		</summary>
+		</Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.BiochemistryRecord.Interpretation">
+            <Field name="Interpretation">
+		<summary>  
+      Contains comments regarding the result.
+		</summary>  
+		</Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.BiochemistryRecord.QuantityUnit">
+            <Field name="QuantityUnit">
+      <summary>
+        The unit of measure that the Result is expressed in e.g. "mmol/L" / "umol/L".
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.BiochemistryRecord.RangeHighValue">
+            <Field name="RangeHighValue">
+      <summary>
+        Maximum guideline value for the test result at the time of testing.  These ranges vary based on relevant criteria such as age, gender, and guidelines will also change over time.
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.BiochemistryRecord.RangeLowValue">
+            <Field name="RangeLowValue">
+      <summary>
+        Minimum guideline value for the test result at the time of testing.  These ranges vary based on relevant criteria such as age, gender, and guidelines will also change over time.
+      </summary>
+    </Field>
+        </member>
+        <member name="M:SynthEHR.Datasets.BiochemistryRecord.#ctor(System.Random)">
+            <summary>
+            Generates a new random biochemistry test.
+            </summary>
+            <param name="r"></param>
+        </member>
+        <member name="M:SynthEHR.Datasets.BiochemistryRecord.BiochemistryRandomDataRow.GetQVResult(System.Random)">
+            <summary>
+            Returns a new QV value using the <see cref="F:SynthEHR.Datasets.BiochemistryRecord.BiochemistryRandomDataRow.QVAverage"/> and <see cref="F:SynthEHR.Datasets.BiochemistryRecord.BiochemistryRandomDataRow.QVStandardDev"/> seeded with the provided
+            <paramref name="r"/>.  Returns null if <see cref="F:SynthEHR.Datasets.BiochemistryRecord.BiochemistryRandomDataRow.QVAverage"/> or <see cref="F:SynthEHR.Datasets.BiochemistryRecord.BiochemistryRandomDataRow.QVStandardDev"/> are null.
+            </summary>
+            <param name="r"></param>
+            <returns></returns>
+        </member>
+        <member name="T:SynthEHR.Datasets.CarotidArteryScan">
+            <summary>
+            Test data based on the Scottish Vascular Labs CARSCAN database table
+            </summary>
+            <inheritdoc/>
+        </member>
+        <member name="M:SynthEHR.Datasets.CarotidArteryScan.#ctor(System.Random)">
+            <summary>
+            Test data based on the Scottish Vascular Labs CARSCAN database table
+            </summary>
+            <inheritdoc/>
+        </member>
+        <member name="M:SynthEHR.Datasets.CarotidArteryScan.GenerateTestDataRow(SynthEHR.Person)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SynthEHR.Datasets.CarotidArteryScan.GetHeaders">
+            <inheritdoc/>
+        </member>
+        <member name="T:SynthEHR.Datasets.DataGenerator">
+            <summary>
+            Base class for all randomly generated datasets.  Handles generating random data types and writing
+            out to csv etc.
+            </summary>
+        </member>
+        <member name="E:SynthEHR.Datasets.DataGenerator.RowsGenerated">
+            <inheritdoc/>
+        </member>
+        <member name="F:SynthEHR.Datasets.DataGenerator.r">
+            <summary>
+            Use for all your random needs to ensure Seed injection support.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Datasets.DataGenerator.Now">
+            <summary>
+            Use this instead of DateTime.Now to ensure reproducible datasets when using the same seeded random
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.#ctor(System.Random)">
+            <summary>
+            Creates a new instance which uses the provided <paramref name="rand"/> as a seed for generating data
+            </summary>
+            <param name="rand"></param>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.IsEligible(SynthEHR.Person)">
+            <summary>
+            Returns true if it is eligible to generate rows in the dataset for the given <paramref name="p"/>
+            </summary>
+            <param name="p"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.GenerateTestDataFile(SynthEHR.IPersonCollection,System.IO.FileInfo,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.GetRandomEligiblePerson(SynthEHR.Person[],System.Random)">
+            <summary>
+            Returns a random <see cref="T:SynthEHR.Person"/> that <see cref="M:SynthEHR.Datasets.DataGenerator.IsEligible(SynthEHR.Person)"/> for this dataset. If nobody is eligible then returns a random person.
+            </summary>
+            <param name="people"></param>
+            <param name="random"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.GetDataTable(SynthEHR.IPersonCollection,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.GenerateTestDataRow(SynthEHR.Person)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.GetHeaders">
+            <inheritdoc/>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.WriteHeaders(System.IO.StreamWriter)">
+            <summary>
+            Outputs the top line of the CSV (column headers)
+            </summary>
+            <param name="sw"></param>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.Concat(System.Random,System.Int32,System.Int32,System.Func{System.String},System.String)">
+            <summary>
+            Concatenates between <paramref name="min"/> and <paramref name="max"/> calls to the <paramref name="generator"/>
+            </summary>
+            <param name="r"></param>
+            <param name="min"></param>
+            <param name="max"></param>
+            <param name="generator"></param>
+            <param name="separator"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.GetGaussian">
+            <summary>
+            returns random number between -1 and 1 with normal distribution (more numbers near 0 than near 1/-1).  The standard
+            deviation is 0.3.  Any values outside the range (5 in 10,000 or so) are adjusted to -1 or 1.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.GetRandomDate(System.DateTime,System.DateTime,System.Random)">
+            <summary>
+            Returns a random date inclusive of the lower bound and exclusive of the upper bound.
+            </summary>
+            <param name="from">inclusive lower bound</param>
+            <param name="to">exclusive upper bound</param>
+            <param name="r">seeded random</param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.GetRandomDateAfter(System.DateTime,System.Random)">
+            <summary>
+            Returns a date after (or on) <paramref name="afterDate"/>.  In order to preserve randomisation seeding a constant
+            value in 2019 is used instead of DateTime.Now (ensures that data generated doesn't vary with the same seed).
+            </summary>
+            <param name="afterDate"></param>
+            <param name="r"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.GetGaussian(System.Double,System.Double,System.Int32)">
+            <summary>
+            returns random number between lowerBoundary and upperBoundary with a gaussian distribution around the middle
+            </summary>
+            <param name="upperBoundary">Highest number that should be generated</param>
+            <param name="digits">The number of decimal places to have in the number</param>
+            <param name="lowerBoundary">Lowest number that should be generated</param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.GetGaussianInt(System.Double,System.Double)">
+            <inheritdoc cref="M:SynthEHR.Datasets.DataGenerator.GetGaussian(System.Double,System.Double,System.Int32)"/>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.Swap(System.Int32,System.Collections.Generic.IEnumerable{System.Int32},System.Int32)">
+            <summary>
+            returns <paramref name="swapFor"/> if <paramref name="swapIfIn"/> contains the input <paramref name="randomInt"/> (otherwise returns the input)
+            </summary>
+            <param name="randomInt"></param>
+            <param name="swapIfIn"></param>
+            <param name="swapFor"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.GetRandomDouble(System.Random)">
+            <summary>
+            Returns a random double or string value that represents a double e.g. "2.1".  In future this might return
+            floats with e specification e.g. "1.7E+3"
+            </summary>
+            <param name="r"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.GetRandomGPCode(System.Random)">
+            <summary>
+            Returns a random 'GPCode'.  This is a letter followed by up to 3 digits.
+            </summary>
+            <param name="r"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.GetRandomLetter(System.Boolean,System.Random)">
+            <summary>
+            Gets a random letter (A - Z)
+            </summary>
+            <param name="upperCase"></param>
+            <param name="r"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.GetRandomCHIStatus(System.Random)">
+            <summary>
+            Returns a random 'status' for a CHI or sometimes null.  Values include 'C' (current), 'H' (historical), 'L'(legacy?) and 'R'(retracted?)
+            </summary>
+            <param name="r"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.EmbeddedCsvToDataTable(System.Type,System.String,System.Data.DataTable)">
+            <summary>
+            [OBSOLETE] This method is deprecated. Use compile-time generated data classes in SynthEHR.Core.Data namespace instead.
+            For example, use BiochemistryData.AllRows, PrescribingData.AllRows, etc.
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.GetRandomSentence(System.Random)">
+            <summary>
+            Returns a random sentence.  There are 391 available.  They were created by https://randomwordgenerator.com/sentence.php
+            </summary>
+            <param name="r"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGenerator.WriteLookups(System.IO.DirectoryInfo)">
+            <summary>
+            Writes out all lookup tables for all datasets.  These are tables which map codes to descriptions.
+            </summary>
+            <param name="dir"></param>
+        </member>
+        <member name="T:SynthEHR.Datasets.DataGeneratorFactory">
+            <summary>
+            Finds Types and Creates instances of <see cref="T:SynthEHR.Datasets.IDataGenerator"/> implementations
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Datasets.DataGeneratorFactory.GeneratorType">
+            <summary>
+            Trivial type wrapper as workaround for https://github.com/dotnet/sdk/issues/27997
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGeneratorFactory.GeneratorType.#ctor(System.Type)">
+            <summary>
+            Trivial type wrapper as workaround for https://github.com/dotnet/sdk/issues/27997
+            </summary>
+        </member>
+        <member name="F:SynthEHR.Datasets.DataGeneratorFactory.GeneratorType.Type">
+            <summary>
+            Actual generator type
+            </summary>
+        </member>
+        <member name="F:SynthEHR.Datasets.DataGeneratorFactory.Generators">
+            <summary>
+            List of generator types. Add yourself to this if outside SynthEHR.Core, to avoid reliance on reflection breaking AOT.
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGeneratorFactory.GetAvailableGenerators">
+            <summary>
+            Finds all concrete implementations of <see cref="T:SynthEHR.Datasets.IDataGenerator"/>.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGeneratorFactory.Create``1(System.Random)">
+            <summary>
+            Creates a new instance of the generic <see cref="T:SynthEHR.Datasets.IDataGenerator"/> Type initialized with the given seed
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="seed"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Datasets.DataGeneratorFactory.Create(System.Type,System.Random)">
+            <summary>
+            Creates a new instance of a <see cref="T:SynthEHR.Datasets.IDataGenerator"/> of Type <paramref name="type"/> initialized with the given seed
+            </summary>
+            <param name="type"></param>
+            <param name="seed"></param>
+            <returns></returns>
+        </member>
+        <member name="T:SynthEHR.Datasets.Demography">
+            <Demography>
+     <summary>
+       Address and patient details as might appear in the CHI register
+      </summary>
+    <Field name="Forename">
+      <summary>
+        Patients forename, randomly generated from a list of 100 common forenames that match the patients gender
+      </summary>
+    </Field>
+    <Field name="Surname">
+      <summary>
+        patients surname, randomly generated from a list of 100 common surnames
+      </summary>
+    </Field>
+    <Field name="ANOCHI">
+      <summary>
+        Anonymous identifier that has replaced the identifiable CHI.  Typically represented as aaa1234567 where the first three letters uniquely identify a project (allowing for project specific anonymisation)
+      </summary>
+    </Field>
+    <Field name="DateOfBirth">
+      <summary>
+        Date of birth of the patient, this should match the first 6 digits of the CHI 
+      </summary>
+    </Field>
+    <Field name="DateOfDeath">
+      <summary>
+        If the patient is dead then this date will be filled in with the date it occurred
+      </summary>
+    </Field>
+    <Field name="Gender">
+      <summary>
+        M for Male patient, F for Female patient.  Should match the second last digit of the CHI (if the patient has a CHI and not an ANOCHI) with odd numbers for females and even numbers for males.  This reflects the physical sex at birth and not what the person may identify as now.
+      </summary>
+    </Field>
+    <Field name="Address">
+      <summary>
+        The address which the patient lives at at the time of the EHR record being generated
+      </summary>
+    </Field>
+    <Field name="PreviousAddress">
+      <summary>
+        The previous address which the patient lived at when the EHR record being generated
+      </summary>
+    </Field>
+	<Field name="dtCreated">
+	<summary>
+	The date the patient registered with the GP (when the chi record was created).
+	</summary>
+	</Field>
+	<Field name="current_record">
+	<summary>
+	1 if the record is still active in the given healthboard (e.g.. Tayside) or 0 if a more recent record exists in another healthboard (i.e. they are known to have moved out of the area or if ISD no longer supplies the record). Note that if your research project only covers Tayside then you would not necessarily get a record with 1 if they moved to Glasgow but would still get the old record from Tayside with 0 for current record. 
+	</summary>
+	</Field>
+	<Field name="notes">
+	<summary>
+	
+	</summary>
+	</Field>
+	<Field name="chi_num_of_curr_record">
+	<summary>
+	Indicates that the chi number recorded (in the chi field) is out of date and that the person should actually be known by this alias.  This occurs when a patient doesn't know their chi or is unable to 
+	supply it (e.g. an emergency appointment while on holiday).
+	</summary>
+	</Field>
+	<Field name="chi_status">
+	<summary>
+	Indicates whether the chi record is current or not, see lookup z_chiStatus
+	</summary>
+	</Field>
+	<Field name="century">
+	<summary>
+	This field contains a 2-digit century of when a person was born (e.g., 19 = born between 1800 - 1899 ; 20 = born between 1900 - 1999; and 21 = born from 2000 onwards).
+	</summary>
+	</Field>
+	<Field name="current_address_L1">
+	<summary>
+	Current known patient address line 1
+	</summary>
+	</Field>
+	<Field name="current_address_L2">
+	<summary>
+	Current known patient address line 2
+	</summary>
+	</Field>
+	<Field name="current_address_L3">
+	<summary>
+	Current known patient address line 3
+	</summary>
+	</Field>
+	<Field name="current_address_L4">
+	<summary>
+	Current known patient address line 4
+	</summary>
+	</Field>
+	<Field name="current_postcode">
+	<summary>
+	Current patient's Postcode 
+	</summary>
+	</Field>
+	<Field name="source_death">
+	<summary>
+	Contains a C if the source of the death information is CHI snapshots, or a G if the source of the death was General Registrar of Deaths (GRO).  If the information is in both GRO and CHI then the code GC will appear.
+	</summary>
+	</Field>
+	<Field name="area_residence">
+	<summary>
+	Healthboard that the patient is currently residing in (may be different from the healthboard they are registered with - hb_extract)
+	</summary>
+	</Field>
+	<Field name="hb_extract">
+	<summary>
+	This field represents the alpha and/or numeric Health Board code in which the patient CHI information was extracted from. 
+	</summary>
+	</Field>
+	<Field name="current_gp">
+	<summary>
+	GP Code of the patients currently registered GP
+	</summary>
+	</Field>
+	<Field name="birth_surname">
+	<summary>
+	Patients surname at birth
+	</summary>
+	</Field>
+	<Field name="previous_surname">
+	<summary>
+	Patients previous surname (e.g. if married)
+	</summary>
+	</Field>
+	<Field name="midname">
+	<summary>
+	Patients middle name
+	</summary>
+	</Field>
+	<Field name="alt_forename">
+	<summary>
+	An alternative name patient goes by
+	</summary>
+	</Field>
+	<Field name="other_initials">
+	<summary>
+	Middle name initials (if any) the patient goes by
+	</summary>
+	</Field>
+	<Field name="previous_address_L1">
+	<summary>
+	Patients previous address line 1
+	</summary>
+	</Field>
+	<Field name="previous_address_L2">
+	<summary>
+	Patients previous address line 2
+	</summary>
+	</Field>
+	<Field name="previous_address_L3">
+	<summary>
+	Patients previous address line 3
+	</summary>
+	</Field>
+	<Field name="previous_address_L4">
+	<summary>
+	Patients previous address line 4
+	</summary>
+	</Field>
+	<Field name="previous_postcode">
+	<summary>
+	Patients previous address postcode
+	</summary>
+	</Field>
+	<Field name="date_address_changed">
+	<summary>
+	The date when the patient moved from their previous address to the current address.
+	</summary>
+	</Field>
+	<Field name="adr">
+	<summary>
+	
+	</summary>
+	</Field>
+	<Field name="current_gp_accept_date">
+	<summary>
+	This is the date when the patient was accepted onto current GP list. 
+	</summary>
+	</Field>
+	<Field name="previous_gp">
+	<summary>
+	GP Code of the patients previously registered GP
+	</summary>
+	</Field>
+	<Field name="previous_gp_accept_date">
+	<summary>
+	Date patient registered with previous GP
+	</summary>
+	</Field>
+	<Field name="date_into_practice">
+	<summary>
+	This field represents the date when a person came into the health board region and registered with that health board GP. 
+	</summary>
+	</Field>
+	<Field name="patient_triage_score">
+	<summary>
+	
+	</summary>
+	</Field>
+	<Field name="hic_dataLoadRunID">
+	<summary>
+	Indicates which data load execution batch (if any) was responsible for creating the record
+	</summary>
+	</Field>
+  </Demography>
+            <inheritdoc />
+        </member>
+        <member name="M:SynthEHR.Datasets.Demography.#ctor(System.Random)">
+            <Demography>
+     <summary>
+       Address and patient details as might appear in the CHI register
+      </summary>
+    <Field name="Forename">
+      <summary>
+        Patients forename, randomly generated from a list of 100 common forenames that match the patients gender
+      </summary>
+    </Field>
+    <Field name="Surname">
+      <summary>
+        patients surname, randomly generated from a list of 100 common surnames
+      </summary>
+    </Field>
+    <Field name="ANOCHI">
+      <summary>
+        Anonymous identifier that has replaced the identifiable CHI.  Typically represented as aaa1234567 where the first three letters uniquely identify a project (allowing for project specific anonymisation)
+      </summary>
+    </Field>
+    <Field name="DateOfBirth">
+      <summary>
+        Date of birth of the patient, this should match the first 6 digits of the CHI 
+      </summary>
+    </Field>
+    <Field name="DateOfDeath">
+      <summary>
+        If the patient is dead then this date will be filled in with the date it occurred
+      </summary>
+    </Field>
+    <Field name="Gender">
+      <summary>
+        M for Male patient, F for Female patient.  Should match the second last digit of the CHI (if the patient has a CHI and not an ANOCHI) with odd numbers for females and even numbers for males.  This reflects the physical sex at birth and not what the person may identify as now.
+      </summary>
+    </Field>
+    <Field name="Address">
+      <summary>
+        The address which the patient lives at at the time of the EHR record being generated
+      </summary>
+    </Field>
+    <Field name="PreviousAddress">
+      <summary>
+        The previous address which the patient lived at when the EHR record being generated
+      </summary>
+    </Field>
+	<Field name="dtCreated">
+	<summary>
+	The date the patient registered with the GP (when the chi record was created).
+	</summary>
+	</Field>
+	<Field name="current_record">
+	<summary>
+	1 if the record is still active in the given healthboard (e.g.. Tayside) or 0 if a more recent record exists in another healthboard (i.e. they are known to have moved out of the area or if ISD no longer supplies the record). Note that if your research project only covers Tayside then you would not necessarily get a record with 1 if they moved to Glasgow but would still get the old record from Tayside with 0 for current record. 
+	</summary>
+	</Field>
+	<Field name="notes">
+	<summary>
+	
+	</summary>
+	</Field>
+	<Field name="chi_num_of_curr_record">
+	<summary>
+	Indicates that the chi number recorded (in the chi field) is out of date and that the person should actually be known by this alias.  This occurs when a patient doesn't know their chi or is unable to 
+	supply it (e.g. an emergency appointment while on holiday).
+	</summary>
+	</Field>
+	<Field name="chi_status">
+	<summary>
+	Indicates whether the chi record is current or not, see lookup z_chiStatus
+	</summary>
+	</Field>
+	<Field name="century">
+	<summary>
+	This field contains a 2-digit century of when a person was born (e.g., 19 = born between 1800 - 1899 ; 20 = born between 1900 - 1999; and 21 = born from 2000 onwards).
+	</summary>
+	</Field>
+	<Field name="current_address_L1">
+	<summary>
+	Current known patient address line 1
+	</summary>
+	</Field>
+	<Field name="current_address_L2">
+	<summary>
+	Current known patient address line 2
+	</summary>
+	</Field>
+	<Field name="current_address_L3">
+	<summary>
+	Current known patient address line 3
+	</summary>
+	</Field>
+	<Field name="current_address_L4">
+	<summary>
+	Current known patient address line 4
+	</summary>
+	</Field>
+	<Field name="current_postcode">
+	<summary>
+	Current patient's Postcode 
+	</summary>
+	</Field>
+	<Field name="source_death">
+	<summary>
+	Contains a C if the source of the death information is CHI snapshots, or a G if the source of the death was General Registrar of Deaths (GRO).  If the information is in both GRO and CHI then the code GC will appear.
+	</summary>
+	</Field>
+	<Field name="area_residence">
+	<summary>
+	Healthboard that the patient is currently residing in (may be different from the healthboard they are registered with - hb_extract)
+	</summary>
+	</Field>
+	<Field name="hb_extract">
+	<summary>
+	This field represents the alpha and/or numeric Health Board code in which the patient CHI information was extracted from. 
+	</summary>
+	</Field>
+	<Field name="current_gp">
+	<summary>
+	GP Code of the patients currently registered GP
+	</summary>
+	</Field>
+	<Field name="birth_surname">
+	<summary>
+	Patients surname at birth
+	</summary>
+	</Field>
+	<Field name="previous_surname">
+	<summary>
+	Patients previous surname (e.g. if married)
+	</summary>
+	</Field>
+	<Field name="midname">
+	<summary>
+	Patients middle name
+	</summary>
+	</Field>
+	<Field name="alt_forename">
+	<summary>
+	An alternative name patient goes by
+	</summary>
+	</Field>
+	<Field name="other_initials">
+	<summary>
+	Middle name initials (if any) the patient goes by
+	</summary>
+	</Field>
+	<Field name="previous_address_L1">
+	<summary>
+	Patients previous address line 1
+	</summary>
+	</Field>
+	<Field name="previous_address_L2">
+	<summary>
+	Patients previous address line 2
+	</summary>
+	</Field>
+	<Field name="previous_address_L3">
+	<summary>
+	Patients previous address line 3
+	</summary>
+	</Field>
+	<Field name="previous_address_L4">
+	<summary>
+	Patients previous address line 4
+	</summary>
+	</Field>
+	<Field name="previous_postcode">
+	<summary>
+	Patients previous address postcode
+	</summary>
+	</Field>
+	<Field name="date_address_changed">
+	<summary>
+	The date when the patient moved from their previous address to the current address.
+	</summary>
+	</Field>
+	<Field name="adr">
+	<summary>
+	
+	</summary>
+	</Field>
+	<Field name="current_gp_accept_date">
+	<summary>
+	This is the date when the patient was accepted onto current GP list. 
+	</summary>
+	</Field>
+	<Field name="previous_gp">
+	<summary>
+	GP Code of the patients previously registered GP
+	</summary>
+	</Field>
+	<Field name="previous_gp_accept_date">
+	<summary>
+	Date patient registered with previous GP
+	</summary>
+	</Field>
+	<Field name="date_into_practice">
+	<summary>
+	This field represents the date when a person came into the health board region and registered with that health board GP. 
+	</summary>
+	</Field>
+	<Field name="patient_triage_score">
+	<summary>
+	
+	</summary>
+	</Field>
+	<Field name="hic_dataLoadRunID">
+	<summary>
+	Indicates which data load execution batch (if any) was responsible for creating the record
+	</summary>
+	</Field>
+  </Demography>
+            <inheritdoc />
+        </member>
+        <member name="M:SynthEHR.Datasets.Demography.GenerateTestDataRow(SynthEHR.Person)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SynthEHR.Datasets.Demography.GetHeaders">
+            <inheritdoc/>
+        </member>
+        <member name="T:SynthEHR.Datasets.DemographyAddress">
+            <summary>
+            Data model for a 5 line address in which some lines might be null
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Datasets.DemographyAddress.Line1">
+            <summary>
+            Top line of the address, may just be a number or may be a number followed by a street or just a street/house name
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Datasets.DemographyAddress.Line2">
+            <summary>
+            Second line of the address may be a street name or a <see cref="P:SynthEHR.Datasets.DemographyPostcode.District"/>
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Datasets.DemographyAddress.Line3">
+            <summary>
+            Third line of the address may be a <see cref="P:SynthEHR.Datasets.DemographyPostcode.District"/> or <see cref="P:SynthEHR.Datasets.DemographyPostcode.Ward"/>
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Datasets.DemographyAddress.Line4">
+            <summary>
+            Fourth line of the address may be a <see cref="P:SynthEHR.Datasets.DemographyPostcode.Ward"/> or null
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Datasets.DemographyAddress.Postcode">
+            <summary>
+            Randomly generated UK postcode
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Datasets.DemographyAddress.#ctor(System.Random)">
+            <summary>
+            Generates a random address with a random street name which might have a number or not.  The
+            randomly generated <see cref="P:SynthEHR.Datasets.DemographyAddress.Postcode"/> will have the correct district/ward to match the code.
+            </summary>
+            <param name="r"></param>
+        </member>
+        <member name="F:SynthEHR.Datasets.DemographyAddress.StreetNames">
+            <summary>
+            List of all street names in Tayside
+            </summary>
+        </member>
+        <member name="F:SynthEHR.Datasets.DemographyAddress.DundeePostcodes">
+            <summary>
+            All Tayside postcodes and the associated District/Ward
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Datasets.DemographyPostcode">
+            <summary>
+            Data model for a UK postcode
+            </summary>
+            <remarks>
+            Creates a new UK Postcode with it's associated Ward/District (See <see cref="P:SynthEHR.Datasets.DemographyPostcode.Ward"/> and <see cref="P:SynthEHR.Datasets.DemographyPostcode.District"/>)
+            </remarks>
+            <param name="value"></param>
+            <param name="ward"></param>
+            <param name="district"></param>
+        </member>
+        <member name="M:SynthEHR.Datasets.DemographyPostcode.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Data model for a UK postcode
+            </summary>
+            <remarks>
+            Creates a new UK Postcode with it's associated Ward/District (See <see cref="P:SynthEHR.Datasets.DemographyPostcode.Ward"/> and <see cref="P:SynthEHR.Datasets.DemographyPostcode.District"/>)
+            </remarks>
+            <param name="value"></param>
+            <param name="ward"></param>
+            <param name="district"></param>
+        </member>
+        <member name="P:SynthEHR.Datasets.DemographyPostcode.Value">
+            <summary>
+            The full postcode e.g. "DD8 3PZ"
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Datasets.DemographyPostcode.Ward">
+            <summary>
+            The region associated with the postcode e.g. "Angus"
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Datasets.DemographyPostcode.District">
+            <summary>
+            The district associated with the postcode e.g. "Brechin and Edzell"
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Datasets.HospitalAdmissions">
+            <summary>
+            Generates synthetic random data that is representative of patient hospital admissions data
+            </summary>
+            <inheritdoc/>
+        </member>
+        <member name="M:SynthEHR.Datasets.HospitalAdmissions.#ctor(System.Random)">
+            <summary>
+            Generates synthetic random data that is representative of patient hospital admissions data
+            </summary>
+            <inheritdoc/>
+        </member>
+        <member name="M:SynthEHR.Datasets.HospitalAdmissions.GenerateTestDataRow(SynthEHR.Person)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SynthEHR.Datasets.HospitalAdmissions.GetHeaders">
+            <inheritdoc/>
+        </member>
+        <member name="T:SynthEHR.Datasets.HospitalAdmissionsRecord">
+            <summary>
+            Random record for when a <see cref="T:SynthEHR.Person"/> entered hospital.  Basic logic is implemented here to ensure that <see cref="P:SynthEHR.Datasets.HospitalAdmissionsRecord.DischargeDate"/>
+            is after <see cref="P:SynthEHR.Datasets.HospitalAdmissionsRecord.AdmissionDate"/> and that the person was alive at the time.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Datasets.HospitalAdmissionsRecord.AdmissionDate">
+            <Field name="AdmissionDate">
+	<summary>
+	Date patient was admitted to hospital
+	</summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.HospitalAdmissionsRecord.DischargeDate">
+            <Field name="DischargeDate">
+	<summary>
+	Date patient was discharged from hospital (or died).
+	</summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.HospitalAdmissionsRecord.MainCondition">
+            <Field name="MainCondition">
+	<summary>
+	The primary presenting condition and the reason for hospitalisation.  This is either an ICD10 code or an ICD9 code.  ICD9 codes are preceded by a minus symbol to distinguish them.
+	</summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.HospitalAdmissionsRecord.OtherCondition1">
+            <Field name="OtherCondition1">
+	<summary>
+	The second condition for hospitalisation.  This is either an ICD10 code or an ICD9 code.  ICD9 codes are preceded by a minus symbol to distinguish them.
+	</summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.HospitalAdmissionsRecord.OtherCondition2">
+            <Field name="OtherCondition2">
+	<summary>
+	The tertiary condition for hospitalisation.  This is either an ICD10 code or an ICD9 code.  ICD9 codes are preceded by a minus symbol to distinguish them.
+	</summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.HospitalAdmissionsRecord.OtherCondition3">
+            <Field name="OtherCondition3">
+	<summary>
+	The forth condition for hospitalisation.  This is either an ICD10 code or an ICD9 code.  ICD9 codes are preceded by a minus symbol to distinguish them.
+	</summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.HospitalAdmissionsRecord.MainOperation">
+            <Field name="MainOperation">
+	<summary>
+	The main operation is that selected by the clinician responsible for the care of the patient. Part A is used for single codes or for the primary part of a recognised code-pair. 
+	</summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.HospitalAdmissionsRecord.MainOperationB">
+            <Field name="MainOperationB">
+	<summary>
+	The main operation is that selected by the clinician responsible for the care of the patient. Part B is used for Core Approach, Technique, Site or Laterality codes or for the supplementary part of a recognised code-pair. 
+	</summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.HospitalAdmissionsRecord.OtherOperation1">
+            <Field name="OtherOperation1">
+	<summary>
+	This field represents other operation entered in the order specified by the clinician. Part A is used for single codes or for the primary part of a recognised code-pair.
+	</summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.HospitalAdmissionsRecord.OtherOperation1B">
+            <Field name="OtherOperation1B">
+	<summary>
+	This field represents other operation entered in the order specified by the clinician. Part B is used for Approach, Technique, Site or Laterality codes or for the supplementary part of a recognised code-pair. 
+	</summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.HospitalAdmissionsRecord.OtherOperation2">
+            <Field name="OtherOperation2">
+	<summary>
+	This field represents other operation entered in the order specified by the clinician. Part A is used for single codes or for the primary part of a recognised code-pair.
+	</summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.HospitalAdmissionsRecord.OtherOperation2B">
+            <Field name="OtherOperation2B">
+	<summary>
+	This field represents other operation entered in the order specified by the clinician. Part B is used for Approach, Technique, Site or Laterality codes or for the supplementary part of a recognised code-pair. 
+	</summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.HospitalAdmissionsRecord.OtherOperation3">
+            <Field name="OtherOperation3">
+	<summary>
+	This field represents other operation entered in the order specified by the clinician. Part A is used for single codes or for the primary part of a recognised code-pair.
+	</summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.HospitalAdmissionsRecord.OtherOperation3B">
+            <Field name="OtherOperation3B">
+	<summary>
+	This field represents other operation entered in the order specified by the clinician. Part B is used for Approach, Technique, Site or Laterality codes or for the supplementary part of a recognised code-pair. 
+	</summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.HospitalAdmissionsRecord.Person">
+            <summary>
+            The <see cref="P:SynthEHR.Datasets.HospitalAdmissionsRecord.Person"/> being admitted to hospital
+            </summary>
+        </member>
+        <member name="F:SynthEHR.Datasets.HospitalAdmissionsRecord.ICD10MonthHashMap">
+            <summary>
+            Maps ColumnAppearingIn to each month we might want to generate random data in (Between <see cref="F:SynthEHR.Datasets.HospitalAdmissionsRecord.MinimumDate"/> and <see cref="F:SynthEHR.Datasets.HospitalAdmissionsRecord.MaximumDate"/>)
+            to the row numbers which were active at that time (based on AverageMonthAppearing and StandardDeviationMonthAppearing)
+            </summary>
+        </member>
+        <member name="F:SynthEHR.Datasets.HospitalAdmissionsRecord.ICD10Rows">
+            <summary>
+            Maps Row(Key) to the CountAppearances/TestCode
+            </summary>
+        </member>
+        <member name="F:SynthEHR.Datasets.HospitalAdmissionsRecord.ConditionsToOperationsMap">
+            <summary>
+            Maps a given MAIN_CONDITION code (doesn't cover other conditions) to popular operations for that condition.  The string array is always length 8 and corresponds to
+            MAIN_OPERATION,MAIN_OPERATION_B,OTHER_OPERATION_1,OTHER_OPERATION_1B,OTHER_OPERATION_2,OTHER_OPERATION_2B,OTHER_OPERATION_3,OTHER_OPERATION_3B
+            </summary>
+        </member>
+        <member name="F:SynthEHR.Datasets.HospitalAdmissionsRecord.MinimumDate">
+            <summary>
+            The earliest date from which to generate records (matches HIC aggregate data collected)
+            </summary>
+        </member>
+        <member name="F:SynthEHR.Datasets.HospitalAdmissionsRecord.MaximumDate">
+            <summary>
+            The latest date to which to generate records (matches HIC aggregate data collected)
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Datasets.HospitalAdmissionsRecord.#ctor(SynthEHR.Person,System.DateTime,System.Random)">
+            <summary>
+            Creates a new record for the given <paramref name="person"/>
+            </summary>
+            <param name="person"></param>
+            <param name="afterDateX"></param>
+            <param name="r"></param>
+        </member>
+        <member name="T:SynthEHR.Datasets.IDataGenerator">
+            <summary>
+            Interface for classes which generate test data to disk.
+            </summary>
+        </member>
+        <member name="E:SynthEHR.Datasets.IDataGenerator.RowsGenerated">
+            <summary>
+            Periodically fired when writing out rows
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Datasets.IDataGenerator.GenerateTestDataFile(SynthEHR.IPersonCollection,System.IO.FileInfo,System.Int32)">
+            <summary>
+            Create the dataset in the given file location using person identifiers in the <paramref name="cohort"/>
+            </summary>
+            <param name="cohort">All people in the test data cohort, allows linkage between different randomly generated test datasets</param>
+            <param name="target">The file that will be created</param>
+            <param name="numberOfRecords">The number of fake data records that should appear in the file created</param>
+        </member>
+        <member name="M:SynthEHR.Datasets.IDataGenerator.GenerateTestDataRow(SynthEHR.Person)">
+            <summary>
+            Returns a single row of data for writing to the output CSV.  This can include string elements with newlines, quotes etc.
+            </summary>
+            <param name="p"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Datasets.IDataGenerator.GetDataTable(SynthEHR.IPersonCollection,System.Int32)">
+            <summary>
+            Create the dataset in memory using the person identifiers in the <paramref name="cohort"/>
+            </summary>
+            <param name="cohort">All people in the test data cohort, allows linkage between different randomly generated test datasets</param>
+            <param name="numberOfRecords">The number of fake data records that should be in the table returned</param>
+            <returns></returns>
+        </member>
+        <member name="T:SynthEHR.Datasets.Maternity">
+            <Maternity>
+    <summary>
+		Tayside and Fife births record.  Contains the parents and children birthed during the admission.  This data is provided in a format based upon the Scottish SMR02 dataset
+	</summary>
+  <Field name="MotherCHI">
+		<summary>  
+			Unique identifier of the pregnant mother of the baby being born
+     </summary>
+	</Field>
+  <Field name="SendingLocation">
+		<summary>  
+			This field indicates the location of where the data was sent from. This is not necessarily the same place as where the episode took place.
+     </summary>
+	</Field>
+  <Field name="EpisodeRecordKey">
+		<summary>  
+			Unique identifier indicating a specific case record
+     </summary>
+	</Field>
+  <Field name="MaritalStatus">
+		<summary>  
+			This field represents the mother's marital status.  At a certain date ISD stopped using numbers in this column and started using letters.  If this field contains a letter (A-Z), see lookup table z_MaritalStatus
+     </summary>
+	</Field>
+  <Field name="Specialty">
+		<summary>  
+			A specialty is defined as a division of medicine or dentistry covering a specific area of clinical activity and identified within one of the Royal Colleges or Faculties.
+     </summary>
+	</Field>
+  <Field name="Location">
+		<summary>  
+			This field represents the location code at which health activity takes place. In other words, the location code represents the point of delivery of health care. 
+     </summary>
+	</Field>
+  <Field name="Healthboard">
+		<summary>  
+			Single letter code describing which NHS healthboard the record came from e.g. T for Tayside, F for Fife
+        </summary>
+	</Field>
+    <Field name="Date">
+		<summary>  
+			The date of admission to the birthing unit
+        </summary>
+	</Field>
+    <Field name="PartnerCHI">
+		<summary>  
+			Unique identifier of the second contributor of genetic material for the babies being born or null if baby is a clone
+        </summary>
+	</Field>
+        <Field name="BabyCHI1">
+		<summary>  
+			Unique identifier of the first baby to be born
+        </summary>
+	</Field>
+        <Field name="BabyCHI2">
+		<summary>  
+			Unique identifier of the second baby to be born (if twins)
+        </summary>
+	</Field>
+        <Field name="BabyCHI3">
+		<summary>  
+			Unique identifier of the third baby to be born (if triplets)
+        </summary>
+	</Field>
+  </Maternity>
+            <inheritdoc />
+        </member>
+        <member name="M:SynthEHR.Datasets.Maternity.#ctor(System.Random)">
+            <Maternity>
+    <summary>
+		Tayside and Fife births record.  Contains the parents and children birthed during the admission.  This data is provided in a format based upon the Scottish SMR02 dataset
+	</summary>
+  <Field name="MotherCHI">
+		<summary>  
+			Unique identifier of the pregnant mother of the baby being born
+     </summary>
+	</Field>
+  <Field name="SendingLocation">
+		<summary>  
+			This field indicates the location of where the data was sent from. This is not necessarily the same place as where the episode took place.
+     </summary>
+	</Field>
+  <Field name="EpisodeRecordKey">
+		<summary>  
+			Unique identifier indicating a specific case record
+     </summary>
+	</Field>
+  <Field name="MaritalStatus">
+		<summary>  
+			This field represents the mother's marital status.  At a certain date ISD stopped using numbers in this column and started using letters.  If this field contains a letter (A-Z), see lookup table z_MaritalStatus
+     </summary>
+	</Field>
+  <Field name="Specialty">
+		<summary>  
+			A specialty is defined as a division of medicine or dentistry covering a specific area of clinical activity and identified within one of the Royal Colleges or Faculties.
+     </summary>
+	</Field>
+  <Field name="Location">
+		<summary>  
+			This field represents the location code at which health activity takes place. In other words, the location code represents the point of delivery of health care. 
+     </summary>
+	</Field>
+  <Field name="Healthboard">
+		<summary>  
+			Single letter code describing which NHS healthboard the record came from e.g. T for Tayside, F for Fife
+        </summary>
+	</Field>
+    <Field name="Date">
+		<summary>  
+			The date of admission to the birthing unit
+        </summary>
+	</Field>
+    <Field name="PartnerCHI">
+		<summary>  
+			Unique identifier of the second contributor of genetic material for the babies being born or null if baby is a clone
+        </summary>
+	</Field>
+        <Field name="BabyCHI1">
+		<summary>  
+			Unique identifier of the first baby to be born
+        </summary>
+	</Field>
+        <Field name="BabyCHI2">
+		<summary>  
+			Unique identifier of the second baby to be born (if twins)
+        </summary>
+	</Field>
+        <Field name="BabyCHI3">
+		<summary>  
+			Unique identifier of the third baby to be born (if triplets)
+        </summary>
+	</Field>
+  </Maternity>
+            <inheritdoc />
+        </member>
+        <member name="M:SynthEHR.Datasets.Maternity.IsEligible(SynthEHR.Person)">
+            <summary>
+            Returns true if the person is Female and lived to be older than <see cref="F:SynthEHR.Datasets.MaternityRecord.MinAge"/> (e.g. 18).  Considers current DateTime and <see cref="F:SynthEHR.Person.DateOfDeath"/>
+            </summary>
+            <param name="p"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Datasets.Maternity.GenerateTestDataRow(SynthEHR.Person)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SynthEHR.Datasets.Maternity.GetHeaders">
+            <inheritdoc/>
+        </member>
+        <member name="T:SynthEHR.Datasets.MaternityRecord">
+            <summary>
+            Describes a single maternity event for a specific <see cref="P:SynthEHR.Datasets.MaternityRecord.Person"/>
+            </summary>
+        </member>
+        <member name="F:SynthEHR.Datasets.MaternityRecord.MinAge">
+            <summary>
+            Youngest age of mother to generate
+            </summary>
+        </member>
+        <member name="F:SynthEHR.Datasets.MaternityRecord.MaxAge">
+            <summary>
+            Oldest age of mother to generate
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Datasets.MaternityRecord.Location">
+            <Field name="Location">
+		<summary>  
+			This field represents the location code at which health activity takes place. In other words, the location code represents the point of delivery of health care. 
+     </summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.MaternityRecord.SendingLocation">
+            <Field name="SendingLocation">
+		<summary>  
+			This field indicates the location of where the data was sent from. This is not necessarily the same place as where the episode took place.
+     </summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.MaternityRecord.Date">
+            <Field name="Date">
+		<summary>  
+			The date of admission to the birthing unit
+        </summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.MaternityRecord.MaritalStatus">
+            <Field name="MaritalStatus">
+		<summary>  
+			This field represents the mother's marital status.  At a certain date ISD stopped using numbers in this column and started using letters.  If this field contains a letter (A-Z), see lookup table z_MaritalStatus
+     </summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.MaternityRecord.Specialty">
+            <Field name="Specialty">
+		<summary>  
+			A specialty is defined as a division of medicine or dentistry covering a specific area of clinical activity and identified within one of the Royal Colleges or Faculties.
+     </summary>
+	</Field>
+        </member>
+        <member name="P:SynthEHR.Datasets.MaternityRecord.Person">
+            <summary>
+            The person on whom the maternity action is performed
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Datasets.MaternityRecord.BabyChi">
+            <summary>
+            Chi numbers of up to 3 babies involved.  Always contains 3 elements with nulls e.g. if twins then first 2 elements are populated and third is null.
+            </summary>
+        </member>
+        <member name="F:SynthEHR.Datasets.MaternityRecord.MaritalStatusSwitchover">
+            <summary>
+            The date at which the data collector stopped using numeric marital status codes (in favour of alphabetical)
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Datasets.MaternityRecord.#ctor(SynthEHR.Person,System.Random)">
+            <summary>
+            Generates a new random biochemistry test.
+            </summary>
+            <param name="p">The person who is undergoing maternity activity.  Should be Female and of a sufficient age that the operation could have taken place during their lifetime (see <see cref="M:SynthEHR.Datasets.Maternity.IsEligible(SynthEHR.Person)"/></param>
+            <param name="r"></param>
+        </member>
+        <member name="T:SynthEHR.Datasets.Prescribing">
+            <Prescribing>
+  <summary> 
+	Prescription data of prescribed drugs 
+  </summary>
+  <Field name="ResSeqNo">
+      <summary>
+        Unique number identifying a prescribable drug
+      </summary>
+    </Field>
+	<Field name="Quantity">
+      <summary>
+        The number prescribed to the patent e.g. 12
+      </summary>
+    </Field>
+	<Field name="Strength">
+      <summary>
+        The strength of the drug prescribed e.g. "2.5 MG"
+      </summary>
+    </Field>
+	<Field name="StrengthNumerical">
+      <summary>
+        The numerical portion of Strength e.g. 50 (must be combined with MeasureCode)
+      </summary>
+    </Field>
+	<Field name="FormulationCode">
+      <summary>
+        How the drug is provided e.g. "TABS", "CREAM"
+      </summary>
+    </Field>
+	<Field name="MeasureCode">
+      <summary>
+        The units portion of Strength e.g. MG
+      </summary>
+    </Field>
+	<Field name="Name">
+      <summary>
+        The common/proprietary name for the drug being prescribed e.g. VENTOLIN
+      </summary>
+    </Field>
+	<Field name="ApprovedName">
+      <summary>
+        The standardised name/active drug e.g. SALBUTAMOL
+      </summary>
+    </Field>
+	<Field name="BnfCode">
+      <summary>
+        Machine readable formatting of Bnf 0407010Q0AAAAAA
+      </summary>
+    </Field>
+	<Field name="FormattedBnfCode">
+    <summary>
+        Human readable formatting of Bnf e.g. 4.7.1
+      </summary>
+    </Field>
+	<Field name="BnfDescription">
+    <summary>
+        Lookup description of what the Bnf entry means
+      </summary>
+    </Field>
+  </Prescribing>
+            <inheritdoc />
+        </member>
+        <member name="M:SynthEHR.Datasets.Prescribing.#ctor(System.Random)">
+            <Prescribing>
+  <summary> 
+	Prescription data of prescribed drugs 
+  </summary>
+  <Field name="ResSeqNo">
+      <summary>
+        Unique number identifying a prescribable drug
+      </summary>
+    </Field>
+	<Field name="Quantity">
+      <summary>
+        The number prescribed to the patent e.g. 12
+      </summary>
+    </Field>
+	<Field name="Strength">
+      <summary>
+        The strength of the drug prescribed e.g. "2.5 MG"
+      </summary>
+    </Field>
+	<Field name="StrengthNumerical">
+      <summary>
+        The numerical portion of Strength e.g. 50 (must be combined with MeasureCode)
+      </summary>
+    </Field>
+	<Field name="FormulationCode">
+      <summary>
+        How the drug is provided e.g. "TABS", "CREAM"
+      </summary>
+    </Field>
+	<Field name="MeasureCode">
+      <summary>
+        The units portion of Strength e.g. MG
+      </summary>
+    </Field>
+	<Field name="Name">
+      <summary>
+        The common/proprietary name for the drug being prescribed e.g. VENTOLIN
+      </summary>
+    </Field>
+	<Field name="ApprovedName">
+      <summary>
+        The standardised name/active drug e.g. SALBUTAMOL
+      </summary>
+    </Field>
+	<Field name="BnfCode">
+      <summary>
+        Machine readable formatting of Bnf 0407010Q0AAAAAA
+      </summary>
+    </Field>
+	<Field name="FormattedBnfCode">
+    <summary>
+        Human readable formatting of Bnf e.g. 4.7.1
+      </summary>
+    </Field>
+	<Field name="BnfDescription">
+    <summary>
+        Lookup description of what the Bnf entry means
+      </summary>
+    </Field>
+  </Prescribing>
+            <inheritdoc />
+        </member>
+        <member name="M:SynthEHR.Datasets.Prescribing.GenerateTestDataRow(SynthEHR.Person)">
+            <summary>
+            Creates a new demography record (GP registration) for the <paramref name="p"/>
+            </summary>
+            <param name="p"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Datasets.Prescribing.GetHeaders">
+            <inheritdoc/>
+        </member>
+        <member name="T:SynthEHR.Datasets.PrescribingRecord">
+            <Prescribing>
+  <summary> 
+	Prescription data of prescribed drugs 
+  </summary>
+  <Field name="ResSeqNo">
+      <summary>
+        Unique number identifying a prescribable drug
+      </summary>
+    </Field>
+	<Field name="Quantity">
+      <summary>
+        The number prescribed to the patent e.g. 12
+      </summary>
+    </Field>
+	<Field name="Strength">
+      <summary>
+        The strength of the drug prescribed e.g. "2.5 MG"
+      </summary>
+    </Field>
+	<Field name="StrengthNumerical">
+      <summary>
+        The numerical portion of Strength e.g. 50 (must be combined with MeasureCode)
+      </summary>
+    </Field>
+	<Field name="FormulationCode">
+      <summary>
+        How the drug is provided e.g. "TABS", "CREAM"
+      </summary>
+    </Field>
+	<Field name="MeasureCode">
+      <summary>
+        The units portion of Strength e.g. MG
+      </summary>
+    </Field>
+	<Field name="Name">
+      <summary>
+        The common/proprietary name for the drug being prescribed e.g. VENTOLIN
+      </summary>
+    </Field>
+	<Field name="ApprovedName">
+      <summary>
+        The standardised name/active drug e.g. SALBUTAMOL
+      </summary>
+    </Field>
+	<Field name="BnfCode">
+      <summary>
+        Machine readable formatting of Bnf 0407010Q0AAAAAA
+      </summary>
+    </Field>
+	<Field name="FormattedBnfCode">
+    <summary>
+        Human readable formatting of Bnf e.g. 4.7.1
+      </summary>
+    </Field>
+	<Field name="BnfDescription">
+    <summary>
+        Lookup description of what the Bnf entry means
+      </summary>
+    </Field>
+  </Prescribing>
+        </member>
+        <member name="F:SynthEHR.Datasets.PrescribingRecord.WeightToRow">
+            <summary>
+            every row in data table has a weight (the number of records in our biochemistry with this sample type, this dictionary lets you input
+            a record number 0-maxWeight and be returned an appropriate row from the table based on its weighting
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Datasets.PrescribingRecord.#ctor(System.Random)">
+            <summary>
+            Generates a new random prescription record
+            </summary>
+            <param name="r"></param>
+        </member>
+        <member name="F:SynthEHR.Datasets.PrescribingRecord.ResSeqNo">
+            <Field name="ResSeqNo">
+      <summary>
+        Unique number identifying a prescribable drug
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.PrescribingRecord.Name">
+            <Field name="Name">
+      <summary>
+        The common/proprietary name for the drug being prescribed e.g. VENTOLIN
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.PrescribingRecord.FormulationCode">
+            <Field name="FormulationCode">
+      <summary>
+        How the drug is provided e.g. "TABS", "CREAM"
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.PrescribingRecord.Strength">
+            <Field name="Strength">
+      <summary>
+        The strength of the drug prescribed e.g. "2.5 MG"
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.PrescribingRecord.StrengthNumerical">
+            <Field name="StrengthNumerical">
+      <summary>
+        The numerical portion of Strength e.g. 50 (must be combined with MeasureCode)
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.PrescribingRecord.MeasureCode">
+            <Field name="MeasureCode">
+      <summary>
+        The units portion of Strength e.g. MG
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.PrescribingRecord.BnfCode">
+            <Field name="BnfCode">
+      <summary>
+        Machine readable formatting of Bnf 0407010Q0AAAAAA
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.PrescribingRecord.FormattedBnfCode">
+            <Field name="FormattedBnfCode">
+    <summary>
+        Human readable formatting of Bnf e.g. 4.7.1
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.PrescribingRecord.BnfDescription">
+            <Field name="BnfDescription">
+    <summary>
+        Lookup description of what the Bnf entry means
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.PrescribingRecord.ApprovedName">
+            <Field name="ApprovedName">
+      <summary>
+        The standardised name/active drug e.g. SALBUTAMOL
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Datasets.PrescribingRecord.Quantity">
+            <Field name="Quantity">
+      <summary>
+        The number prescribed to the patent e.g. 12
+      </summary>
+    </Field>
+        </member>
+        <member name="T:SynthEHR.Datasets.UltraWide">
+            <UltraWide>
+		<summary>
+			Generates a dataset with 20,000 columns of data in a variety of formats.  This is useful for testing very wide tables that are too wide for most RDBMS without special treatment (e.g. SPARSE columns).
+		</summary>
+		<Field name="id">
+			<summary>
+				Incremental int primary key for the dataset
+			</summary>
+		</Field>
+	</UltraWide>
+            <inheritdoc />
+        </member>
+        <member name="M:SynthEHR.Datasets.UltraWide.#ctor(System.Random)">
+            <UltraWide>
+		<summary>
+			Generates a dataset with 20,000 columns of data in a variety of formats.  This is useful for testing very wide tables that are too wide for most RDBMS without special treatment (e.g. SPARSE columns).
+		</summary>
+		<Field name="id">
+			<summary>
+				Incremental int primary key for the dataset
+			</summary>
+		</Field>
+	</UltraWide>
+            <inheritdoc />
+        </member>
+        <member name="M:SynthEHR.Datasets.UltraWide.GenerateTestDataRow(SynthEHR.Person)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SynthEHR.Datasets.UltraWide.GetHeaders">
+            <inheritdoc/>
+        </member>
+        <member name="T:SynthEHR.Datasets.Wide">
+            <Wide>
+		<summary>
+			Generates a dataset with 980 columns of data in a variety of formats.  This is useful for testing very wide tables that still fit into most RDBMS without special treatment (e.g. SPARSE columns).
+		</summary>
+		<Field name="id">
+			<summary>
+				Incremental int primary key for the dataset
+			</summary>
+		</Field>
+	</Wide>
+            <inheritdoc />
+        </member>
+        <member name="M:SynthEHR.Datasets.Wide.#ctor(System.Random)">
+            <Wide>
+		<summary>
+			Generates a dataset with 980 columns of data in a variety of formats.  This is useful for testing very wide tables that still fit into most RDBMS without special treatment (e.g. SPARSE columns).
+		</summary>
+		<Field name="id">
+			<summary>
+				Incremental int primary key for the dataset
+			</summary>
+		</Field>
+	</Wide>
+            <inheritdoc />
+        </member>
+        <member name="M:SynthEHR.Datasets.Wide.GenerateTestDataRow(SynthEHR.Person)">
+            <inheritdoc/>
+        </member>
+        <member name="M:SynthEHR.Datasets.Wide.GetHeaders">
+            <inheritdoc/>
+        </member>
+        <member name="T:SynthEHR.DateTimeExtensions">
+            <summary>
+            Extension methods for the <see cref="T:System.DateTime"/> class
+            </summary>
+        </member>
+        <member name="M:SynthEHR.DateTimeExtensions.Max(System.DateTime,System.DateTime)">
+            <summary>
+            Returns a new <see cref="T:System.DateTime"/> representing the maximum of <paramref name="a"/> and <paramref name="b"/>
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.DateTimeExtensions.Min(System.DateTime,System.DateTime)">
+            <summary>
+            Returns a new <see cref="T:System.DateTime"/> representing the minimum of <paramref name="a"/> and <paramref name="b"/>
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <returns></returns>
+        </member>
+        <member name="T:SynthEHR.Descriptions">
+            <summary>
+            Provides descriptions for what is in each dataset column (at runtime).  This is the same information that appears in xmldocs.
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Descriptions.#cctor">
+            <summary>
+            Load the XML data at init
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Descriptions.GetAll``1">
+            <summary>
+            Returns all columns with descriptions in the dataset (does not include Common fields e.g. chi)
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Descriptions.GetAll(System.String)">
+            <summary>
+            Returns all columns with descriptions in the dataset (does not include Common fields e.g. chi - unless you pass "Common" for <paramref name="dataset"/>)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Descriptions.Get(System.String)">
+            <summary>
+            Returns the description of the dataset (or null if no metadata exists)
+            </summary>
+            <param name="dataset">Dataset you want the description of</param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Descriptions.Get``1">
+            <summary>
+            Returns the description of the dataset <typeparamref name="T"/> (or null if no metadata exists)
+            </summary>
+            <typeparam name="T">Dataset you want the description of</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Descriptions.Get``1(System.String)">
+            <summary>
+            Returns the description of the column <paramref name="field"/> in dataset <typeparamref name="T"/> (or null if no metadata exists)
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="field"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Descriptions.Get(System.String,System.String)">
+            <summary>
+            Returns the description of the column <paramref name="field"/> in the <paramref name="dataset"/> (or null if no metadata exists)
+            </summary>
+            <param name="dataset"></param>
+            <param name="field"></param>
+            <returns></returns>
+        </member>
+        <member name="T:SynthEHR.IPersonCollection">
+            <summary>
+            A factory and collection for <see cref="T:SynthEHR.Person"/>.  Pass around to ensure all datasets share the same
+            patient identifiers.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.IPersonCollection.People">
+            <summary>
+            The last set of randomly generated patients
+            </summary>
+        </member>
+        <member name="M:SynthEHR.IPersonCollection.GeneratePeople(System.Int32,System.Random)">
+            <summary>
+            Generates <paramref name="numberOfUniqueIndividuals"/> random people (populating <see cref="P:SynthEHR.IPersonCollection.People"/>).
+            </summary>
+            <param name="numberOfUniqueIndividuals">Number of <see cref="P:SynthEHR.IPersonCollection.People"/> to generate</param>
+            <param name="random">The seed upon which to generate data</param>
+        </member>
+        <member name="T:SynthEHR.Person">
+            <summary>
+            Randomly generated person for whom datasets can be built
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Person.Forename">
+            <Field name="Forename">
+      <summary>
+        Patients forename, randomly generated from a list of 100 common forenames that match the patients gender
+      </summary>
+    </Field>
+        </member>
+        <member name="P:SynthEHR.Person.Surname">
+            <Field name="Surname">
+      <summary>
+        patients surname, randomly generated from a list of 100 common surnames
+      </summary>
+    </Field>
+        </member>
+        <member name="P:SynthEHR.Person.CHI">
+            <Field name="chi">
+      <summary>
+        Community Health Index (CHI) number is a unique personal identifier allocated to each patient on first registration with a GP Practice. It follows the format DDMMYYRRGC where DDMMYY represents the persons date of birth, RR are random digits, G is another random digit but acts as a gender identifier, (where odd numbers indicate males and even numbers indicate females), and the final digit is an arithmetical check digit.
+      </summary>
+    </Field>
+        </member>
+        <member name="P:SynthEHR.Person.ANOCHI">
+            <Field name="ANOCHI">
+      <summary>
+        Anonymous identifier that has replaced the identifiable CHI.  Typically represented as aaa1234567 where the first three letters uniquely identify a project (allowing for project specific anonymisation)
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Person.DateOfBirth">
+            <Field name="DateOfBirth">
+      <summary>
+        Date of birth of the patient, this should match the first 6 digits of the CHI 
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Person.DateOfDeath">
+            <Field name="DateOfDeath">
+      <summary>
+        If the patient is dead then this date will be filled in with the date it occurred
+      </summary>
+    </Field>
+        </member>
+        <member name="P:SynthEHR.Person.Gender">
+            <Field name="Gender">
+      <summary>
+        M for Male patient, F for Female patient.  Should match the second last digit of the CHI (if the patient has a CHI and not an ANOCHI) with odd numbers for females and even numbers for males.  This reflects the physical sex at birth and not what the person may identify as now.
+      </summary>
+    </Field>
+        </member>
+        <member name="P:SynthEHR.Person.Address">
+            <Field name="Address">
+      <summary>
+        The address which the patient lives at at the time of the EHR record being generated
+      </summary>
+    </Field>
+        </member>
+        <member name="P:SynthEHR.Person.PreviousAddress">
+            <Field name="PreviousAddress">
+      <summary>
+        The previous address which the patient lived at when the EHR record being generated
+      </summary>
+    </Field>
+        </member>
+        <member name="F:SynthEHR.Person.MinimumYearOfBirth">
+            <summary>
+            Earliest year of birth to generate
+            </summary>
+        </member>
+        <member name="F:SynthEHR.Person.MaximumYearOfBirth">
+            <summary>
+            Latest year of birth to generate
+            </summary>
+        </member>
+        <member name="F:SynthEHR.Person._parent">
+            <summary>
+            The collection to which the patient belongs, may be null
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Person.#ctor(System.Random,SynthEHR.PersonCollection)">
+            <summary>
+            Generates a new random person using the seeded random.  This overload ensures that the <see cref="T:SynthEHR.Person"/> generated
+            does not already exist in the <paramref name="collection"/> (in terms of CHI / ANOCHI numbers).
+            </summary>
+            <param name="r"></param>
+            <param name="collection"></param>
+        </member>
+        <member name="M:SynthEHR.Person.GetRandomForename(System.Random)">
+            <summary>
+            Returns a random first name based on the <see cref="P:SynthEHR.Person.Gender"/>
+            </summary>
+            <param name="r"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Person.GetRandomDateDuringLifetime(System.Random)">
+            <summary>
+            Returns a random date after the patients date of birth (and before their death if they are dead).
+            </summary>
+            <param name="r"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Person.GetRandomSurname(System.Random)">
+            <summary>
+            Returns a random surname from a list of common surnames
+            </summary>
+            <param name="r"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Person.GetDateOfDeathOrNullOn(System.DateTime)">
+            <summary>
+            If the person died before onDate it returns NULL (as of onDate we did not know when the person would die).  if onDate is > date of death it
+            returns the date of death (we knew when they died - you cannot predict the future, but you can remember the past)
+            </summary>
+            <param name="onDate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Person.GetNovelANOCHI(System.Random)">
+            <summary>
+            Returns a new random ANOCHI which does not exist in <see cref="F:SynthEHR.Person._parent"/> (if we have one)
+            </summary>
+            <param name="r"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Person.GetNovelCHI(System.Random)">
+            <summary>
+            Returns a new random CHI which does not exist in <see cref="F:SynthEHR.Person._parent"/> (if we have one)
+            </summary>
+            <param name="r"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SynthEHR.Person.GetRandomCHI(System.Random)">
+            <summary>
+            Returns a randomly generated CHI number for the patient.  The first 6 digits will match the patients <see cref="F:SynthEHR.Person.DateOfBirth"/> and
+            the second to last digit will match the <see cref="P:SynthEHR.Person.Gender"/>.
+            </summary>
+            <param name="r"></param>
+            <returns></returns>
+        </member>
+        <member name="T:SynthEHR.PersonCollection">
+            <inheritdoc/>
+        </member>
+        <member name="P:SynthEHR.PersonCollection.People">
+            <inheritdoc/>
+        </member>
+        <member name="M:SynthEHR.PersonCollection.GeneratePeople(System.Int32,System.Random)">
+            <inheritdoc/>
+        </member>
+        <member name="T:SynthEHR.RowsGeneratedEventArgs">
+            <summary>
+            Args for the <see cref="E:SynthEHR.Datasets.IDataGenerator.RowsGenerated"/> event.  Describes how many rows have
+            been generated and how long has gone by etc.
+            </summary>
+            <remarks>
+            Creates a new instance documenting how many rows have been written so far.
+            </remarks>
+            <param name="rowsWritten"></param>
+            <param name="elapsedTime"></param>
+            <param name="isFinished">True if this the last invocation and the file generation is complete</param>
+        </member>
+        <member name="M:SynthEHR.RowsGeneratedEventArgs.#ctor(System.Int32,System.TimeSpan,System.Boolean)">
+            <summary>
+            Args for the <see cref="E:SynthEHR.Datasets.IDataGenerator.RowsGenerated"/> event.  Describes how many rows have
+            been generated and how long has gone by etc.
+            </summary>
+            <remarks>
+            Creates a new instance documenting how many rows have been written so far.
+            </remarks>
+            <param name="rowsWritten"></param>
+            <param name="elapsedTime"></param>
+            <param name="isFinished">True if this the last invocation and the file generation is complete</param>
+        </member>
+        <member name="P:SynthEHR.RowsGeneratedEventArgs.RowsWritten">
+            <summary>
+            The current number of rows written (may differ from the line numbers of the file generated
+            if the records contain newlines etc.).
+            </summary>
+        </member>
+        <member name="P:SynthEHR.RowsGeneratedEventArgs.ElapsedTime">
+            <summary>
+            The length of time elapsed since record writing began
+            </summary>
+        </member>
+        <member name="P:SynthEHR.RowsGeneratedEventArgs.IsFinished">
+            <summary>
+            False for all event invocations except the last.  When this property is true you know the
+            report generator has finished
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Statistics.Distributions.IContinuousDistribution">
+            <summary>
+            Continuous Univariate Probability Distribution.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.IContinuousDistribution.Mode">
+            <summary>
+            Gets the mode of the distribution.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.IContinuousDistribution.Minimum">
+            <summary>
+            Gets the smallest element in the domain of the distribution which can be represented by a double.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.IContinuousDistribution.Maximum">
+            <summary>
+            Gets the largest element in the domain of the distribution which can be represented by a double.
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Statistics.Distributions.IContinuousDistribution.Sample">
+            <summary>
+            Draws a random sample from the distribution.
+            </summary>
+            <returns>a sample from the distribution.</returns>
+        </member>
+        <member name="T:SynthEHR.Statistics.Distributions.IDistribution">
+            <summary>
+            Probability Distribution.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.IDistribution.RandomSource">
+            <summary>
+            Gets or sets the random number generator which is used to draw random samples.
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Statistics.Distributions.IUnivariateDistribution">
+            <summary>
+            Univariate Probability Distribution.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.IUnivariateDistribution.Mean">
+            <summary>
+            Gets the mean of the distribution.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.IUnivariateDistribution.Variance">
+            <summary>
+            Gets the variance of the distribution.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.IUnivariateDistribution.StdDev">
+            <summary>
+            Gets the standard deviation of the distribution.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.IUnivariateDistribution.Entropy">
+            <summary>
+            Gets the entropy of the distribution.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.IUnivariateDistribution.Skewness">
+            <summary>
+            Gets the skewness of the distribution.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.IUnivariateDistribution.Median">
+            <summary>
+            Gets the median of the distribution.
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Statistics.Distributions.Normal">
+            <summary>
+            Continuous Univariate Normal distribution, also known as Gaussian distribution.
+            For details about this distribution, see
+            <a href="http://en.wikipedia.org/wiki/Normal_distribution">Wikipedia - Normal distribution</a>.
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Statistics.Distributions.Normal.#ctor(System.Double,System.Double,System.Random)">
+            <summary>
+            Initializes a new instance of the Normal class with a particular mean and standard deviation. The distribution will
+            be initialized with the default <seealso cref="T:System.Random"/> random number generator.
+            </summary>
+            <param name="mean">The mean (μ) of the normal distribution.</param>
+            <param name="stddev">The standard deviation (σ) of the normal distribution. Range: σ ≥ 0.</param>
+            <param name="randomSource">The random number generator which is used to draw random samples.</param>
+        </member>
+        <member name="M:SynthEHR.Statistics.Distributions.Normal.ToString">
+            <summary>
+            A string representation of the distribution.
+            </summary>
+            <returns>a string representation of the distribution.</returns>
+        </member>
+        <member name="M:SynthEHR.Statistics.Distributions.Normal.IsValidParameterSet(System.Double,System.Double)">
+            <summary>
+            Tests whether the provided values are valid parameters for this distribution.
+            </summary>
+            <param name="mean">The mean (μ) of the normal distribution.</param>
+            <param name="stddev">The standard deviation (σ) of the normal distribution. Range: σ ≥ 0.</param>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.Normal.Mean">
+            <summary>
+            Gets the mean (μ) of the normal distribution.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.Normal.StdDev">
+            <summary>
+            Gets the standard deviation (σ) of the normal distribution. Range: σ ≥ 0.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.Normal.Variance">
+            <summary>
+            Gets the variance of the normal distribution.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.Normal.RandomSource">
+            <summary>
+            Gets the random number generator which is used to draw random samples.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.Normal.Entropy">
+            <summary>
+            Gets the entropy of the normal distribution.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.Normal.Skewness">
+            <summary>
+            Gets the skewness of the normal distribution.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.Normal.Mode">
+            <summary>
+            Gets the mode of the normal distribution.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.Normal.Median">
+            <summary>
+            Gets the median of the normal distribution.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.Normal.Minimum">
+            <summary>
+            Gets the minimum of the normal distribution.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Statistics.Distributions.Normal.Maximum">
+            <summary>
+            Gets the maximum of the normal distribution.
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Statistics.Distributions.Normal.Sample">
+            <summary>
+            Generates a sample from the normal distribution using the <i>Box-Muller</i> algorithm.
+            </summary>
+            <returns>a sample from the distribution.</returns>
+        </member>
+        <member name="T:SynthEHR.Core.Data.CsvDataSourceAttribute">
+            <summary>
+            Marks a class as generated from CSV data.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.CsvDataSourceAttribute.FileName">
+            <summary>
+            Gets or sets the source CSV file name.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.CsvDataSourceAttribute.RowCount">
+            <summary>
+            Gets or sets the number of rows in the CSV file.
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Core.Data.BiochemistryData">
+            <summary>
+            Generated data class for Biochemistry.csv containing 8010 rows using columnar storage. Data is pre-sorted by RecordCount (descending) for optimal performance.
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Core.Data.BiochemistryData.Row">
+            <summary>
+            Represents a single row from Biochemistry.csv
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData.Row.LocalClinicalCodeValue">
+            <summary>
+            Column: LocalClinicalCodeValue
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData.Row.ReadCodeValue">
+            <summary>
+            Column: ReadCodeValue
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData.Row.HbExtract">
+            <summary>
+            Column: hb_extract
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData.Row.SampleName">
+            <summary>
+            Column: SampleName
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData.Row.ArithmeticComparator">
+            <summary>
+            Column: ArithmeticComparator
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData.Row.Interpretation">
+            <summary>
+            Column: Interpretation
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData.Row.QuantityUnit">
+            <summary>
+            Column: QuantityUnit
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData.Row.RangeHighValue">
+            <summary>
+            Column: RangeHighValue
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData.Row.RangeLowValue">
+            <summary>
+            Column: RangeLowValue
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData.Row.RecordCount">
+            <summary>
+            Column: RecordCount
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData.Row.QVAverage">
+            <summary>
+            Column: QVAverage
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData.Row.QVStandardDev">
+            <summary>
+            Column: QVStandardDev
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData._RangeHighValueData">
+            <summary>
+            Column data for RangeHighValue
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData._RecordCountData">
+            <summary>
+            Column data for RecordCount
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData._QVAverageData">
+            <summary>
+            Column data for QVAverage
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData._QVStandardDevData">
+            <summary>
+            Column data for QVStandardDev
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData._RangeHighValueNulls">
+            <summary>
+            Null flags for RangeHighValue
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData._QVAverageNulls">
+            <summary>
+            Null flags for QVAverage
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData._QVStandardDevNulls">
+            <summary>
+            Null flags for QVStandardDev
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData._stringData">
+            <summary>
+            UTF8 string data blob for all string columns
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData._stringOffsets">
+            <summary>
+            Offsets into string data blob
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Core.Data.BiochemistryData.GetString(System.Int32,System.Int32)">
+            <summary>
+            Extracts a string from the blob at the specified row and column index
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Core.Data.BiochemistryData.GetRow(System.Int32)">
+            <summary>
+            Gets a row at the specified index
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Core.Data.BiochemistryData.LazyRowList">
+            <summary>
+            Lazy IReadOnlyList wrapper for compatibility
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData.AllRows">
+            <summary>
+            All rows from the CSV file.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.BiochemistryData.Count">
+            <summary>
+            Gets the total number of rows.
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Core.Data.BiochemistryData.GetRandom(System.Random)">
+            <summary>
+            Gets a random row from the dataset.
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Core.Data.HospitalAdmissionsData">
+            <summary>
+            Generated data class for HospitalAdmissions.csv containing 31614 rows using columnar storage. Data is pre-sorted by CountAppearances (descending) for optimal performance.
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Core.Data.HospitalAdmissionsData.Row">
+            <summary>
+            Represents a single row from HospitalAdmissions.csv
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsData.Row.TestCode">
+            <summary>
+            Column: TestCode
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsData.Row.CountAppearances">
+            <summary>
+            Column: CountAppearances
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsData.Row.AverageMonthAppearing">
+            <summary>
+            Column: AverageMonthAppearing
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsData.Row.StandardDeviationMonthAppearing">
+            <summary>
+            Column: StandardDeviationMonthAppearing
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsData.Row.ColumnAppearingIn">
+            <summary>
+            Column: ColumnAppearingIn
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsData._CountAppearancesData">
+            <summary>
+            Column data for CountAppearances
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsData._AverageMonthAppearingData">
+            <summary>
+            Column data for AverageMonthAppearing
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsData._StandardDeviationMonthAppearingData">
+            <summary>
+            Column data for StandardDeviationMonthAppearing
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsData._stringData">
+            <summary>
+            UTF8 string data blob for all string columns
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsData._stringOffsets">
+            <summary>
+            Offsets into string data blob
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Core.Data.HospitalAdmissionsData.GetString(System.Int32,System.Int32)">
+            <summary>
+            Extracts a string from the blob at the specified row and column index
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Core.Data.HospitalAdmissionsData.GetRow(System.Int32)">
+            <summary>
+            Gets a row at the specified index
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Core.Data.HospitalAdmissionsData.LazyRowList">
+            <summary>
+            Lazy IReadOnlyList wrapper for compatibility
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsData.AllRows">
+            <summary>
+            All rows from the CSV file.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsData.Count">
+            <summary>
+            Gets the total number of rows.
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Core.Data.HospitalAdmissionsData.GetRandom(System.Random)">
+            <summary>
+            Gets a random row from the dataset.
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Core.Data.HospitalAdmissionsOperationsData">
+            <summary>
+            Generated data class for HospitalAdmissionsOperations.csv containing 47576 rows using columnar storage. Data is pre-sorted by CountOfRecords (descending) for optimal performance.
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Core.Data.HospitalAdmissionsOperationsData.Row">
+            <summary>
+            Represents a single row from HospitalAdmissionsOperations.csv
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsOperationsData.Row.CountOfRecords">
+            <summary>
+            Column: CountOfRecords
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsOperationsData.Row.MAINCONDITION">
+            <summary>
+            Column: MAIN_CONDITION
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsOperationsData.Row.MAINOPERATION">
+            <summary>
+            Column: MAIN_OPERATION
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsOperationsData.Row.MAINOPERATIONB">
+            <summary>
+            Column: MAIN_OPERATION_B
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsOperationsData.Row.OTHEROPERATION1">
+            <summary>
+            Column: OTHER_OPERATION_1
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsOperationsData.Row.OTHEROPERATION1B">
+            <summary>
+            Column: OTHER_OPERATION_1B
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsOperationsData.Row.OTHEROPERATION2">
+            <summary>
+            Column: OTHER_OPERATION_2
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsOperationsData.Row.OTHEROPERATION2B">
+            <summary>
+            Column: OTHER_OPERATION_2B
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsOperationsData.Row.OTHEROPERATION3">
+            <summary>
+            Column: OTHER_OPERATION_3
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsOperationsData.Row.OTHEROPERATION3B">
+            <summary>
+            Column: OTHER_OPERATION_3B
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsOperationsData._CountOfRecordsData">
+            <summary>
+            Column data for CountOfRecords
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsOperationsData._stringData">
+            <summary>
+            UTF8 string data blob for all string columns
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsOperationsData._stringOffsets">
+            <summary>
+            Offsets into string data blob
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Core.Data.HospitalAdmissionsOperationsData.GetString(System.Int32,System.Int32)">
+            <summary>
+            Extracts a string from the blob at the specified row and column index
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Core.Data.HospitalAdmissionsOperationsData.GetRow(System.Int32)">
+            <summary>
+            Gets a row at the specified index
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Core.Data.HospitalAdmissionsOperationsData.LazyRowList">
+            <summary>
+            Lazy IReadOnlyList wrapper for compatibility
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsOperationsData.AllRows">
+            <summary>
+            All rows from the CSV file.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.HospitalAdmissionsOperationsData.Count">
+            <summary>
+            Gets the total number of rows.
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Core.Data.HospitalAdmissionsOperationsData.GetRandom(System.Random)">
+            <summary>
+            Gets a random row from the dataset.
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Core.Data.MaternityData">
+            <summary>
+            Generated data class for Maternity.csv containing 67 rows using columnar storage. Data is pre-sorted by Location_RecordCount (descending) for optimal performance.
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Core.Data.MaternityData.Row">
+            <summary>
+            Represents a single row from Maternity.csv
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData.Row.Location">
+            <summary>
+            Column: Location
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData.Row.LocationRecordCount">
+            <summary>
+            Column: Location_RecordCount
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData.Row.MaritalStatusNumeric">
+            <summary>
+            Column: MaritalStatusNumeric
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData.Row.MaritalStatusNumericRecordCount">
+            <summary>
+            Column: MaritalStatusNumeric_RecordCount
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData.Row.MaritalStatusAlpha">
+            <summary>
+            Column: MaritalStatusAlpha
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData.Row.MaritalStatusAlphaRecordCount">
+            <summary>
+            Column: MaritalStatusAlpha_RecordCount
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData.Row.Specialty">
+            <summary>
+            Column: Specialty
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData.Row.SpecialtyRecordCount">
+            <summary>
+            Column: Specialty_RecordCount
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData._LocationRecordCountData">
+            <summary>
+            Column data for Location_RecordCount
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData._MaritalStatusNumericData">
+            <summary>
+            Column data for MaritalStatusNumeric
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData._MaritalStatusNumericRecordCountData">
+            <summary>
+            Column data for MaritalStatusNumeric_RecordCount
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData._MaritalStatusAlphaRecordCountData">
+            <summary>
+            Column data for MaritalStatusAlpha_RecordCount
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData._SpecialtyRecordCountData">
+            <summary>
+            Column data for Specialty_RecordCount
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData._MaritalStatusNumericNulls">
+            <summary>
+            Null flags for MaritalStatusNumeric
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData._MaritalStatusNumericRecordCountNulls">
+            <summary>
+            Null flags for MaritalStatusNumeric_RecordCount
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData._MaritalStatusAlphaRecordCountNulls">
+            <summary>
+            Null flags for MaritalStatusAlpha_RecordCount
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData._SpecialtyRecordCountNulls">
+            <summary>
+            Null flags for Specialty_RecordCount
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData._stringData">
+            <summary>
+            UTF8 string data blob for all string columns
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData._stringOffsets">
+            <summary>
+            Offsets into string data blob
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Core.Data.MaternityData.GetString(System.Int32,System.Int32)">
+            <summary>
+            Extracts a string from the blob at the specified row and column index
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Core.Data.MaternityData.GetRow(System.Int32)">
+            <summary>
+            Gets a row at the specified index
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Core.Data.MaternityData.LazyRowList">
+            <summary>
+            Lazy IReadOnlyList wrapper for compatibility
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData.AllRows">
+            <summary>
+            All rows from the CSV file.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.MaternityData.Count">
+            <summary>
+            Gets the total number of rows.
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Core.Data.MaternityData.GetRandom(System.Random)">
+            <summary>
+            Gets a random row from the dataset.
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Core.Data.PrescribingData">
+            <summary>
+            Generated data class for Prescribing.csv containing 33454 rows using columnar storage.
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Core.Data.PrescribingData.Row">
+            <summary>
+            Represents a single row from Prescribing.csv
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData.Row.ResSeqno">
+            <summary>
+            Column: res_seqno
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData.Row.Name">
+            <summary>
+            Column: Name
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData.Row.FormulationCode">
+            <summary>
+            Column: Formulation_code
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData.Row.Strength">
+            <summary>
+            Column: Strength
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData.Row.OrigStrength">
+            <summary>
+            Column: orig_strength
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData.Row.MeasureCode">
+            <summary>
+            Column: measure_code
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData.Row.BNFCode">
+            <summary>
+            Column: BNF_Code
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData.Row.FormattedBNFCode">
+            <summary>
+            Column: formatted_BNF_Code
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData.Row.BNFDescription">
+            <summary>
+            Column: BNF_Description
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData.Row.ApprovedName">
+            <summary>
+            Column: Approved_Name
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData.Row.MinQuantity">
+            <summary>
+            Column: minQuantity
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData.Row.MaxQuantity">
+            <summary>
+            Column: maxQuantity
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData.Row.Frequency">
+            <summary>
+            Column: frequency
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData._ResSeqnoData">
+            <summary>
+            Column data for res_seqno
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData._OrigStrengthData">
+            <summary>
+            Column data for orig_strength
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData._FrequencyData">
+            <summary>
+            Column data for frequency
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData._OrigStrengthNulls">
+            <summary>
+            Null flags for orig_strength
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData._stringData">
+            <summary>
+            UTF8 string data blob for all string columns
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData._stringOffsets">
+            <summary>
+            Offsets into string data blob
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Core.Data.PrescribingData.GetString(System.Int32,System.Int32)">
+            <summary>
+            Extracts a string from the blob at the specified row and column index
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Core.Data.PrescribingData.GetRow(System.Int32)">
+            <summary>
+            Gets a row at the specified index
+            </summary>
+        </member>
+        <member name="T:SynthEHR.Core.Data.PrescribingData.LazyRowList">
+            <summary>
+            Lazy IReadOnlyList wrapper for compatibility
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData.AllRows">
+            <summary>
+            All rows from the CSV file.
+            </summary>
+        </member>
+        <member name="P:SynthEHR.Core.Data.PrescribingData.Count">
+            <summary>
+            Gets the total number of rows.
+            </summary>
+        </member>
+        <member name="M:SynthEHR.Core.Data.PrescribingData.GetRandom(System.Random)">
+            <summary>
+            Gets a random row from the dataset.
+            </summary>
+        </member>
+    </members>
+</doc>

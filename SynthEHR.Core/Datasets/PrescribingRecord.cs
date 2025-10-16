@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -17,10 +16,10 @@ namespace SynthEHR.Datasets;
 public sealed class PrescribingRecord
 {
     /// <summary>
-    /// every row in data table has a weight (the number of records in our biochemistry with this sample type, this dictionary lets you input
-    /// a record number 0-maxWeight and be returned an appropriate row from the table based on its weighting
+    /// Sorted array of (cumulative weight, row index) tuples for O(log n) binary search lookup.
+    /// Maps cumulative frequencies to original LookupTable indices, excluding rows with frequency=0.
     /// </summary>
-    private static readonly FrozenDictionary<int, int> WeightToRow;
+    private static readonly (int CumulativeWeight, int RowIndex)[] WeightToRow;
     private static readonly int MaxWeight;
     private static readonly IReadOnlyList<PrescribingData.Row> LookupTable;
 
@@ -29,9 +28,9 @@ public sealed class PrescribingRecord
         // Use compile-time generated data instead of runtime CSV parsing
         LookupTable = PrescribingData.AllRows;
 
-        var tempWeightToRow = new Dictionary<int, int>();
-
+        var weights = new List<(int, int)>();
         var currentWeight = 0;
+
         for (var i = 0; i < LookupTable.Count; i++)
         {
             var frequency = int.Parse(LookupTable[i].Frequency);
@@ -40,14 +39,13 @@ public sealed class PrescribingRecord
                 continue;
 
             currentWeight += frequency;
-
-            tempWeightToRow.Add(currentWeight, i);
+            weights.Add((currentWeight, i)); // Tuple: (cumulative weight, original index)
         }
 
         MaxWeight = currentWeight;
 
-        // Freeze the WeightToRow dictionary for optimized lookups
-        WeightToRow = tempWeightToRow.ToFrozenDictionary();
+        // Array is already sorted by construction (cumulative sum is monotonically increasing)
+        WeightToRow = weights.ToArray();
     }
 
     /// <summary>
@@ -87,10 +85,22 @@ public sealed class PrescribingRecord
     {
         var weightToGet = r.Next(MaxWeight);
 
-        //get the first key with a cumulative frequency above the one you are trying to get
-        var row = WeightToRow.First(kvp => kvp.Key > weightToGet).Value;
+        // Binary search to find first cumulative weight > weightToGet
+        // O(log n) instead of O(n) linear scan
+        int left = 0;
+        int right = WeightToRow.Length - 1;
 
-        return LookupTable[row];
+        while (left < right)
+        {
+            int mid = left + (right - left) / 2;
+
+            if (WeightToRow[mid].CumulativeWeight <= weightToGet)
+                left = mid + 1;
+            else
+                right = mid;
+        }
+
+        return LookupTable[WeightToRow[left].RowIndex];
     }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/Prescribing/Field[@name="ResSeqNo"]'/>
