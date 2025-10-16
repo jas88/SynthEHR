@@ -45,23 +45,13 @@ jobs:
         with:
           category: "/language:csharp"
 
-      - name: Package CLI binaries (AOT where possible)
+      - name: Package CLI binaries
         run: |
-          # Try AOT first for CLI project only, fall back to JIT if dependencies incompatible
-          dotnet publish SynthEHR/SynthEHR.csproj -o dist/linux-x64 -r linux-x64 -c Release --nologo -p:PublishSingleFile=true -p:PublishAot=true -p:GenerateDocumentationFile=false 2>&1 | tee aot.log || \
-            dotnet publish SynthEHR/SynthEHR.csproj -o dist/linux-x64 -r linux-x64 -c Release --self-contained --nologo -p:PublishSingleFile=true -p:GenerateDocumentationFile=false
-
-          dotnet publish SynthEHR/SynthEHR.csproj -o dist/win-x64 -r win-x64 -c Release --nologo -p:PublishSingleFile=true -p:PublishAot=true -p:GenerateDocumentationFile=false 2>&1 || \
-            dotnet publish SynthEHR/SynthEHR.csproj -o dist/win-x64 -r win-x64 -c Release --self-contained --nologo -p:PublishSingleFile=true -p:GenerateDocumentationFile=false
-
-          dotnet publish SynthEHR/SynthEHR.csproj -o dist/osx-x64 -r osx-x64 -c Release --nologo -p:PublishSingleFile=true -p:PublishAot=true -p:GenerateDocumentationFile=false 2>&1 || \
-            dotnet publish SynthEHR/SynthEHR.csproj -o dist/osx-x64 -r osx-x64 -c Release --self-contained --nologo -p:PublishSingleFile=true -p:GenerateDocumentationFile=false
-
-          dotnet publish SynthEHR/SynthEHR.csproj -o dist/osx-arm64 -r osx-arm64 -c Release --nologo -p:PublishSingleFile=true -p:PublishAot=true -p:GenerateDocumentationFile=false 2>&1 || \
-            dotnet publish SynthEHR/SynthEHR.csproj -o dist/osx-arm64 -r osx-arm64 -c Release --self-contained --nologo -p:PublishSingleFile=true -p:GenerateDocumentationFile=false
-
-          # Log which builds used AOT
-          grep -q "Generating native code" aot.log && echo "✓ Linux x64: AOT" || echo "✓ Linux x64: JIT (self-contained)"
+          # Self-contained single-file binaries (AOT causes issues with dependencies)
+          dotnet publish SynthEHR/SynthEHR.csproj -o dist/linux-x64 -r linux-x64 -c Release --self-contained --nologo -p:PublishSingleFile=true -p:GenerateDocumentationFile=false
+          dotnet publish SynthEHR/SynthEHR.csproj -o dist/win-x64 -r win-x64 -c Release --self-contained --nologo -p:PublishSingleFile=true -p:GenerateDocumentationFile=false
+          dotnet publish SynthEHR/SynthEHR.csproj -o dist/osx-x64 -r osx-x64 -c Release --self-contained --nologo -p:PublishSingleFile=true -p:GenerateDocumentationFile=false
+          dotnet publish SynthEHR/SynthEHR.csproj -o dist/osx-arm64 -r osx-arm64 -c Release --self-contained --nologo -p:PublishSingleFile=true -p:GenerateDocumentationFile=false
 
       - name: Create distribution archives
         run: |
