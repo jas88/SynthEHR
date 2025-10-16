@@ -66,15 +66,17 @@ public sealed class HospitalAdmissionsRecord
     public Person Person { get; set; }
 
     /// <summary>
-    /// Maps ColumnAppearingIn to each month we might want to generate random data in (Between <see cref="MinimumDate"/> and <see cref="MaximumDate"/>)
-    /// to the row numbers which were active at that time (based on AverageMonthAppearing and StandardDeviationMonthAppearing)
+    /// Pre-computed cumulative weights and indices for each field/month combination.
+    /// Enables O(log n) binary search instead of O(n) linear scan.
+    /// Maps ColumnAppearingIn -> Month -> (CumulativeWeights array, Indices into ICD10Rows array)
     /// </summary>
-    private static readonly FrozenDictionary<string, FrozenDictionary<int, List<int>>> ICD10MonthHashMap;
+    private static readonly FrozenDictionary<string, FrozenDictionary<int, (int[] CumulativeWeights, int[] Indices)>> ICD10MonthLookup;
 
     /// <summary>
-    /// Maps Row(Key) to the CountAppearances/TestCode
+    /// All ICD10 codes with their cumulative weights for binary search.
+    /// Each entry contains (cumulative weight up to this point, ICD10 code).
     /// </summary>
-    private static readonly BucketList<string> ICD10Rows;
+    private static readonly (int CumulativeWeight, string Code)[] ICD10Rows;
 
     /// <summary>
     /// Maps a given MAIN_CONDITION code (doesn't cover other conditions) to popular operations for that condition.  The string array is always length 8 and corresponds to
@@ -148,11 +150,23 @@ public sealed class HospitalAdmissionsRecord
 
     static HospitalAdmissionsRecord()
     {
-        ICD10Rows = [];
-
         // Use compile-time generated data instead of runtime CSV parsing
         var rows = HospitalAdmissionsData.AllRows;
 
+        // Step 1: Build ICD10Rows array with cumulative weights
+        var rowsList = new List<(int CumulativeWeight, string Code)>(rows.Count);
+        var cumulativeWeight = 0;
+
+        foreach (var row in rows)
+        {
+            var weight = int.Parse(row.CountAppearances);
+            cumulativeWeight += weight;
+            rowsList.Add((cumulativeWeight, row.TestCode));
+        }
+
+        ICD10Rows = [.. rowsList];
+
+        // Step 2: Build month-based index mappings (which rows are valid for each month)
         var tempICD10MonthHashMap = new Dictionary<string, Dictionary<int, List<int>>>
             {
                 {"MAIN_CONDITION", new Dictionary<int, List<int>>()},
@@ -161,14 +175,11 @@ public sealed class HospitalAdmissionsRecord
                 {"OTHER_CONDITION_3", new Dictionary<int,  List<int>>()}
             };
 
-
-        //The number of months since 1/1/1900 (this is the measure of field AverageMonthAppearing)
-
-        //get all the months we might be asked for
+        // Get all the months we might be asked for
         var from = (MinimumDate.Year - 1900) * 12 + MinimumDate.Month;
         var to = (MaximumDate.Year - 1900) * 12 + MaximumDate.Month;
 
-
+        // Initialize all month buckets
         foreach (var columnKey in tempICD10MonthHashMap.Keys)
         {
             for (var i = from; i <= to; i++)
@@ -177,23 +188,22 @@ public sealed class HospitalAdmissionsRecord
             }
         }
 
+        // For each row in the sample data, determine which months it's valid for
         var rowCount = 0;
-
-        //for each row in the sample data
         foreach (var row in rows)
         {
             var avgMonth = double.Parse(row.AverageMonthAppearing);
             var stdDev = double.Parse(row.StandardDeviationMonthAppearing);
 
-            //calculate 2 standard deviations in months
+            // Calculate 2 standard deviations in months
             var monthFrom = Convert.ToInt32(avgMonth - 2 * stdDev);
             var monthTo = Convert.ToInt32(avgMonth + 2 * stdDev);
 
-            //2 standard deviations might take us beyond the beginning or start so only build hashmap for dates we will be asked for
+            // Clamp to our valid range
             monthFrom = Math.Max(monthFrom, from);
             monthTo = Math.Min(monthTo, to);
 
-            //for each month add row to the hashmap (for the correct column and month in the range)
+            // Add this row index to all months in its valid range
             for (var i = monthFrom; i <= monthTo; i++)
             {
                 if (monthFrom < from)
@@ -205,12 +215,48 @@ public sealed class HospitalAdmissionsRecord
                 tempICD10MonthHashMap[row.ColumnAppearingIn][i].Add(rowCount);
             }
 
-            ICD10Rows.Add(int.Parse(row.CountAppearances), row.TestCode);
             rowCount++;
         }
 
-        // Freeze the ICD10MonthHashMap - convert inner dictionaries first, then outer
-        ICD10MonthHashMap = tempICD10MonthHashMap.ToFrozenDictionary(
+        // Step 3: Convert index lists to cumulative weight arrays for binary search
+        var tempICD10MonthLookup = new Dictionary<string, Dictionary<int, (int[] CumulativeWeights, int[] Indices)>>();
+
+        foreach (var field in tempICD10MonthHashMap.Keys)
+        {
+            tempICD10MonthLookup[field] = new Dictionary<int, (int[] CumulativeWeights, int[] Indices)>();
+
+            foreach (var (month, indices) in tempICD10MonthHashMap[field])
+            {
+                if (indices.Count == 0)
+                {
+                    // Empty month - store empty arrays
+                    tempICD10MonthLookup[field][month] = ([], []);
+                    continue;
+                }
+
+                // Build cumulative weights for this month's subset
+                var indicesArray = indices.ToArray();
+                var cumulativeWeights = new int[indicesArray.Length];
+                var cumulative = 0;
+
+                for (var i = 0; i < indicesArray.Length; i++)
+                {
+                    var idx = indicesArray[i];
+                    // Get the weight for this specific item
+                    var itemWeight = i == 0
+                        ? ICD10Rows[idx].CumulativeWeight
+                        : ICD10Rows[idx].CumulativeWeight - ICD10Rows[idx - 1].CumulativeWeight;
+
+                    cumulative += itemWeight;
+                    cumulativeWeights[i] = cumulative;
+                }
+
+                tempICD10MonthLookup[field][month] = (cumulativeWeights, indicesArray);
+            }
+        }
+
+        // Freeze the lookup structure
+        ICD10MonthLookup = tempICD10MonthLookup.ToFrozenDictionary(
             kvp => kvp.Key,
             kvp => kvp.Value.ToFrozenDictionary()
         );
@@ -245,11 +291,55 @@ public sealed class HospitalAdmissionsRecord
 
     private string GetRandomICDCode(string field, Random random)
     {
-
-        //The number of months since 1/1/1900 (this is the measure of field AverageMonthAppearing)
+        // The number of months since 1/1/1900 (this is the measure of field AverageMonthAppearing)
         var monthsSinceZeroDay = (AdmissionDate.Year - 1900) * 12 + AdmissionDate.Month;
 
-        return ICD10Rows.GetRandom(ICD10MonthHashMap[field][monthsSinceZeroDay], random);
+        var (cumulativeWeights, indices) = ICD10MonthLookup[field][monthsSinceZeroDay];
+
+        if (cumulativeWeights.Length == 0)
+        {
+            // No valid codes for this month/field combination
+            return string.Empty;
+        }
+
+        // Generate random value in range [0, totalWeight)
+        var target = random.Next(cumulativeWeights[^1]);
+
+        // Binary search for the target weight
+        var index = BinarySearchCumulativeWeights(cumulativeWeights, target);
+
+        // Return the code at the found index
+        return ICD10Rows[indices[index]].Code;
+    }
+
+    /// <summary>
+    /// Binary search to find the index where cumulative weight first exceeds target.
+    /// This maintains the same weighted random distribution as the original linear scan.
+    /// </summary>
+    /// <param name="cumulativeWeights">Array of cumulative weights (must be sorted ascending)</param>
+    /// <param name="target">Random value to search for</param>
+    /// <returns>Index of the first element where cumulative weight > target</returns>
+    private static int BinarySearchCumulativeWeights(int[] cumulativeWeights, int target)
+    {
+        var left = 0;
+        var right = cumulativeWeights.Length - 1;
+
+        // Find the first index where cumulativeWeights[index] > target
+        while (left < right)
+        {
+            var mid = left + (right - left) / 2;
+
+            if (cumulativeWeights[mid] <= target)
+            {
+                left = mid + 1;
+            }
+            else
+            {
+                right = mid;
+            }
+        }
+
+        return left;
     }
 
 }
