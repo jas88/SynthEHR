@@ -123,7 +123,7 @@ internal static class Program
             {
                 var instance = DataGeneratorFactory.Create(g.Type, r);
 
-                var targetFile = new FileInfo(Path.Combine(dir.FullName, $"{g.Type.Name}.csv"));
+                var targetFile = new FileInfo(Path.Join(dir.FullName, $"{g.Type.Name}.csv"));
                 instance.GenerateTestDataFile(identifiers, targetFile, opts.NumberOfRows);
             }
 
