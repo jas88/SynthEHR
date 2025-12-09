@@ -406,9 +406,7 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
             foreach (var colIndex in stringColumns)
             {
                 var value = colIndex < row.Length ? (row[colIndex] ?? string.Empty) : string.Empty;
-                if (!frequency.ContainsKey(value))
-                    frequency[value] = 0;
-                frequency[value]++;
+                frequency[value] = frequency.TryGetValue(value, out var count) ? count + 1 : 1;
             }
         }
 

@@ -270,7 +270,7 @@ public sealed class HospitalAdmissionsRecord
         {
             var key = r.MAINCONDITION;
             if (!tempConditionsToOperationsMap.TryGetValue(key, out var conditionOps))
-                tempConditionsToOperationsMap.Add(key, conditionOps = []);
+                tempConditionsToOperationsMap[key] = conditionOps = [];
 
             conditionOps.Add(int.Parse(r.CountOfRecords), [
                     r.MAINOPERATION,
