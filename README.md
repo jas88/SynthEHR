@@ -1,6 +1,6 @@
 # SynthEHR (Previously BadMedicine)
 
-[![Build Status](https://github.com/HICServices/SynthEHR/actions/workflows/testpack.yml/badge.svg?branch=develop)](https://travis-ci.org/HicServices/SynthEHR) [![NuGet Badge](https://buildstats.info/nuget/HIC.SynthEHR)](https://www.nuget.org/packages/HIC.SynthEHR/)
+[![Build](https://github.com/jas88/SynthEHR/actions/workflows/build.yml/badge.svg)](https://github.com/jas88/SynthEHR/actions/workflows/build.yml) [![codecov](https://codecov.io/gh/jas88/SynthEHR/graph/badge.svg)](https://codecov.io/gh/jas88/SynthEHR) [![NuGet Badge](https://buildstats.info/nuget/HIC.SynthEHR)](https://www.nuget.org/packages/HIC.SynthEHR/)
 
 Library and CLI for randomly generating medical data like you might get out of an Electronic Health Records (EHR) system.  It is intended for generating data for demos and testing ETL / cohort generation/ data management tools.
 
