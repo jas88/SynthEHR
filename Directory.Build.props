@@ -1,0 +1,31 @@
+<Project>
+  <!--
+    SynthEHR Build Configuration
+    Imports shared build standards from the build-standards submodule
+  -->
+
+  <!-- Import shared build standards -->
+  <Import Project="build-standards/Directory.Build.props.shared" />
+
+  <!-- SynthEHR-specific overrides -->
+  <PropertyGroup>
+    <!-- Use GPL license instead of MIT -->
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+
+    <!-- Use latest C# instead of fixed 13.0 -->
+    <LangVersion>latest</LangVersion>
+
+    <!-- Use SharedAssemblyInfo.cs for versioning, not MinVer -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+    <!-- Project-specific metadata -->
+    <RepositoryUrl>https://github.com/jas88/SynthEHR</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/jas88/SynthEHR</PackageProjectUrl>
+    <Authors>Health Informatics Centre - University of Dundee</Authors>
+  </PropertyGroup>
+
+  <!-- Don't include MinVer package since we use SharedAssemblyInfo.cs -->
+  <ItemGroup>
+    <PackageReference Include="MinVer" PrivateAssets="All" Remove="MinVer" />
+  </ItemGroup>
+</Project>
