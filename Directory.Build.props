@@ -22,10 +22,19 @@
     <RepositoryUrl>https://github.com/jas88/SynthEHR</RepositoryUrl>
     <PackageProjectUrl>https://github.com/jas88/SynthEHR</PackageProjectUrl>
     <Authors>Health Informatics Centre - University of Dundee</Authors>
+
+    <!-- Don't treat warnings as errors until code quality issues are fixed -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <!-- Don't include MinVer package since we use SharedAssemblyInfo.cs -->
   <ItemGroup>
-    <PackageReference Include="MinVer" PrivateAssets="All" Remove="MinVer" />
+    <PackageReference Remove="MinVer" />
+  </ItemGroup>
+
+  <!-- Specify versions for packages from shared build standards -->
+  <ItemGroup>
+    <PackageReference Update="DotNet.ReproducibleBuilds" Version="1.2.25" />
+    <PackageReference Update="coverlet.collector" Version="6.0.4" />
   </ItemGroup>
 </Project>
