@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          submodules: recursive
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
@@ -26,7 +28,13 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Test (includes restore and build)
-        run: dotnet test --nologo -c Release
+        run: dotnet test --nologo -c Release --collect:"XPlat Code Coverage"
+
+      - name: Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
