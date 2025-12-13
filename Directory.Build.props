@@ -34,7 +34,7 @@
 
   <!-- Specify versions for packages from shared build standards -->
   <ItemGroup>
-    <PackageReference Update="DotNet.ReproducibleBuilds" Version="1.2.25" />
+    <PackageReference Update="DotNet.ReproducibleBuilds" Version="1.2.39" />
     <PackageReference Update="coverlet.collector" Version="6.0.4" />
   </ItemGroup>
 </Project>
