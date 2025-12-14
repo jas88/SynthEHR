@@ -28,7 +28,7 @@ jobs:
         with:
           global-json-file: global.json
           cache: true
-          cache-dependency-path: '**/*.csproj'
+          cache-dependency-path: Directory.Packages.props
 
       - name: Test (includes restore and build)
         run: dotnet test --nologo -c Release --collect:"XPlat Code Coverage"
