@@ -30,9 +30,6 @@ jobs:
           cache: true
           cache-dependency-path: Directory.Packages.props
 
-      - name: Update target frameworks for SDK version
-        run: ./scripts/generate-build-props.sh
-
       - name: Test (includes restore and build)
         run: dotnet test --nologo -c Release --collect:"XPlat Code Coverage"
 
