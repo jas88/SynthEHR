@@ -25,7 +25,9 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '8.0.x'
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/*.csproj'
 
       - name: Test (includes restore and build)
         run: dotnet test --nologo -c Release --collect:"XPlat Code Coverage"
