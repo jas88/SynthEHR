@@ -2,7 +2,8 @@
 # Update Directory.Build.props with dynamic target framework values based on .NET SDK version.
 # Uses markers in the root file to update the frameworks section:
 # - Libraries: multi-target all non-EOL versions
-# - Tests (*Tests) and Executables (OutputType=Exe): latest only
+# - Tests (*Tests), Benchmarks (*Benchmark), and CLI (SynthEHR): latest only
+# Note: Uses name patterns because OutputType isn't available in .props
 #
 # If the file differs from what's in git, commit and push (in CI), then exit with error.
 
@@ -54,12 +55,12 @@ for v in $(seq $MIN_MAJOR $MAX_MAJOR); do
     fi
 done
 
-# Generate the new frameworks section
+# Generate the new frameworks section (uses name patterns since OutputType isn't available in .props)
 NEW_SECTION="  <!-- @FRAMEWORKS_START@ -->
-  <PropertyGroup Condition=\"!\$(MSBuildProjectName.Contains('SourceGenerator')) AND !\$(MSBuildProjectName.EndsWith('Tests')) AND '\$(OutputType)' != 'Exe'\">
+  <PropertyGroup Condition=\"!\$(MSBuildProjectName.Contains('SourceGenerator')) AND !\$(MSBuildProjectName.EndsWith('Tests')) AND '\$(MSBuildProjectName)' != 'SynthEHR' AND !\$(MSBuildProjectName.Contains('Benchmark'))\">
     <TargetFrameworks>$LIB_FRAMEWORKS</TargetFrameworks>
   </PropertyGroup>
-  <PropertyGroup Condition=\"!\$(MSBuildProjectName.Contains('SourceGenerator')) AND (\$(MSBuildProjectName.EndsWith('Tests')) OR '\$(OutputType)' == 'Exe')\">
+  <PropertyGroup Condition=\"!\$(MSBuildProjectName.Contains('SourceGenerator')) AND (\$(MSBuildProjectName.EndsWith('Tests')) OR '\$(MSBuildProjectName)' == 'SynthEHR' OR \$(MSBuildProjectName.Contains('Benchmark')))\">
     <TargetFramework>net${MAX_MAJOR}.0</TargetFramework>
   </PropertyGroup>
   <!-- @FRAMEWORKS_END@ -->"
