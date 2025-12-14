@@ -1,13 +1,14 @@
 #!/bin/bash
-# Generate directory-specific Directory.Build.props files with dynamic target framework values
-# based on .NET SDK version. Auto-detects project types:
+# Update Directory.Build.props with dynamic target framework values based on .NET SDK version.
+# Uses markers in the root file to update the frameworks section:
 # - Libraries: multi-target all non-EOL versions
-# - Tests (*.Tests): single-target latest
-# - Executables (OutputType=Exe): single-target latest
+# - Tests (*Tests) and Executables (OutputType=Exe): latest only
 #
-# If any files differ from what's in git, commit and push (in CI), then exit with error.
+# If the file differs from what's in git, commit and push (in CI), then exit with error.
 
 set -e
+
+PROPS_FILE="Directory.Build.props"
 
 # Create a temporary project to query SDK properties
 TEMP_DIR=$(mktemp -d)
@@ -53,104 +54,50 @@ for v in $(seq $MIN_MAJOR $MAX_MAJOR); do
     fi
 done
 
-CHANGES_MADE=false
-PROPS_FILES=""
-
-# Find all csproj files (excluding source generators which stay on netstandard2.0)
-for CSPROJ in $(find . -name "*.csproj" -not -path "./build-standards/*" | sort); do
-    DIR=$(dirname "$CSPROJ")
-    PROJ_NAME=$(basename "$DIR")
-    PROPS_FILE="$DIR/Directory.Build.props"
-
-    # Skip source generator projects (they must target netstandard2.0)
-    if grep -q "netstandard2.0" "$CSPROJ" 2>/dev/null; then
-        continue
-    fi
-
-    # Determine project type
-    IS_TEST=false
-    IS_EXE=false
-
-    # Check if it's a test project (name ends with Tests or Test)
-    if [[ "$PROJ_NAME" == *Tests ]] || [[ "$PROJ_NAME" == *Test ]]; then
-        IS_TEST=true
-    fi
-
-    # Check if it's an executable
-    if grep -qE "<OutputType>Exe</OutputType>" "$CSPROJ" 2>/dev/null; then
-        IS_EXE=true
-    fi
-
-    # Generate appropriate Directory.Build.props
-    TEMP_PROPS=$(mktemp)
-
-    if [ "$IS_TEST" = true ]; then
-        cat > "$TEMP_PROPS" << EOF
-<Project>
-  <!-- Import parent props -->
-  <Import Project="\$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '\$(MSBuildThisFileDirectory)../'))" />
-
-  <!-- Test projects target only the latest .NET version -->
-  <!-- Auto-generated based on SDK version by scripts/generate-build-props.sh -->
-  <PropertyGroup>
-    <TargetFramework>net${MAX_MAJOR}.0</TargetFramework>
-  </PropertyGroup>
-</Project>
-EOF
-    elif [ "$IS_EXE" = true ]; then
-        cat > "$TEMP_PROPS" << EOF
-<Project>
-  <!-- Import parent props -->
-  <Import Project="\$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '\$(MSBuildThisFileDirectory)../'))" />
-
-  <!-- Executable projects target only the latest .NET version -->
-  <!-- Auto-generated based on SDK version by scripts/generate-build-props.sh -->
-  <PropertyGroup>
-    <TargetFramework>net${MAX_MAJOR}.0</TargetFramework>
-  </PropertyGroup>
-</Project>
-EOF
-    else
-        cat > "$TEMP_PROPS" << EOF
-<Project>
-  <!-- Import parent props -->
-  <Import Project="\$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '\$(MSBuildThisFileDirectory)../'))" />
-
-  <!-- Library projects multi-target all non-EOL .NET versions -->
-  <!-- Auto-generated based on SDK version by scripts/generate-build-props.sh -->
-  <PropertyGroup>
+# Generate the new frameworks section
+NEW_SECTION="  <!-- @FRAMEWORKS_START@ -->
+  <PropertyGroup Condition=\"!\$(MSBuildProjectName.Contains('SourceGenerator')) AND !\$(MSBuildProjectName.EndsWith('Tests')) AND '\$(OutputType)' != 'Exe'\">
     <TargetFrameworks>$LIB_FRAMEWORKS</TargetFrameworks>
   </PropertyGroup>
-</Project>
-EOF
-    fi
+  <PropertyGroup Condition=\"!\$(MSBuildProjectName.Contains('SourceGenerator')) AND (\$(MSBuildProjectName.EndsWith('Tests')) OR '\$(OutputType)' == 'Exe')\">
+    <TargetFramework>net${MAX_MAJOR}.0</TargetFramework>
+  </PropertyGroup>
+  <!-- @FRAMEWORKS_END@ -->"
 
-    if ! diff -q "$PROPS_FILE" "$TEMP_PROPS" > /dev/null 2>&1; then
-        echo "$PROPS_FILE needs updating for current .NET SDK version"
-        mv "$TEMP_PROPS" "$PROPS_FILE"
-        CHANGES_MADE=true
-        PROPS_FILES="$PROPS_FILES $PROPS_FILE"
-    else
-        rm -f "$TEMP_PROPS"
-    fi
-done
+# Extract current section from file
+CURRENT_SECTION=$(sed -n '/@FRAMEWORKS_START@/,/@FRAMEWORKS_END@/p' "$PROPS_FILE")
 
-# If changes were made and we're in CI, commit and push
-if [ "$CHANGES_MADE" = true ]; then
-    if [ -d .git ] && [ -n "$CI" ]; then
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        git add $PROPS_FILES
-        git commit -m "Update Directory.Build.props files for .NET SDK version"
-        git push
-        echo "ERROR: Directory.Build.props files were out of date and have been updated."
-        echo "The changes have been committed and pushed. Please retry the workflow."
-        exit 1
-    else
-        echo "Updated props files locally. Please commit the changes."
-        exit 0
-    fi
+# Compare sections
+if [ "$CURRENT_SECTION" = "$NEW_SECTION" ]; then
+    echo "Directory.Build.props is up to date"
+    exit 0
+fi
+
+echo "Directory.Build.props needs updating for current .NET SDK version"
+
+# Create temp file with updated content
+TEMP_FILE=$(mktemp)
+
+# Use awk to replace the section between markers
+awk -v new="$NEW_SECTION" '
+    /@FRAMEWORKS_START@/ { printing=1; print new; next }
+    /@FRAMEWORKS_END@/ { printing=0; next }
+    !printing { print }
+' "$PROPS_FILE" > "$TEMP_FILE"
+
+mv "$TEMP_FILE" "$PROPS_FILE"
+
+# If we're in CI, commit and push
+if [ -d .git ] && [ -n "$CI" ]; then
+    git config user.name "github-actions[bot]"
+    git config user.email "github-actions[bot]@users.noreply.github.com"
+    git add "$PROPS_FILE"
+    git commit -m "Update Directory.Build.props for .NET SDK version"
+    git push
+    echo "ERROR: Directory.Build.props was out of date and has been updated."
+    echo "The changes have been committed and pushed. Please retry the workflow."
+    exit 1
 else
-    echo "All Directory.Build.props files are up to date"
+    echo "Updated $PROPS_FILE locally. Please commit the changes."
     exit 0
 fi
