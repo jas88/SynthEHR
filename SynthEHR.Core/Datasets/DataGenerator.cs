@@ -308,6 +308,24 @@ public abstract class DataGenerator : IDataGenerator
         };
 
     /// <summary>
+    /// Generates a deterministic GUID using the seeded random number generator.
+    /// This ensures reproducible GUIDs when using a fixed seed.
+    /// </summary>
+    /// <returns>A new GUID generated from the seeded RNG</returns>
+    protected Guid GenerateDeterministicGuid()
+    {
+        // Use stackalloc to avoid heap allocation for the 16 bytes
+        Span<byte> bytes = stackalloc byte[16];
+
+        // Fill the span with random bytes from the seeded RNG
+        for (int i = 0; i < 16; i++)
+            bytes[i] = (byte)r.Next(256);
+
+        // Create GUID from the bytes
+        return new Guid(bytes);
+    }
+
+    /// <summary>
     /// [OBSOLETE] This method is deprecated. Use compile-time generated data classes in SynthEHR.Core.Data namespace instead.
     /// For example, use BiochemistryData.AllRows, PrescribingData.AllRows, etc.
     /// </summary>

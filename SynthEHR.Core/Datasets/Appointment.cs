@@ -21,10 +21,29 @@ public sealed class Appointment(Person testPerson, Random r)
     /// <summary>
     /// Globally unique identifier for this appointment
     /// </summary>
-    public string Identifier { get; set; } = $"APPT_{Guid.NewGuid()}";
+    public string Identifier { get; set; } = $"APPT_{GenerateDeterministicGuid(r)}";
 
     /// <summary>
     /// Random date within the lifetime of the <see cref="Person"/> used for construction
     /// </summary>
     public DateTime StartDate { get; set; } = testPerson.GetRandomDateDuringLifetime(r);
+
+    /// <summary>
+    /// Generates a deterministic GUID using the provided random number generator.
+    /// This ensures reproducible GUIDs when using a fixed seed.
+    /// </summary>
+    /// <param name="rand">The seeded random number generator</param>
+    /// <returns>A new GUID generated from the seeded RNG</returns>
+    private static Guid GenerateDeterministicGuid(Random rand)
+    {
+        // Use stackalloc to avoid heap allocation for the 16 bytes
+        Span<byte> bytes = stackalloc byte[16];
+
+        // Fill the span with random bytes from the seeded RNG
+        for (int i = 0; i < 16; i++)
+            bytes[i] = (byte)rand.Next(256);
+
+        // Create GUID from the bytes
+        return new Guid(bytes);
+    }
 }
