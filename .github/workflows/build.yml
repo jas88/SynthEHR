@@ -2,8 +2,9 @@ name: Build, Test, Package and Security Analysis
 
 on:
   push:
+    branches: [main]
   pull_request:
-    branches: [ "develop", "main" ]
+    branches: [main]
   schedule:
     - cron: "33 3 * * 6"
 
