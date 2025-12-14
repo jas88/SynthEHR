@@ -49,9 +49,12 @@ jobs:
           config-file: ./.github/codeql/codeql-config.yml
 
       - name: Build for CodeQL (without source generator)
-        run: dotnet build --nologo -c Release -p:UseSourceGenerator=false
+        run: |
+          dotnet clean --nologo -c Release
+          dotnet build --nologo -c Release
         env:
           # Disable source generator to avoid OOM in CodeQL
+          # Uses stub data classes from CodeQLStubs.cs instead
           DISABLE_SOURCE_GENERATOR: true
 
       - name: Perform CodeQL Analysis

@@ -29,6 +29,10 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <!-- Define DISABLE_SOURCE_GENERATOR symbol when env var is set (for CodeQL builds) -->
+  <PropertyGroup Condition="'$(DISABLE_SOURCE_GENERATOR)' == 'true'">
+    <DefineConstants>$(DefineConstants);DISABLE_SOURCE_GENERATOR</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <None Remove="Datasets\Aggregates.zip" />
     <None Remove="Datasets\HospitalAdmissionsOperations.csv" />
