@@ -24,46 +24,71 @@ The following synthetic datasets can be produced.
 | Hospital Admissions | ICD9 and ICD10 codes for admission to hospital |
 | Maternity | Records of births etc |
 
-## Usage:
+## Usage
+
+### CLI
 
 SynthEHR is available as a [nuget package](https://www.nuget.org/packages/HIC.SynthEHR/) for linking as a library
 
-The standalone CLI (SynthEHR.exe) is available in the [releases section of Github](https://github.com/HicServices/SynthEHR/releases)
+The CLI can be run using `dotnet run`:
 
-Usage is as follows:
+```bash
+# Generate default amount of data (500 patients, 2000 records per dataset)
+dotnet run --project SynthEHR/SynthEHR.csproj c:/temp/
 
-```
-SynthEHR.exe c:\temp\
-```
+# Specify number of patients and records per dataset
+dotnet run --project SynthEHR/SynthEHR.csproj c:/temp/ 500 10000
 
-You can change how much data is produced (e.g. 500 patients, 10000 records per dataset):
+# Generate only a single dataset
+dotnet run --project SynthEHR/SynthEHR.csproj c:/temp 5000 200000 -l -d CarotidArteryScan
 
-```
-SynthEHR.exe c:\temp\ 500 10000
-```
-
-Or run only a single dataset:
-
-```
-SynthEHR.exe c:\omg 5000 200000 -l -d CarotidArteryScan
+# Seed the generator for reproducible results (deterministic GUIDs included)
+dotnet run --project SynthEHR/SynthEHR.csproj c:/temp 5000 200000 -l -d CarotidArteryScan -s 5000
 ```
 
-You can seed the generator (Guids generated will still differ)
+Or you can build and run the executable directly:
 
+```bash
+# Build the application
+dotnet publish SynthEHR/SynthEHR.csproj -c Release -o ./publish
+
+# Run the executable (platform-dependent name)
+./publish/SynthEHR c:/temp/  # Linux/macOS
+./publish/SynthEHR.exe c:/temp/  # Windows
 ```
-SynthEHR.exe c:\omg 5000 200000 -l -d CarotidArteryScan -s 5000
-```
+
+### Deterministic GUID Generation
+
+When using the `-s` (seed) parameter, SynthEHR now generates deterministic GUIDs. This means that:
+
+- With the same seed, all generated data (including GUIDs) will be identical across runs
+- GUIDs are generated using the seeded random number generator with `stackalloc` for efficient memory usage
+- This enables fully reproducible test data scenarios
 
 ## Building
 
-Building requires MSBuild 15 or later (or Visual Studio 2017 or later).  You will also need to install the DotNetCore 2.2 SDK.
+Building requires .NET 8.0 SDK or later.
 
-You can build a OS specific binary
-
-First build SynthEHR.csproj
+To build the solution:
+```bash
+dotnet build
 ```
-dotnet publish SynthEHR.csproj -r win-x64 --self-contained
-cd .\bin\Debug\netcoreapp2.2\win-x64\
+
+To create a self-contained executable for a specific platform:
+```bash
+# Windows x64
+dotnet publish SynthEHR/SynthEHR.csproj -c Release -r win-x64 --self-contained
+
+# Linux x64
+dotnet publish SynthEHR/SynthEHR.csproj -c Release -r linux-x64 --self-contained
+
+# macOS x64
+dotnet publish SynthEHR/SynthEHR.csproj -c Release -r osx-x64 --self-contained
+```
+
+To create a framework-dependent executable (smaller, requires .NET runtime installed):
+```bash
+dotnet publish SynthEHR/SynthEHR.csproj -c Release -o ./publish
 ```
 ## Direct to Database
 
@@ -88,14 +113,14 @@ Database:
 You can generate test data for your program yourself by referencing the [nuget package](https://www.nuget.org/packages/HIC.SynthEHR/):
 
 ```csharp
-//Seed the random generator if you want to always produce the same randomisation
+// Seed the random generator for reproducible results (including GUIDs)
 var r = new Random(100);
 
-//Create a new person
+// Create a new person
 var person = new Person(r);
 
-//Create test data for that person
-var a = new HospitalAdmissionsRecord(person,person.DateOfBirth,r);
+// Create test data for that person
+var a = new HospitalAdmissionsRecord(person, person.DateOfBirth, r);
 
 Assert.IsNotNull(a.Person.CHI);
 Assert.IsNotNull(a.Person.DateOfBirth);
@@ -105,6 +130,8 @@ Assert.IsNotNull(a.AdmissionDate);
 Assert.IsNotNull(a.DischargeDate);
 Assert.IsNotNull(a.Condition1);
 ```
+
+Note: When using a seeded `Random` instance, all generated data including GUIDs in datasets like Appointments and Maternity will be deterministic, ensuring reproducible test scenarios.
 
 ## What is Modelled?
 

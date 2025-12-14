@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Deterministic GUID generation when using seeded random number generator
+- Now generates reproducible GUIDs in Appointment and Maternity datasets when seeded
+- Uses stackalloc for efficient memory allocation in GUID generation
+- Standardized build patterns through build-standards submodule
+
+### Changed
+- Updated README with modern .NET CLI usage instructions
+- Build requirements updated to .NET 8.0 SDK or later
+
 ## [2.0.1] - 2024-08-15
 
 - Remove reliance on Equ
