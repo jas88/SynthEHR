@@ -98,7 +98,7 @@ public static class Descriptions
             Doc.Root?.Element(Ns + dataset)?.Elements(Ns + "Field")
 
             //the one whose name attribute matches
-            .SingleOrDefault(e => string.Equals(e.Attribute(Ns + "name")?.Value, field, StringComparison.CurrentCultureIgnoreCase))?.Value
+            .SingleOrDefault(e => string.Equals(e.Attribute(Ns + "name")?.Value, field, StringComparison.OrdinalIgnoreCase))?.Value
 
             //or from Common if it's not in the dataset.
             ?? (dataset != "Common" ? Get("Common", field) : null); //null if we are already trying Common

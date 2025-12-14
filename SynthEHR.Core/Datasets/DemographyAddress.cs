@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Globalization;
 
 namespace SynthEHR.Datasets;
 
@@ -56,7 +57,7 @@ public class DemographyAddress
         //1 in 10 has house number in line 1 instead of full address line 1
         if (r.Next(0, 10) == 0)
         {
-            Line1 = r.Next(0, 100).ToString();
+            Line1 = r.Next(0, 100).ToString(CultureInfo.InvariantCulture);
             Line2 = StreetNames[r.Next(0, StreetNames.Length)];
             Line3 = Postcode.District;
             Line4 = Postcode.Ward;

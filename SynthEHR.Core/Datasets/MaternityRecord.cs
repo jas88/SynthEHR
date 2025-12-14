@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using SynthEHR.Core.Data;
 
 namespace SynthEHR.Datasets;
@@ -143,7 +144,7 @@ public sealed class MaternityRecord
         if (string.IsNullOrWhiteSpace(freqStr) || freqStr == "NULL")
             return;
 
-        var frequency = Convert.ToInt32(freqStr);
+        var frequency = Convert.ToInt32(freqStr, CultureInfo.InvariantCulture);
         if (frequency == 0)
             return;
 

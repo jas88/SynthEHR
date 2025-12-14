@@ -40,7 +40,7 @@ public sealed class BucketList<T> : IEnumerable<(T item,int probability)>
                 return _list[i].item;
         }
 
-        throw new Exception("Could not GetRandom");
+        throw new InvalidOperationException("Could not GetRandom");
     }
 
 
@@ -65,7 +65,7 @@ public sealed class BucketList<T> : IEnumerable<(T item,int probability)>
                 return _list[i].item;
         }
 
-        throw new Exception("Could not GetRandom");
+        throw new InvalidOperationException("Could not GetRandom");
     }
 
 

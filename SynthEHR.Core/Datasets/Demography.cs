@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Globalization;
 
 namespace SynthEHR.Datasets;
 
@@ -32,7 +33,7 @@ public sealed class Demography(Random rand) : DataGenerator(rand)
             values[4] = person.GetRandomCHI(r);
 
         values[5] = GetRandomCHIStatus(r);
-        values[6] = person.DateOfBirth.Year.ToString()[..2];
+        values[6] = person.DateOfBirth.Year.ToString(CultureInfo.InvariantCulture)[..2];
         values[7] = person.Surname;
         values[8] = person.Forename;
         values[9] = person.Gender;
