@@ -111,7 +111,7 @@ public sealed partial class PackageListIsCorrectTests
     }
 
     [GeneratedRegex("""
-                    <PackageReference\s+Include="(.*)"\s+Version="([^"]*)"
+                    <PackageReference\s+Include="([^"]*)"
                     """, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex PackageRefRegex();
     [GeneratedRegex(@"^\|\s*\[?([^ |\]]+)(\]\([^)]+\))?\s*\|", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
