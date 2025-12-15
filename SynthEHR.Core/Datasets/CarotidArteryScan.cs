@@ -15,7 +15,7 @@ namespace SynthEHR.Datasets;
 /// <inheritdoc/>
 public class CarotidArteryScan(Random rand) : DataGenerator(rand)
 {
-    private int _id = 0;
+    private int _id;
 
     /// <inheritdoc/>
     public override object[] GenerateTestDataRow(Person p)

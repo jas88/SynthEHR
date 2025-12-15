@@ -7,7 +7,6 @@
     <Copyright>Copyright 2019-2025</Copyright>
     <PackageId>SynthEHR.Core</PackageId>
     <Authors>Health Informatics Centre - University of Dundee</Authors>
-    <TargetFramework>net8.0</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -21,14 +20,16 @@
 
       SynthEHR differs from other random data generators e.g. Mockaroo, SQL Data Generator etc in that data generated is based on (simple) models generated from live EHR datasets collected for over 30 years in Tayside and Fife (UK). This makes the data generated recognisable (codes used, frequency of codes etc) from a clinical perspective and representative of the problems (ontology mapping etc) that data analysts would encounter working with real medical data..
     </Description>
-    <IsAotCompatible>true</IsAotCompatible>
-    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <!-- Define DISABLE_SOURCE_GENERATOR symbol when env var is set (for CodeQL builds) -->
+  <PropertyGroup Condition="'$(DISABLE_SOURCE_GENERATOR)' == 'true'">
+    <DefineConstants>$(DefineConstants);DISABLE_SOURCE_GENERATOR</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Datasets\Aggregates.zip" />
@@ -45,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <!-- CsvHelper removed - now using compile-time source generation instead -->
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
     <!-- Reference the source generator as an analyzer (disabled for CodeQL to avoid OOM) -->

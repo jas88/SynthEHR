@@ -8,6 +8,7 @@ using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using SynthEHR.Core.Data;
 
 namespace SynthEHR.Datasets;
@@ -159,7 +160,7 @@ public sealed class HospitalAdmissionsRecord
 
         foreach (var row in rows)
         {
-            var weight = int.Parse(row.CountAppearances);
+            var weight = int.Parse(row.CountAppearances, CultureInfo.InvariantCulture);
             cumulativeWeight += weight;
             rowsList.Add((cumulativeWeight, row.TestCode));
         }
@@ -192,8 +193,8 @@ public sealed class HospitalAdmissionsRecord
         var rowCount = 0;
         foreach (var row in rows)
         {
-            var avgMonth = double.Parse(row.AverageMonthAppearing);
-            var stdDev = double.Parse(row.StandardDeviationMonthAppearing);
+            var avgMonth = double.Parse(row.AverageMonthAppearing, CultureInfo.InvariantCulture);
+            var stdDev = double.Parse(row.StandardDeviationMonthAppearing, CultureInfo.InvariantCulture);
 
             // Calculate 2 standard deviations in months
             var monthFrom = Convert.ToInt32(avgMonth - 2 * stdDev);
@@ -272,7 +273,7 @@ public sealed class HospitalAdmissionsRecord
             if (!tempConditionsToOperationsMap.TryGetValue(key, out var conditionOps))
                 tempConditionsToOperationsMap[key] = conditionOps = [];
 
-            conditionOps.Add(int.Parse(r.CountOfRecords), [
+            conditionOps.Add(int.Parse(r.CountOfRecords, CultureInfo.InvariantCulture), [
                     r.MAINOPERATION,
                 r.MAINOPERATIONB,
                 r.OTHEROPERATION1,

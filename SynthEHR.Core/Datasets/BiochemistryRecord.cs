@@ -71,7 +71,7 @@ public sealed class BiochemistryRecord
 
         foreach (var row in rows)
         {
-            var count = int.Parse(row.RecordCount);
+            var count = int.Parse(row.RecordCount, CultureInfo.InvariantCulture);
             currentWeight += count;
             weights.Add((currentWeight, new BiochemistryRandomDataRow(row)));
         }
@@ -98,8 +98,8 @@ public sealed class BiochemistryRecord
         ArithmeticComparator = row.ArithmeticComparator;
         Interpretation = row.Interpretation;
         QuantityUnit = row.QuantityUnit;
-        RangeHighValue = row.RangeHighValue.HasValue ? row.RangeHighValue.ToString() : "NULL";
-        RangeLowValue = row.RangeLowValue.HasValue ? row.RangeLowValue.ToString() : "NULL";
+        RangeHighValue = row.RangeHighValue.HasValue ? row.RangeHighValue.Value.ToString(CultureInfo.InvariantCulture) : "NULL";
+        RangeLowValue = row.RangeLowValue.HasValue ? row.RangeLowValue.Value.ToString(CultureInfo.InvariantCulture) : "NULL";
 
         Healthboard = row.hb_extract;
         ReadCodeValue = row.ReadCodeValue;
@@ -143,10 +143,10 @@ public sealed class BiochemistryRecord
         public readonly string ArithmeticComparator = row.ArithmeticComparator;
         public readonly string Interpretation = row.Interpretation;
         public readonly string QuantityUnit = row.QuantityUnit;
-        public double? RangeHighValue = double.TryParse(row.RangeHighValue, out var rangeLow) ? rangeLow : null;
-        public double? RangeLowValue = double.TryParse(row.RangeLowValue, out var rangeHigh) ? rangeHigh : null;
-        private readonly double? QVAverage = double.TryParse(row.QVAverage, out var min) ? min : null;
-        private readonly double? QVStandardDev = double.TryParse(row.QVStandardDev, out var dev) ? dev : null;
+        public double? RangeHighValue = double.TryParse(row.RangeHighValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var rangeLow) ? rangeLow : null;
+        public double? RangeLowValue = double.TryParse(row.RangeLowValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var rangeHigh) ? rangeHigh : null;
+        private readonly double? QVAverage = double.TryParse(row.QVAverage, NumberStyles.Any, CultureInfo.InvariantCulture, out var min) ? min : null;
+        private readonly double? QVStandardDev = double.TryParse(row.QVStandardDev, NumberStyles.Any, CultureInfo.InvariantCulture, out var dev) ? dev : null;
 
         /// <summary>
         /// Returns a new QV value using the <see cref="QVAverage"/> and <see cref="QVStandardDev"/> seeded with the provided
@@ -158,7 +158,7 @@ public sealed class BiochemistryRecord
         {
             return !QVAverage.HasValue || !QVStandardDev.HasValue
                 ? null
-                : new Normal(QVAverage.Value, QVStandardDev.Value, r).Sample().ToString(CultureInfo.CurrentCulture);
+                : new Normal(QVAverage.Value, QVStandardDev.Value, r).Sample().ToString(CultureInfo.InvariantCulture);
         }
     }
 }

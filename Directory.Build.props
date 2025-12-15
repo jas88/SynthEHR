@@ -2,7 +2,13 @@
   <!--
     SynthEHR Build Configuration
     Imports shared build standards from the build-standards submodule
+
+    SynthEHR is an executable repository (contains SynthEHR.exe),
+    so it uses the executable-repo pattern for target framework selection.
   -->
+
+  <!-- Import executable repo pattern for target framework selection -->
+  <Import Project="build-standards/Directory.Build.props.executable-repo" />
 
   <!-- Import shared build standards -->
   <Import Project="build-standards/Directory.Build.props.shared" />
@@ -30,11 +36,5 @@
   <!-- Don't include MinVer package since we use SharedAssemblyInfo.cs -->
   <ItemGroup>
     <PackageReference Remove="MinVer" />
-  </ItemGroup>
-
-  <!-- Specify versions for packages from shared build standards -->
-  <ItemGroup>
-    <PackageReference Update="DotNet.ReproducibleBuilds" Version="1.2.39" />
-    <PackageReference Update="coverlet.collector" Version="6.0.4" />
   </ItemGroup>
 </Project>

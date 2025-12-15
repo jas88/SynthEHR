@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using SynthEHR.Core.Data;
 
@@ -33,7 +34,7 @@ public sealed class PrescribingRecord
 
         for (var i = 0; i < LookupTable.Count; i++)
         {
-            var frequency = int.Parse(LookupTable[i].Frequency);
+            var frequency = int.Parse(LookupTable[i].Frequency, CultureInfo.InvariantCulture);
 
             if (frequency == 0)
                 continue;
@@ -61,18 +62,18 @@ public sealed class PrescribingRecord
         Name = row.Name;
         FormulationCode = row.FormulationCode;
         Strength = row.Strength;
-        StrengthNumerical = row.OrigStrength == "NULL" ? null : Convert.ToDouble(row.OrigStrength);
+        StrengthNumerical = row.OrigStrength == "NULL" ? null : Convert.ToDouble(row.OrigStrength, CultureInfo.InvariantCulture);
         MeasureCode = row.MeasureCode;
         BnfCode = row.BNFCode;
         FormattedBnfCode = row.FormattedBNFCode;
         BnfDescription = row.BNFDescription;
         ApprovedName = row.ApprovedName;
 
-        var hasMin = double.TryParse(row.MinQuantity, out var min);
-        var hasMax = double.TryParse(row.MaxQuantity, out var max);
+        var hasMin = double.TryParse(row.MinQuantity, NumberStyles.Any, CultureInfo.InvariantCulture, out var min);
+        var hasMax = double.TryParse(row.MaxQuantity, NumberStyles.Any, CultureInfo.InvariantCulture, out var max);
 
         if (hasMin && hasMax)
-            Quantity = ((int)(r.NextDouble() * (max - min) + min)).ToString();//it is a number
+            Quantity = ((int)(r.NextDouble() * (max - min) + min)).ToString(CultureInfo.InvariantCulture);//it is a number
         else
             if (r.Next(0, 2) == 0)
             Quantity = row.MinQuantity;//it isn't a number, randomly select max or min

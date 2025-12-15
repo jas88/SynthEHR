@@ -46,7 +46,7 @@ public sealed class Maternity(Random rand) : DataGenerator(rand)
             results[6] = record.BabyChi[2];
 
             results[7] = record.SendingLocation;
-            results[8] = Guid.NewGuid().ToString();
+            results[8] = GenerateDeterministicGuid().ToString();
             results[9] = record.Location;
             results[10] = record.MaritalStatus;
             results[11] = record.Specialty;

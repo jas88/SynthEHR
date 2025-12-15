@@ -24,7 +24,7 @@ public sealed record Person
     /// <include file='../Datasets.doc.xml' path='Datasets/Demography/Field[@name="ANOCHI"]'/>
     public string ANOCHI { get; set; }
     /// <include file='../Datasets.doc.xml' path='Datasets/Demography/Field[@name="DateOfBirth"]'/>
-    public DateTime DateOfBirth = new();
+    public DateTime DateOfBirth;
     /// <include file='../Datasets.doc.xml' path='Datasets/Demography/Field[@name="DateOfDeath"]'/>
     public DateTime? DateOfDeath;
 

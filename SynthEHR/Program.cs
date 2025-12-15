@@ -82,7 +82,7 @@ internal static class Program
             //if the user only wants to extract a single dataset
             if(!string.IsNullOrEmpty(opts.Dataset))
             {
-                var match = generators.FirstOrDefault(g => g.Type.Name.Equals(opts.Dataset));
+                var match = generators.FirstOrDefault(g => g.Type.Name.Equals(opts.Dataset, StringComparison.Ordinal));
                 if(match.Type == null)
                 {
                     Console.WriteLine($"Could not find dataset called '{opts.Dataset}'");
