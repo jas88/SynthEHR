@@ -117,4 +117,4 @@ jobs:
 
       - name: Submit dependencies
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/dependency-submission@v3
+        uses: actions/dependency-submission-action@v3
