@@ -1,9 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <DebugType>embedded</DebugType>
     <LangVersion>latest</LangVersion>
+    <!-- Enable Microsoft.Testing.Platform with NUnit runner -->
+    <OutputType>Exe</OutputType>
+    <EnableNUnitRunner>true</EnableNUnitRunner>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,7 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Microsoft.Testing.Extensions.Telemetry" />
+    <PackageReference Include="Microsoft.Testing.Platform" />
+    <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
     <PackageReference Include="NUnit" />
     <PackageReference Include="NUnit.Analyzers">
       <PrivateAssets>all</PrivateAssets>
@@ -25,5 +32,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SynthEHR.Core\SynthEHR.Core.csproj" />
+  </ItemGroup>
+
+  <!-- Exclude CodeCoverage - conflicts with NUnit on .NET 10 -->
+  <ItemGroup>
+    <PackageReference Remove="Microsoft.Testing.Extensions.CodeCoverage" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,4 @@
+<Project>
+  <!-- Import shared build targets from the build-standards submodule -->
+  <Import Project="build-standards/Directory.Build.targets.shared" />
+</Project>
