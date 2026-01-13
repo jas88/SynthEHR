@@ -4,6 +4,10 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <DebugType>embedded</DebugType>
     <LangVersion>latest</LangVersion>
+    <!-- Enable Microsoft.Testing.Platform with NUnit runner -->
+    <OutputType>Exe</OutputType>
+    <EnableNUnitRunner>true</EnableNUnitRunner>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +16,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Microsoft.Testing.Extensions.Telemetry" />
+    <PackageReference Include="Microsoft.Testing.Platform" />
+    <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
     <PackageReference Include="NUnit" />
     <PackageReference Include="NUnit.Analyzers">
       <PrivateAssets>all</PrivateAssets>
