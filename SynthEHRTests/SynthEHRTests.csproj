@@ -33,4 +33,9 @@
   <ItemGroup>
     <ProjectReference Include="..\SynthEHR.Core\SynthEHR.Core.csproj" />
   </ItemGroup>
+
+  <!-- Exclude CodeCoverage - conflicts with NUnit on .NET 10 -->
+  <ItemGroup>
+    <PackageReference Remove="Microsoft.Testing.Extensions.CodeCoverage" />
+  </ItemGroup>
 </Project>
