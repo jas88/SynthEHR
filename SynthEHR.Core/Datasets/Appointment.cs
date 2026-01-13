@@ -43,6 +43,12 @@ public sealed class Appointment(Person testPerson, Random r)
         for (int i = 0; i < 16; i++)
             bytes[i] = (byte)rand.Next(256);
 
+        // Set RFC 4122 version 4 (random) and variant 1 bits
+        // Version 4: bits 48-51 = 0100 binary
+        bytes[6] = (byte)((bytes[6] & 0x0f) | 0x40);
+        // Variant 1: bits 64-65 = 10 binary
+        bytes[8] = (byte)((bytes[8] & 0x3f) | 0x80);
+
         // Create GUID from the bytes
         return new Guid(bytes);
     }
