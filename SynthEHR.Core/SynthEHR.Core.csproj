@@ -45,10 +45,6 @@
     <EmbeddedResource Include="..\data\*.csv" LogicalName="SynthEHR.Core.Datasets.%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
-    <!-- CsvHelper removed - now using compile-time source generation instead -->
-    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
-  </ItemGroup>
-  <ItemGroup>
     <!-- Reference the source generator as an analyzer (disabled for CodeQL to avoid OOM) -->
     <ProjectReference Include="..\SynthEHR.SourceGenerators\SynthEHR.SourceGenerators.csproj"
                       OutputItemType="Analyzer"
