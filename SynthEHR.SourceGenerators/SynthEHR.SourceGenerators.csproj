@@ -29,6 +29,7 @@
 
   <!-- Package the generator in the analyzer directory where the compiler can load it -->
   <ItemGroup>
+    <PackageReference Include="DotNet.ReproducibleBuilds" />
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
 
