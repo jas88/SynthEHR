@@ -28,7 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" />
-    <PackageReference Include="HIC.FAnsiSql" />
+    <PackageReference Include="FAnsiSql.Legacy" />
     <PackageReference Include="YamlDotNet" />
   </ItemGroup>
   <ItemGroup>
