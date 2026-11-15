@@ -4,12 +4,10 @@
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/jas88/SynthEHR</PackageProjectUrl>
     <PackageTags>Test Data,Random,Synthetic Data,EHR,Electronic Health Record,Source Generator</PackageTags>
-    <Copyright>Copyright 2019-2025</Copyright>
     <PackageId>SynthEHR.Core</PackageId>
     <Authors>Health Informatics Centre - University of Dundee</Authors>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <OutputType>Library</OutputType>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <DebugType>embedded</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RootNamespace>SynthEHR</RootNamespace>
@@ -37,7 +35,6 @@
     <None Remove="Datasets\Maternity.csv" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\Datasets.doc.xml" Link="Datasets.doc.xml" />
