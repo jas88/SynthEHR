@@ -17,6 +17,7 @@ jobs:
       contents: write
       security-events: write
       packages: write
+      id-token: write  # required for NuGet Trusted Publishing (OIDC)
 
     steps:
       - name: Checkout
@@ -79,11 +80,9 @@ jobs:
 
       - name: Package NuGet
         run: |
-          VERSION=$(grep AssemblyInformationalVersion SharedAssemblyInfo.cs | cut -d'"' -f2)
           dotnet pack SynthEHR.Core/SynthEHR.Core.csproj \
             -p:DebugType=full \
             -p:SymbolPackageFormat=snupkg \
-            -p:PackageVersion=$VERSION \
             -o . \
             --include-source \
             --include-symbols \
@@ -100,9 +99,25 @@ jobs:
             *.nupkg
             *.snupkg
 
+      - name: Check tag matches project version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          VERSION=$(dotnet msbuild SynthEHR.Core/SynthEHR.Core.csproj -getProperty:Version -nologo)
+          if [ "v$VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match <Version>$VERSION</Version> in Directory.Build.props"
+            exit 1
+          fi
+
+      - name: NuGet login (Trusted Publishing)
+        if: startsWith(github.ref, 'refs/tags/v')
+        id: nuget-login
+        uses: NuGet/login@v1
+        with:
+          user: jas88
+
       - name: Publish to NuGet
         if: startsWith(github.ref, 'refs/tags/v')
-        run: dotnet nuget push "*.nupkg" --skip-duplicate --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_KEY }}
+        run: dotnet nuget push "*.nupkg" --skip-duplicate --source https://api.nuget.org/v3/index.json --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
