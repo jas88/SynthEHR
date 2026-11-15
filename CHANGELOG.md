@@ -6,15 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-11-15
+
+First release from the jas88/SynthEHR fork.
+
+### Breaking
+- NuGet package renamed from `HIC.SynthEHR` to `SynthEHR.Core`
+- Library now multi-targets net8.0, net9.0 and net10.0 (previously net8.0 only); CLI targets net10.0
+- Seeded runs now produce deterministic GUIDs, so output differs from 2.x for the same seed
+- CLI database support switched from `HIC.FAnsiSql` 3.2.x to `FAnsiSql.Legacy` 3.7.0
+
 ### Added
-- Deterministic GUID generation when using seeded random number generator
-- Now generates reproducible GUIDs in Appointment and Maternity datasets when seeded
-- Uses stackalloc for efficient memory allocation in GUID generation
-- Standardized build patterns through build-standards submodule
+- Deterministic GUID generation in Appointment and Maternity datasets when using a seeded random number generator
+- Compile-time source generator turns the dataset CSVs into generated data classes, replacing runtime CSV parsing
+- Standardised build configuration through the build-standards submodule
 
 ### Changed
+- Removed the CsvHelper dependency; the library has no runtime package dependencies
+- Dataset CSVs are no longer also embedded as unused resources, reducing SynthEHR.Core.dll from about 25 MB to 17 MB per target framework
+- Performance improvements: Span-based CHI/ANOCHI generation, binary-search weighted lookups, SearchValues CSV escaping, string interning
 - Updated README with modern .NET CLI usage instructions
-- Build requirements updated to .NET 8.0 SDK or later
 
 ## [2.0.1] - 2024-08-15
 
@@ -110,7 +121,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Patient birth dates now go from 1914 (Person.MinimumYearOfBirth) allowing for patients aged up to 100 years
 
-[Unreleased]: https://github.com/HicServices/SynthEHR/compare/v2.0.1...main
+[Unreleased]: https://github.com/jas88/SynthEHR/compare/v3.0.0...main
+[3.0.0]: https://github.com/jas88/SynthEHR/compare/v2.0.1...v3.0.0
 [2.0.1]: https://github.com/HicServices/SynthEHR/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/HicServices/SynthEHR/compare/v1.2.2...v2.0.0
 [1.2.2]: https://github.com/HicServices/SynthEHR/compare/v1.2.1...v1.2.2

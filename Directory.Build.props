@@ -21,19 +21,22 @@
     <!-- Use latest C# instead of fixed 13.0 -->
     <LangVersion>latest</LangVersion>
 
-    <!-- Use SharedAssemblyInfo.cs for versioning, not MinVer -->
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <!-- Single source of truth for assembly, file, informational and package versions (MinVer not used) -->
+    <Version>3.0.0</Version>
 
     <!-- Project-specific metadata -->
     <RepositoryUrl>https://github.com/jas88/SynthEHR</RepositoryUrl>
     <PackageProjectUrl>https://github.com/jas88/SynthEHR</PackageProjectUrl>
     <Authors>Health Informatics Centre - University of Dundee</Authors>
+    <Company>Health Informatics Centre, University of Dundee</Company>
+    <Product>SynthEHR</Product>
+    <Copyright>Copyright 2018-2026</Copyright>
 
     <!-- Don't treat warnings as errors until code quality issues are fixed -->
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
 
-  <!-- Don't include MinVer package since we use SharedAssemblyInfo.cs -->
+  <!-- Don't include MinVer package since the version is set explicitly above -->
   <ItemGroup>
     <PackageReference Remove="MinVer" />
   </ItemGroup>
