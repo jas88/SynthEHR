@@ -18,13 +18,13 @@ First release from the jas88/SynthEHR fork.
 
 ### Added
 - Deterministic GUID generation in Appointment and Maternity datasets when using a seeded random number generator
-- Compile-time source generator replaces embedded CSV dataset files
+- Compile-time source generator turns the dataset CSVs into generated data classes, replacing runtime CSV parsing
 - Standardised build configuration through the build-standards submodule
 
 ### Changed
 - Removed the CsvHelper dependency; the library has no runtime package dependencies
+- Dataset CSVs are no longer also embedded as unused resources, reducing SynthEHR.Core.dll from about 25 MB to 17 MB per target framework
 - Performance improvements: Span-based CHI/ANOCHI generation, binary-search weighted lookups, SearchValues CSV escaping, string interning
-- Fixed NULL handling for string columns
 - Updated README with modern .NET CLI usage instructions
 
 ## [2.0.1] - 2024-08-15

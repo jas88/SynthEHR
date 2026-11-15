@@ -38,8 +38,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\Datasets.doc.xml" Link="Datasets.doc.xml" />
-    <!-- CSV files embedded as resources with proper naming for runtime access -->
-    <EmbeddedResource Include="..\data\*.csv" LogicalName="SynthEHR.Core.Datasets.%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
     <!-- Reference the source generator as an analyzer (disabled for CodeQL to avoid OOM) -->
