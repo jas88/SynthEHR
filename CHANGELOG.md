@@ -13,7 +13,9 @@ Completes the 3.0 API clean-up. 3.0.0 had no consumers yet, so these source-brea
 ### Breaking
 - `IDataGenerator.GenerateTestDataRow` / `DataGenerator.GenerateTestDataRow` return `object?[]`, since rows legitimately contain null cells; the parameter is renamed from `p` to `person`
 - Removed `DataGenerator.EmbeddedCsvToDataTable`, which always threw in 3.0.0
-- Public fields are now properties: `BiochemistryRecord.*`, `PrescribingRecord.*`, `Person.DateOfBirth`, `Person.DateOfDeath`, `DataGenerator.r` and `DataGeneratorFactory.GeneratorType.Type`
+- Public fields are now properties: `BiochemistryRecord.*`, `PrescribingRecord.*`, `Person.DateOfBirth`, `Person.DateOfDeath` and `DataGeneratorFactory.GeneratorType.Type`
+- The protected field `DataGenerator.r` is now a protected property; `DataGenerator` subclasses that pass it by `ref` or `out` must change
+- `RowsGeneratedEventArgs` now derives from `EventArgs`; `IPersonCollection` and `PersonCollection` implement `IReadOnlyCollection<Person>` (enumerating `People`)
 - Nullable annotations corrected to match actual behaviour: `BiochemistryRecord.Result`, `DemographyAddress.Line4`, the optional diagnosis/operation properties on `HospitalAdmissionsRecord`, `Descriptions.Get*` and the `RowsGenerated` event are nullable
 
 ### Fixed

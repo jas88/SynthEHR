@@ -14,7 +14,7 @@ public class Prescribing(Random rand) : DataGenerator(rand)
 {
 
     /// <summary>
-    /// Creates a new demography record (GP registration) for the <paramref name="person"/>
+    /// Creates a new prescription record for the <paramref name="person"/>
     /// </summary>
     /// <param name="person"></param>
     /// <returns></returns>

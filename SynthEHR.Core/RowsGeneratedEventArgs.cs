@@ -13,7 +13,7 @@ namespace SynthEHR;
 /// <param name="rowsWritten"></param>
 /// <param name="elapsedTime"></param>
 /// <param name="isFinished">True if this the last invocation and the file generation is complete</param>
-public sealed class RowsGeneratedEventArgs(int rowsWritten, TimeSpan elapsedTime, bool isFinished)
+public sealed class RowsGeneratedEventArgs(int rowsWritten, TimeSpan elapsedTime, bool isFinished) : EventArgs
 {
 
     /// <summary>
