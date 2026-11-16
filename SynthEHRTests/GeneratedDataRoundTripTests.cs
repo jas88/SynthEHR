@@ -159,8 +159,10 @@ internal sealed class GeneratedDataRoundTripTests
         var rows = new List<string[]>();
         while (!parser.EndOfData)
         {
+            // TextFieldParser already skips empty lines; like the generator, also skip a line that is only
+            // whitespace (one whitespace field), but keep records whose cells are all empty (e.g. ",,,").
             var fields = parser.ReadFields();
-            if (fields is null || fields.All(string.IsNullOrWhiteSpace))
+            if (fields is null || (fields.Length == 1 && string.IsNullOrWhiteSpace(fields[0])))
                 continue;
 
             // Missing trailing cells read as empty, matching the generator.

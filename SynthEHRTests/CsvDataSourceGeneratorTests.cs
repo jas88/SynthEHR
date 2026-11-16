@@ -147,21 +147,38 @@ internal sealed class CsvDataSourceGeneratorTests
         AssertRoundTrip(headers, rows);
     }
 
-    [Test]
-    public void CountColumn_RowsArePreSortedDescending()
+    /// <summary>
+    /// A count column is detected (all values parse as integers) and rows are pre-sorted by it, descending.
+    /// Detection must not depend on the build machine's culture: ar-SA and fa-IR use a different minus sign,
+    /// so culture-sensitive parsing would reject "-1" and skip the sort, changing seeded output.
+    /// </summary>
+    [TestCase("")]
+    [TestCase("ar-SA")]
+    [TestCase("fa-IR")]
+    [TestCase("sv-SE")]
+    public void CountColumn_RowsArePreSortedDescending(string culture)
     {
         var headers = new[] { "Code", "RecordCount" };
         var rows = new List<string[]>
         {
-            new[] { "«a", "5" }, new[] { "b€", "50" }, new[] { "c😀", "1" }, new[] { "d", "500" },
+            new[] { "«a", "5" }, new[] { "b€", "50" }, new[] { "c😀", "-1" }, new[] { "d", "500" },
         };
 
-        var data = Generate(headers, rows);
-        var counts = data.Rows.Select(r => r[1]).ToArray();
+        var previous = CultureInfo.CurrentCulture;
+        (List<string[]> Rows, ImmutableArray<Diagnostic> Diagnostics) data;
+        try
+        {
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(culture);
+            data = Generate(headers, rows);
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = previous;
+        }
 
         Assert.Multiple(() =>
         {
-            Assert.That(counts, Is.EqualTo(new[] { "500", "50", "5", "1" }));
+            Assert.That(data.Rows.Select(r => r[1]), Is.EqualTo(new[] { "500", "50", "5", "-1" }));
             Assert.That(data.Rows.Select(r => r[0]), Is.EqualTo(new[] { "d", "b€", "«a", "c😀" }));
         });
     }

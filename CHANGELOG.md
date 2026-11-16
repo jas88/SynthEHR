@@ -162,7 +162,8 @@ First release from the jas88/SynthEHR fork.
 
 - Patient birth dates now go from 1914 (Person.MinimumYearOfBirth) allowing for patients aged up to 100 years
 
-[Unreleased]: https://github.com/jas88/SynthEHR/compare/v3.0.1...main
+[Unreleased]: https://github.com/jas88/SynthEHR/compare/v3.0.2...main
+[3.0.2]: https://github.com/jas88/SynthEHR/compare/v3.0.1...v3.0.2
 [3.0.1]: https://github.com/jas88/SynthEHR/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/jas88/SynthEHR/compare/v2.0.1...v3.0.0
 [2.0.1]: https://github.com/HicServices/SynthEHR/compare/v2.0.0...v2.0.1

@@ -209,7 +209,7 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
             {
                 if (sortColumnIndex >= row.Length) return int.MinValue;
                 var value = row[sortColumnIndex];
-                return int.TryParse(value, out var result) ? result : int.MinValue;
+                return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result) ? result : int.MinValue;
             }).ToArray(),
 
             ColumnDataType.Double => rows.OrderByDescending(row =>
@@ -245,7 +245,7 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
 
                 var value = row[colIndex];
 
-                if (allInt && !int.TryParse(value, out _))
+                if (allInt && !int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
                     allInt = false;
 
                 if (allDouble && !double.TryParse(value, System.Globalization.NumberStyles.Any,
