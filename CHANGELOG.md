@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-11-16
+
+### Changed
+- **BREAKING** (target frameworks): the library now targets `net10.0` and `net11.0`; `net8.0` and `net9.0` reached end of support on 10 November 2026 and are dropped. The CLI still targets `net10.0`
+- Update the build-standards submodule, which sets these target frameworks
+- CI: CodeQL runs as a separate, parallel job, and the NuGet package and CLI binaries are built from the tested Release output instead of being recompiled
+- Symbol package settings moved from the CI command line into `SynthEHR.Core.csproj`: local Release builds now produce the same separate portable PDBs as the published package (`.snupkg`); the package contents are otherwise unchanged
+
 ## [3.0.2] - 2026-11-16
 
 ### Fixed
@@ -162,7 +170,8 @@ First release from the jas88/SynthEHR fork.
 
 - Patient birth dates now go from 1914 (Person.MinimumYearOfBirth) allowing for patients aged up to 100 years
 
-[Unreleased]: https://github.com/jas88/SynthEHR/compare/v3.0.2...main
+[Unreleased]: https://github.com/jas88/SynthEHR/compare/v3.1.0...main
+[3.1.0]: https://github.com/jas88/SynthEHR/compare/v3.0.2...v3.1.0
 [3.0.2]: https://github.com/jas88/SynthEHR/compare/v3.0.1...v3.0.2
 [3.0.1]: https://github.com/jas88/SynthEHR/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/jas88/SynthEHR/compare/v2.0.1...v3.0.0

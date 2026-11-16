@@ -8,6 +8,9 @@
     <DebugType>embedded</DebugType>
     <LangVersion>latest</LangVersion>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <!-- Don't copy SynthEHR.Core's .pdb/.xml (separate files in Release for the .snupkg) next to the CLI;
+         only the binary, its config and the YAML template are distributed. -->
+    <AllowedReferenceRelatedFileExtensions>.dll.config;.exe.config</AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
