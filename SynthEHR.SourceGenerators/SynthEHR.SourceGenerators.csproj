@@ -11,8 +11,9 @@
     <IsPublishable>false</IsPublishable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <DevelopmentDependency>true</DevelopmentDependency>
-    <!-- Suppress analyzer warnings that don't apply to source generators -->
-    <NoWarn>$(NoWarn);CA1016;CA1304;CA1305;CA1310</NoWarn>
+    <!-- Suppress analyzer warnings that don't apply to source generators. The culture rules
+         (CA1304/CA1305/CA1310) stay on: generated source must not depend on the build machine's locale. -->
+    <NoWarn>$(NoWarn);CA1016</NoWarn>
   </PropertyGroup>
 
 

@@ -129,9 +129,9 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         var sortNote = sortColumnIndex >= 0
             ? $" Data is pre-sorted by {headers[sortColumnIndex]} (descending) for optimal performance."
             : "";
-        code.AppendXmlDocComment($"Generated data class for {fileName}.csv containing {rows.Length} rows using columnar storage.{sortNote}");
+        code.AppendXmlDocComment(FormattableString.Invariant($"Generated data class for {fileName}.csv containing {rows.Length} rows using columnar storage.{sortNote}"));
         code.AppendGeneratedCodeAttribute();
-        code.AppendLine($"[CsvDataSource(FileName = \"{fileName}.csv\", RowCount = {rows.Length})]");
+        code.AppendLine(FormattableString.Invariant($"[CsvDataSource(FileName = \"{fileName}.csv\", RowCount = {rows.Length})]"));
         code.AppendClass(className, isStatic: true);
         code.OpenBrace();
 
@@ -153,21 +153,21 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         code.AppendLine();
 
         // Generate columnar storage arrays and collect interning info
-        var internedStrings = GenerateColumnarStorage(code, headers, rows, columnTypes);
+        var internedStrings = GenerateColumnarStorage(code, headers, rows);
 
         // Generate GetRow method with interning support
-        GenerateGetRowMethod(code, headers, columnTypes, internedStrings);
+        GenerateGetRowMethod(code, headers, internedStrings);
 
         // Generate IReadOnlyList wrapper
         GenerateLazyRowList(code);
 
         // Public properties
         code.AppendXmlDocComment("All rows from the CSV file.");
-        code.AppendLine($"public static IReadOnlyList<Row> AllRows {{ get; }} = new LazyRowList({rows.Length});");
+        code.AppendLine(FormattableString.Invariant($"public static IReadOnlyList<Row> AllRows {{ get; }} = new LazyRowList({rows.Length});"));
         code.AppendLine();
 
         code.AppendXmlDocComment("Gets the total number of rows.");
-        code.AppendLine($"public static int Count => {rows.Length};");
+        code.AppendLine(FormattableString.Invariant($"public static int Count => {rows.Length};"));
         code.AppendLine();
 
         code.AppendXmlDocComment("Gets a random row from the dataset.");
@@ -209,7 +209,7 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
             {
                 if (sortColumnIndex >= row.Length) return int.MinValue;
                 var value = row[sortColumnIndex];
-                return int.TryParse(value, out var result) ? result : int.MinValue;
+                return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result) ? result : int.MinValue;
             }).ToArray(),
 
             ColumnDataType.Double => rows.OrderByDescending(row =>
@@ -245,7 +245,7 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
 
                 var value = row[colIndex];
 
-                if (allInt && !int.TryParse(value, out _))
+                if (allInt && !int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
                     allInt = false;
 
                 if (allDouble && !double.TryParse(value, System.Globalization.NumberStyles.Any,
@@ -278,15 +278,12 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
                value == "yes" || value == "no" || value == "Yes" || value == "No";
     }
 
-    private static Dictionary<string, int> GenerateColumnarStorage(CodeBuilder code, string[] headers, string[][] rows, ColumnTypeInfo[] columnTypes)
+    private static Dictionary<string, int> GenerateColumnarStorage(CodeBuilder code, string[] headers, string[][] rows)
     {
-        // Group columns by type
-        var stringColumns = new List<int>();
-        for (int i = 0; i < columnTypes.Length; i++)
-        {
-            if (columnTypes[i].Type == ColumnDataType.String)
-                stringColumns.Add(i);
-        }
+        // Row exposes every column as a string, so every column is stored as its exact CSV text.
+        // Converting numeric-looking columns to typed arrays and back would reformat values ("13.0" -> "13",
+        // "007" -> "7"), make the output depend on the current culture, and turn empty cells into "NULL".
+        var stringColumns = Enumerable.Range(0, headers.Length).ToList();
 
         // Analyze string frequency for interning
         var stringFrequency = AnalyzeStringFrequency(rows, stringColumns);
@@ -295,100 +292,17 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         // Generate interned string constants
         if (internedStrings.Count > 0)
         {
-            code.AppendXmlDocComment($"Interned strings (appearing 10+ times) - {internedStrings.Count} unique values");
+            code.AppendXmlDocComment(FormattableString.Invariant($"Interned strings (appearing 10+ times) - {internedStrings.Count} unique values"));
             foreach (var kvp in internedStrings.OrderBy(x => x.Value))
             {
-                var constName = $"_InternedStr{kvp.Value}";
+                var constName = FormattableString.Invariant($"_InternedStr{kvp.Value}");
                 var escapedValue = EscapeString(kvp.Key);
                 var frequency = stringFrequency[kvp.Key];
-                code.AppendLine($"private const string {constName} = \"{escapedValue}\"; // appears {frequency}x");
+                code.AppendLine(FormattableString.Invariant($"private const string {constName} = \"{escapedValue}\"; // appears {frequency}x"));
             }
             code.AppendLine();
         }
 
-        // Generate typed column arrays
-        for (int colIndex = 0; colIndex < headers.Length; colIndex++)
-        {
-            var columnType = columnTypes[colIndex];
-            var propertyName = CsvDataParser.SanitizeIdentifier(headers[colIndex]);
-
-            if (columnType.Type == ColumnDataType.String)
-                continue; // Handle strings separately with blob
-
-            string spanType = columnType.Type switch
-            {
-                ColumnDataType.Int => "int",
-                ColumnDataType.Double => "double",
-                ColumnDataType.Bool => "bool",
-                _ => "string"
-            };
-
-            code.AppendXmlDocComment($"Column data for {headers[colIndex]}");
-            code.AppendLine($"private static ReadOnlySpan<{spanType}> _{propertyName}Data => new {spanType}[]");
-            code.OpenBrace();
-
-            for (int rowIndex = 0; rowIndex < rows.Length; rowIndex++)
-            {
-                var row = rows[rowIndex];
-                var value = colIndex < row.Length ? (row[colIndex] ?? string.Empty) : string.Empty;
-                var isLast = rowIndex == rows.Length - 1;
-
-                string literalValue;
-                if (string.IsNullOrEmpty(value) || value == "NULL")
-                {
-                    literalValue = columnType.Type switch
-                    {
-                        ColumnDataType.Int => "0",
-                        ColumnDataType.Double => "0.0",
-                        ColumnDataType.Bool => "false",
-                        _ => "\"\""
-                    };
-                }
-                else
-                {
-                    literalValue = columnType.Type switch
-                    {
-                        ColumnDataType.Int => value,
-                        ColumnDataType.Double => FormatDoubleLiteral(value),
-                        ColumnDataType.Bool => ParseBoolLiteral(value),
-                        _ => $"\"{EscapeString(value)}\""
-                    };
-                }
-
-                code.AppendLine($"{literalValue}{(isLast ? "" : ",")}");
-            }
-
-            code.CloseBrace(semicolon: true);
-            code.AppendLine();
-        }
-
-        // Generate nullable flags for columns that need them
-        for (int colIndex = 0; colIndex < headers.Length; colIndex++)
-        {
-            var columnType = columnTypes[colIndex];
-            if (!columnType.IsNullable || columnType.Type == ColumnDataType.String)
-                continue;
-
-            var propertyName = CsvDataParser.SanitizeIdentifier(headers[colIndex]);
-            code.AppendXmlDocComment($"Null flags for {headers[colIndex]}");
-            code.AppendLine($"private static ReadOnlySpan<bool> _{propertyName}Nulls => new bool[]");
-            code.OpenBrace();
-
-            for (int rowIndex = 0; rowIndex < rows.Length; rowIndex++)
-            {
-                var row = rows[rowIndex];
-                var value = colIndex < row.Length ? (row[colIndex] ?? string.Empty) : string.Empty;
-                var isLast = rowIndex == rows.Length - 1;
-                var isNull = string.IsNullOrEmpty(value) || value == "NULL";
-
-                code.AppendLine($"{(isNull ? "true" : "false")}{(isLast ? "" : ",")}");
-            }
-
-            code.CloseBrace(semicolon: true);
-            code.AppendLine();
-        }
-
-        // Generate string blob and offsets with interning support
         if (stringColumns.Count > 0)
         {
             GenerateInternedStringStorage(code, rows, stringColumns, internedStrings);
@@ -433,7 +347,10 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
     private static void GenerateInternedStringStorage(CodeBuilder code, string[][] rows, List<int> stringColumns, Dictionary<string, int> internedStrings)
     {
         var stringBlob = new StringBuilder();
+        // Offsets index the UTF-8 bytes of the blob, not its UTF-16 chars: any non-ASCII text would
+        // otherwise shift every later value.
         var offsets = new List<int>();
+        var byteOffset = 0;
         var internedIndices = new List<int>(); // -1 = not interned, >= 0 = interned string ID
 
         for (int rowIndex = 0; rowIndex < rows.Length; rowIndex++)
@@ -441,7 +358,7 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
             var row = rows[rowIndex];
             foreach (var colIndex in stringColumns)
             {
-                offsets.Add(stringBlob.Length);
+                offsets.Add(byteOffset);
                 var value = colIndex < row.Length ? (row[colIndex] ?? string.Empty) : string.Empty;
 
                 // Check if this string should be interned
@@ -450,6 +367,7 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
                     internedIndices.Add(internId);
                     // Add marker to blob (empty string with special offset handling)
                     stringBlob.Append('\0');
+                    byteOffset += 1;
                 }
                 else
                 {
@@ -457,13 +375,16 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
                     // Keep "NULL" as-is for string columns - tests expect this literal
                     stringBlob.Append(value);
                     stringBlob.Append('\0');
+                    byteOffset += Encoding.UTF8.GetByteCount(value) + 1;
                 }
             }
         }
-        offsets.Add(stringBlob.Length); // Final offset for bounds
+        offsets.Add(byteOffset); // Final offset for bounds
 
         code.AppendXmlDocComment("UTF8 string data blob for non-interned string columns");
         var blobBytes = Encoding.UTF8.GetBytes(stringBlob.ToString());
+        if (blobBytes.Length != byteOffset)
+            throw new InvalidOperationException(FormattableString.Invariant($"String blob is {blobBytes.Length} bytes but offsets end at {byteOffset}"));
         code.AppendLine($"private static ReadOnlySpan<byte> _stringData => new byte[]");
         code.OpenBrace();
 
@@ -478,7 +399,7 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
             if (i > 0 && i % 20 != 0)
                 code.Append(" ");
 
-            code.Append(blobBytes[i].ToString());
+            code.Append(blobBytes[i].ToString(CultureInfo.InvariantCulture));
 
             if (i < blobBytes.Length - 1)
                 code.Append(",");
@@ -497,7 +418,7 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         for (int i = 0; i < offsets.Count; i++)
         {
             var isLast = i == offsets.Count - 1;
-            code.AppendLine($"{offsets[i]}{(isLast ? "" : ",")}");
+            code.AppendLine(FormattableString.Invariant($"{offsets[i]}{(isLast ? "" : ",")}"));
         }
 
         code.CloseBrace(semicolon: true);
@@ -510,20 +431,20 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         for (int i = 0; i < internedIndices.Count; i++)
         {
             var isLast = i == internedIndices.Count - 1;
-            code.AppendLine($"{internedIndices[i]}{(isLast ? "" : ",")}");
+            code.AppendLine(FormattableString.Invariant($"{internedIndices[i]}{(isLast ? "" : ",")}"));
         }
 
         code.CloseBrace(semicolon: true);
         code.AppendLine();
 
-        code.AppendLine($"private const int StringColumnsCount = {stringColumns.Count};");
+        code.AppendLine(FormattableString.Invariant($"private const int StringColumnsCount = {stringColumns.Count};"));
         code.AppendLine();
     }
 
-    private static void GenerateGetRowMethod(CodeBuilder code, string[] headers, ColumnTypeInfo[] columnTypes, Dictionary<string, int> internedStrings)
+    private static void GenerateGetRowMethod(CodeBuilder code, string[] headers, Dictionary<string, int> internedStrings)
     {
         // Generate GetString helper if needed
-        var hasStringColumns = columnTypes.Any(ct => ct.Type == ColumnDataType.String);
+        var hasStringColumns = headers.Length > 0;
         if (hasStringColumns)
         {
             code.AppendXmlDocComment("Extracts a string from the blob at the specified row and column index");
@@ -543,7 +464,7 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
             {
                 foreach (var kvp in internedStrings.OrderBy(x => x.Value))
                 {
-                    code.AppendLine($"{kvp.Value} => _InternedStr{kvp.Value},");
+                    code.AppendLine(FormattableString.Invariant($"{kvp.Value} => _InternedStr{kvp.Value},"));
                 }
             }
             code.AppendLine("_ => string.Empty");
@@ -567,34 +488,10 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         code.AppendLine("return new Row");
         code.OpenBrace();
 
-        int stringColIndex = 0;
         for (int i = 0; i < headers.Length; i++)
         {
             var propertyName = CsvDataParser.SanitizeIdentifier(headers[i]);
-            var columnType = columnTypes[i];
-
-            string assignment;
-            if (columnType.Type == ColumnDataType.String)
-            {
-                assignment = $"GetString(index, {stringColIndex})";
-                stringColIndex++;
-            }
-            else
-            {
-                // Convert typed values back to strings for backward compatibility
-                string access = $"_{propertyName}Data[index]";
-                if (columnType.IsNullable)
-                {
-                    // Return "NULL" string for nulls - existing code expects this literal
-                    assignment = $"_{propertyName}Nulls[index] ? \"NULL\" : {access}.ToString()";
-                }
-                else
-                {
-                    assignment = $"{access}.ToString()";
-                }
-            }
-
-            code.AppendLine($"{propertyName} = {assignment},");
+            code.AppendLine(FormattableString.Invariant($"{propertyName} = GetString(index, {i}),"));
         }
 
         code.CloseBrace(semicolon: true);
@@ -621,24 +518,7 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         code.AppendLine();
     }
 
-    private static string ParseBoolLiteral(string value)
-    {
-        return value switch
-        {
-            "true" or "True" or "TRUE" or "1" or "yes" or "Yes" => "true",
-            _ => "false"
-        };
-    }
 
-    private static string FormatDoubleLiteral(string value)
-    {
-        // Ensure double literals are valid C# - must have decimal point and at least one digit after
-        if (!value.Contains('.'))
-            return value + ".0";
-        if (value.EndsWith("."))
-            return value + "0";
-        return value;
-    }
 
     private static string EscapeString(string value)
     {

@@ -130,7 +130,7 @@ internal static class CsvDataParser
         {
             if (char.IsLetterOrDigit(c))
             {
-                sb.Append(firstChar ? char.ToUpper(c) : c);
+                sb.Append(firstChar ? char.ToUpperInvariant(c) : c);
                 firstChar = false;
             }
             else if (c == '_' || c == ' ')

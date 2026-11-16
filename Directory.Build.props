@@ -22,7 +22,7 @@
     <LangVersion>latest</LangVersion>
 
     <!-- Single source of truth for assembly, file, informational and package versions (MinVer not used) -->
-    <Version>3.0.1</Version>
+    <Version>3.0.2</Version>
 
     <!-- Project-specific metadata -->
     <RepositoryUrl>https://github.com/jas88/SynthEHR</RepositoryUrl>
