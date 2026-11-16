@@ -1,15 +1,11 @@
-SynthEHR/obj/
-SynthEHR/bin/
+# Build output (any project)
+[Bb]in/
+[Oo]bj/
+
 *.user
 SynthEHR/.vs/
 .vs/
 Visual Studio 2017/
-SynthEHRTests/obj/
 *.vspx
 *.psess
-SynthEHRTests/bin/
-SynthEHR.Core/obj/
-SynthEHR.Core/bin/
-SynthEHR.SourceGenerators/obj/
-SynthEHR.SourceGenerators/bin/
 .idea/
