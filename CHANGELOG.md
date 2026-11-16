@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.2] - 2026-11-16
+
+### Fixed
+- Generated data classes (`SynthEHR.Core.Data.*Data`) now return exactly the text of every CSV cell. In 3.0.0 and 3.0.1:
+  - String offsets into the UTF-8 data blob were counted in UTF-16 chars, so every value after the first non-ASCII character was read from the wrong position. `Prescribing.csv` contains `«`, which corrupted about half of all prescribing `Name`s and most `BNF_Description`s, and produced whitespace-only names
+  - Numeric-looking columns were stored as numbers and formatted back with the current culture, so values were reformatted (`13.0` became `13`, `480.000000` became `480`) and, under cultures with a comma decimal separator, became unparseable or were mis-parsed by consumers (`13.5` read back as `135`)
+  - Empty cells in numeric-looking columns came back as the literal `NULL`, changing generated Maternity marital status values
+- The source generator formats numbers in generated code with the invariant culture, so building under locales such as `ar-SA` no longer produces uncompilable source, and column names no longer depend on the build machine's casing rules
+
+### Changed
+- Every column is stored as text (with the existing string interning), increasing `SynthEHR.Core.dll` from about 17 MB to 20 MB per target framework
+
+### Added
+- Tests that compare every generated row against an independent parse of each dataset CSV, in several cultures, and tests that run the source generator over synthetic CSVs with multi-byte UTF-8, quoting, numeric-looking text and randomised content
+
 ## [3.0.1] - 2026-11-16
 
 Completes the 3.0 API clean-up. 3.0.0 had no consumers yet, so these source-breaking changes ship as a patch release.

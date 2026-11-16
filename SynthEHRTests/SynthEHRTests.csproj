@@ -9,15 +9,21 @@
     <EnableNUnitRunner>true</EnableNUnitRunner>
     <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
     <!-- CA1707: underscores in test method names are conventional and aid readability.
-         IL2026/IL2067: tests use reflection (e.g. GetExportedTypes) to cross-check the AOT-clean
-         production code; the test project is never trimmed, so trim warnings do not apply. -->
-    <NoWarn>$(NoWarn);CA1707;IL2026;IL2067</NoWarn>
+         CA1861: inline constant arrays are test data, kept next to the assertions that use them.
+         IL2026/IL2067/IL2075: tests use reflection (e.g. GetExportedTypes, generated data classes) to
+         cross-check the AOT-clean production code; the test project is never trimmed, so trim warnings
+         do not apply. -->
+    <NoWarn>$(NoWarn);CA1707;CA1861;IL2026;IL2067;IL2075</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Source CSVs, re-read by GeneratedDataRoundTripTests to check the generated data classes -->
+    <None Include="..\data\*.csv" Link="data\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Drives CsvDataSourceGenerator directly in CsvDataSourceGeneratorTests -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <PackageReference Include="Microsoft.Testing.Extensions.Telemetry" />
     <PackageReference Include="Microsoft.Testing.Platform" />
     <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
@@ -34,6 +40,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SynthEHR.Core\SynthEHR.Core.csproj" />
+    <ProjectReference Include="..\SynthEHR.SourceGenerators\SynthEHR.SourceGenerators.csproj" />
   </ItemGroup>
 
   <!-- Exclude CodeCoverage - conflicts with NUnit on .NET 10 -->
