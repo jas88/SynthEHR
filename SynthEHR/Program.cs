@@ -6,7 +6,6 @@ using SynthEHR.Configuration;
 using SynthEHR.Datasets;
 using CommandLine;
 using FAnsi.Discovery;
-using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
@@ -44,7 +43,7 @@ internal static class Program
         if (opts.NumberOfRows <= 0)
             opts.NumberOfRows = 2000;
 
-        Config config = null;
+        Config? config = null;
 
         if (File.Exists(ConfigFile))
         {
@@ -141,10 +140,17 @@ internal static class Program
     private static int RunDatabaseTarget(IPersonCollection cohort,TargetDatabase configDatabase, IDataGenerator generator, int numberOfRows)
     {
 
-        ImplementationManager.Load<MySqlImplementation>();
-        ImplementationManager.Load<PostgreSqlImplementation>();
-        ImplementationManager.Load<OracleImplementation>();
-        ImplementationManager.Load<MicrosoftSQLImplementation>();
+        // Explicitly register each implementation rather than relying on auto-registration,
+        // so they are guaranteed to be loaded in single-file published builds.
+        MySqlImplementation.EnsureLoaded();
+        PostgreSqlImplementation.EnsureLoaded();
+        OracleImplementation.EnsureLoaded();
+        MicrosoftSQLImplementation.EnsureLoaded();
+
+        if (string.IsNullOrWhiteSpace(configDatabase.ConnectionString))
+            throw new InvalidOperationException($"'{nameof(TargetDatabase.ConnectionString)}' must be set in the Database section of '{ConfigFile}'");
+        if (string.IsNullOrWhiteSpace(configDatabase.DatabaseName))
+            throw new InvalidOperationException($"'{nameof(TargetDatabase.DatabaseName)}' must be set in the Database section of '{ConfigFile}'");
 
         var server = new DiscoveredServer(configDatabase.ConnectionString, configDatabase.DatabaseType);
 

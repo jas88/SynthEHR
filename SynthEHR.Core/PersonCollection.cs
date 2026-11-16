@@ -13,7 +13,7 @@ namespace SynthEHR;
 public class PersonCollection : IPersonCollection
 {
     /// <inheritdoc/>
-    public Person[] People { get; private set; }
+    public Person[] People { get; private set; } = [];
 
     internal readonly HashSet<string> AlreadyGeneratedCHIs = [];
     internal readonly HashSet<string> AlreadyGeneratedANOCHIs = [];

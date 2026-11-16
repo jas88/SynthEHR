@@ -21,37 +21,37 @@ namespace SynthEHR.Datasets;
 public sealed class BiochemistryRecord
 {
     /// <include file='../../Datasets.doc.xml' path='Datasets/Biochemistry/Field[@name="LabNumber"]'/>
-    public readonly string LabNumber;
+    public string LabNumber { get; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/Biochemistry/Field[@name="SampleType"]'/>
-    public readonly string SampleType;
+    public string SampleType { get; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/Biochemistry/Field[@name="TestCode"]'/>
-    public readonly string TestCode;
+    public string TestCode { get; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/Biochemistry/Field[@name="Result"]'/>
-    public readonly string Result;
+    public string? Result { get; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/Biochemistry/Field[@name="ReadCodeValue"]'/>
-    public readonly string ReadCodeValue;
+    public string ReadCodeValue { get; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/Biochemistry/Field[@name="Healthboard"]'/>
-    public readonly string Healthboard;
+    public string Healthboard { get; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/Biochemistry/Field[@name="ArithmeticComparator"]'/>
-    public readonly string ArithmeticComparator;
+    public string ArithmeticComparator { get; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/Biochemistry/Field[@name="Interpretation"]'/>
-    public readonly string Interpretation;
+    public string Interpretation { get; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/Biochemistry/Field[@name="QuantityUnit"]'/>
-    public readonly string QuantityUnit;
+    public string QuantityUnit { get; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/Biochemistry/Field[@name="RangeHighValue"]'/>
-    public readonly string RangeHighValue;
+    public string RangeHighValue { get; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/Biochemistry/Field[@name="RangeLowValue"]'/>
-    public readonly string RangeLowValue;
+    public string RangeLowValue { get; }
 
     /// <summary>
     /// Sorted array of (cumulative weight, data row) tuples for O(log n) binary search lookup.
@@ -154,7 +154,7 @@ public sealed class BiochemistryRecord
         /// </summary>
         /// <param name="r"></param>
         /// <returns></returns>
-        internal string GetQVResult(Random r)
+        internal string? GetQVResult(Random r)
         {
             return !QVAverage.HasValue || !QVStandardDev.HasValue
                 ? null

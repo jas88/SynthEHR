@@ -31,9 +31,9 @@ public interface IDataGenerator
     /// <summary>
     /// Returns a single row of data for writing to the output CSV.  This can include string elements with newlines, quotes etc.
     /// </summary>
-    /// <param name="p"></param>
+    /// <param name="person"></param>
     /// <returns></returns>
-    object[] GenerateTestDataRow(Person p);
+    object?[] GenerateTestDataRow(Person person);
 
     /// <summary>
     /// Create the dataset in memory using the person identifiers in the <paramref name="cohort"/>

@@ -31,12 +31,12 @@ public abstract class DataGenerator : IDataGenerator
         SearchValues.Create([',', '"', '\n', '\r']);
 
     /// <inheritdoc/>
-    public event EventHandler<RowsGeneratedEventArgs> RowsGenerated;
+    public event EventHandler<RowsGeneratedEventArgs>? RowsGenerated;
 
     /// <summary>
     /// Use for all your random needs to ensure Seed injection support.
     /// </summary>
-    protected Random r;
+    protected Random r { get; }
 
     /// <summary>
     /// Use this instead of DateTime.Now to ensure reproducible datasets when using the same seeded random
@@ -96,10 +96,11 @@ public abstract class DataGenerator : IDataGenerator
     /// Escapes CSV field values by detecting special characters and wrapping in quotes.
     /// Uses SIMD-accelerated SearchValues for 10-30x faster character detection on hot path.
     /// </summary>
-    private static string EscapeCsvField(object field)
+    private static string EscapeCsvField(object? field)
     {
-        if (field == null) return "";
-        var value = field.ToString();
+        // ToString() may legitimately return null for some types, so treat that as empty too
+        var value = field?.ToString();
+        if (value is null) return "";
 
         // SIMD-accelerated single-pass search for CSV special characters
         // Replaces 3-4 separate Contains() calls with vectorized IndexOfAny
@@ -115,7 +116,7 @@ public abstract class DataGenerator : IDataGenerator
     /// <param name="people"></param>
     /// <param name="random"></param>
     /// <returns></returns>
-    public Person GetRandomEligiblePerson(Person[] people, Random random=null)
+    public Person GetRandomEligiblePerson(Person[] people, Random? random=null)
     {
         random ??= r;
 
@@ -145,7 +146,7 @@ public abstract class DataGenerator : IDataGenerator
     }
 
     /// <inheritdoc/>
-    public abstract object[] GenerateTestDataRow(Person p);
+    public abstract object?[] GenerateTestDataRow(Person person);
 
     /// <inheritdoc/>
     protected abstract string[] GetHeaders();
@@ -170,7 +171,7 @@ public abstract class DataGenerator : IDataGenerator
     /// <param name="generator"></param>
     /// <param name="separator"></param>
     /// <returns></returns>
-    protected static string Concat(Random r, int min, int max, Func<string> generator, string separator)
+    protected static string Concat(Random r, int min, int max, Func<string?> generator, string separator)
     {
         var sb = new StringBuilder();
 
@@ -296,7 +297,7 @@ public abstract class DataGenerator : IDataGenerator
     /// </summary>
     /// <param name="r"></param>
     /// <returns></returns>
-    protected static object GetRandomCHIStatus(Random r) =>
+    protected static object? GetRandomCHIStatus(Random r) =>
         r.Next(0, 5) switch
         {
             0 => 'C',
@@ -326,23 +327,12 @@ public abstract class DataGenerator : IDataGenerator
     }
 
     /// <summary>
-    /// [OBSOLETE] This method is deprecated. Use compile-time generated data classes in SynthEHR.Core.Data namespace instead.
-    /// For example, use BiochemistryData.AllRows, PrescribingData.AllRows, etc.
-    /// </summary>
-    [Obsolete("Use compile-time generated data classes (e.g., BiochemistryData.AllRows) instead of runtime CSV parsing")]
-    public static DataTable EmbeddedCsvToDataTable(Type requestingType, string resourceFileName, DataTable dt = null)
-    {
-        throw new NotSupportedException(
-            "EmbeddedCsvToDataTable is obsolete. Use compile-time generated data classes " +
-            "in SynthEHR.Core.Data namespace (e.g., BiochemistryData.AllRows, PrescribingData.AllRows) instead.");
-    }
-
-    /// <summary>
-    /// Returns a random sentence.  There are 391 available.  They were created by https://randomwordgenerator.com/sentence.php
+    /// Returns a random sentence.  There are 373 available, drawn from 391 slots; the 18 unused slots (371-379 and 381-389)
+    /// return null, so roughly 1 in 22 results is null.  They were created by https://randomwordgenerator.com/sentence.php
     /// </summary>
     /// <param name="r"></param>
-    /// <returns></returns>
-    protected static string GetRandomSentence(Random r)
+    /// <returns>A random sentence, or null</returns>
+    protected static string? GetRandomSentence(Random r)
     {
         return r.Next(391) switch
         {

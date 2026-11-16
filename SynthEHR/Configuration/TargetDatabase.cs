@@ -14,12 +14,12 @@ public class TargetDatabase
     /// <summary>
     /// The ConnectionString containing the server name, credentials and other parameters for the connection
     /// </summary>
-    public string ConnectionString { get; set; }
+    public string? ConnectionString { get; set; }
 
     /// <summary>
     /// The name of database
     /// </summary>
-    public string DatabaseName { get; set; }
+    public string? DatabaseName { get; set; }
 
     /// <summary>
     /// Set to true to drop and recreate tables described in the Template

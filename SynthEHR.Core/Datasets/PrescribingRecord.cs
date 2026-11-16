@@ -105,25 +105,25 @@ public sealed class PrescribingRecord
     }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/Prescribing/Field[@name="ResSeqNo"]'/>
-    public string ResSeqNo;
+    public string ResSeqNo { get; set; }
     /// <include file='../../Datasets.doc.xml' path='Datasets/Prescribing/Field[@name="Name"]'/>
-    public string Name;
+    public string Name { get; set; }
     /// <include file='../../Datasets.doc.xml' path='Datasets/Prescribing/Field[@name="FormulationCode"]'/>
-    public string FormulationCode;
+    public string FormulationCode { get; set; }
     /// <include file='../../Datasets.doc.xml' path='Datasets/Prescribing/Field[@name="Strength"]'/>
-    public string Strength;
+    public string Strength { get; set; }
     /// <include file='../../Datasets.doc.xml' path='Datasets/Prescribing/Field[@name="StrengthNumerical"]'/>
-    public double? StrengthNumerical;
+    public double? StrengthNumerical { get; set; }
     /// <include file='../../Datasets.doc.xml' path='Datasets/Prescribing/Field[@name="MeasureCode"]'/>
-    public string MeasureCode;
+    public string MeasureCode { get; set; }
     /// <include file='../../Datasets.doc.xml' path='Datasets/Prescribing/Field[@name="BnfCode"]'/>
-    public string BnfCode;
+    public string BnfCode { get; set; }
     /// <include file='../../Datasets.doc.xml' path='Datasets/Prescribing/Field[@name="FormattedBnfCode"]'/>
-    public string FormattedBnfCode;
+    public string FormattedBnfCode { get; set; }
     /// <include file='../../Datasets.doc.xml' path='Datasets/Prescribing/Field[@name="BnfDescription"]'/>
-    public string BnfDescription;
+    public string BnfDescription { get; set; }
     /// <include file='../../Datasets.doc.xml' path='Datasets/Prescribing/Field[@name="ApprovedName"]'/>
-    public string ApprovedName;
+    public string ApprovedName { get; set; }
     /// <include file='../../Datasets.doc.xml' path='Datasets/Prescribing/Field[@name="Quantity"]'/>
-    public string Quantity;
+    public string Quantity { get; set; }
 }

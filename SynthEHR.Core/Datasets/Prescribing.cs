@@ -14,18 +14,18 @@ public class Prescribing(Random rand) : DataGenerator(rand)
 {
 
     /// <summary>
-    /// Creates a new demography record (GP registration) for the <paramref name="p"/>
+    /// Creates a new demography record (GP registration) for the <paramref name="person"/>
     /// </summary>
-    /// <param name="p"></param>
+    /// <param name="person"></param>
     /// <returns></returns>
-    public override object[] GenerateTestDataRow(Person p)
+    public override object?[] GenerateTestDataRow(Person person)
     {
-            var values = new object[12];
+            var values = new object?[12];
 
             var prescription = new PrescribingRecord(r);
 
-            values[0] = p.CHI;
-            values[1] = p.GetRandomDateDuringLifetime(r);
+            values[0] = person.CHI;
+            values[1] = person.GetRandomDateDuringLifetime(r);
             values[2] = prescription.Quantity;
             values[3] = prescription.Strength;
             values[4] = prescription.StrengthNumerical;

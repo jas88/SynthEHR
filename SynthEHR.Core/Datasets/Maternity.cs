@@ -26,13 +26,13 @@ public sealed class Maternity(Random rand) : DataGenerator(rand)
         }
 
     /// <inheritdoc/>
-    public override object[] GenerateTestDataRow(Person p)
+    public override object?[] GenerateTestDataRow(Person person)
     {
-            var record = new MaternityRecord(p,r);
+            var record = new MaternityRecord(person,r);
 
-            var results = new object[12];
+            var results = new object?[12];
 
-            results[0] = p.CHI;
+            results[0] = person.CHI;
             results[1] = r.Next(2) == 0 ? 'T': 'F';
 
             results[2] = record.Date;

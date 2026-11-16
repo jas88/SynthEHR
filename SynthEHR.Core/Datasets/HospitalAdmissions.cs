@@ -10,9 +10,9 @@ public class HospitalAdmissions(Random rand) : DataGenerator(rand)
 {
 
     /// <inheritdoc/>
-    public override object[] GenerateTestDataRow(Person p)
+    public override object?[] GenerateTestDataRow(Person person)
     {
-            var episode = new HospitalAdmissionsRecord(p,p.DateOfBirth, r);
+            var episode = new HospitalAdmissionsRecord(person,person.DateOfBirth, r);
 
             return
             [

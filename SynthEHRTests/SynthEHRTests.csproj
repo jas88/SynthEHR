@@ -8,6 +8,10 @@
     <OutputType>Exe</OutputType>
     <EnableNUnitRunner>true</EnableNUnitRunner>
     <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+    <!-- CA1707: underscores in test method names are conventional and aid readability.
+         IL2026/IL2067: tests use reflection (e.g. GetExportedTypes) to cross-check the AOT-clean
+         production code; the test project is never trimmed, so trim warnings do not apply. -->
+    <NoWarn>$(NoWarn);CA1707;IL2026;IL2067</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
