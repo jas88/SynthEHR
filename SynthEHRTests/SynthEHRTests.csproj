@@ -19,6 +19,10 @@
   <ItemGroup>
     <!-- Source CSVs, re-read by GeneratedDataRoundTripTests to check the generated data classes -->
     <None Include="..\data\*.csv" Link="data\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The CodeQL build (DISABLE_SOURCE_GENERATOR=true) replaces the generated data classes with internal
+         stubs (SynthEHR.Core/Data/CodeQLStubs.cs), so these tests cannot compile there. Tests only run on the
+         normal build. -->
+    <Compile Remove="GeneratedDataRoundTripTests.cs" Condition="'$(DISABLE_SOURCE_GENERATOR)' == 'true'" />
   </ItemGroup>
 
   <ItemGroup>
