@@ -18,11 +18,11 @@ public class CarotidArteryScan(Random rand) : DataGenerator(rand)
     private int _id;
 
     /// <inheritdoc/>
-    public override object[] GenerateTestDataRow(Person p)
+    public override object?[] GenerateTestDataRow(Person person)
     {
-            var results = new object[68];
+            var results = new object?[68];
 
-            var appointment = new Appointment(p,r);
+            var appointment = new Appointment(person,r);
 
             results[0] = appointment.Identifier; //RECORD_NUMBER
             results[1] = 0; //R_CC_STEN_A
@@ -43,7 +43,7 @@ public class CarotidArteryScan(Random rand) : DataGenerator(rand)
             results[16] = Concat(r,0,3,()=>GetRandomSentence(r),Environment.NewLine + Environment.NewLine); //COMMENT
             results[17] = GetRandomSentence(r); //REPORT
             results[18] = _id++; //id
-            results[19] = p.CHI; //PatientID
+            results[19] = person.CHI; //PatientID
             results[20] = 0; //SUMMARY
             results[21] = r.Next(0,99999); //LAST_AUTH_BY
             results[22] = GetRandomDateAfter(appointment.StartDate,r); //LAST_AUTH_DT
@@ -62,7 +62,7 @@ public class CarotidArteryScan(Random rand) : DataGenerator(rand)
             results[35] = 0; //L_CC_STEN_B
             results[36] = 0; //APPT_ID
             results[37] = appointment.StartDate; //DATE
-            results[38] = p.CHI; //CHINO
+            results[38] = person.CHI; //CHINO
             results[39] = GetGaussian(0,5); //L_BD_RATIO
             results[40] = GetGaussian(0,3); //L_AC_RATIO
             results[41] = GetGaussian(0,10); //R_BD_RATIO

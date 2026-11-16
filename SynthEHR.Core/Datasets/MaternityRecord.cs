@@ -158,8 +158,9 @@ public sealed class MaternityRecord
     /// </summary>
     private static string GetRandomFromWeightedArray((int CumulativeWeight, string Value)[] array, int maxWeight, Random r)
     {
+        // the weighted arrays are built from compile-time embedded data, so an empty one indicates corrupt or missing data
         if (array.Length == 0)
-            return null;
+            throw new InvalidOperationException("Weighted lookup array is empty; the embedded maternity data is missing or corrupt");
 
         var weight = r.Next(maxWeight);
 

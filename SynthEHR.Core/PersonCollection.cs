@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace SynthEHR;
@@ -13,7 +14,7 @@ namespace SynthEHR;
 public class PersonCollection : IPersonCollection
 {
     /// <inheritdoc/>
-    public Person[] People { get; private set; }
+    public Person[] People { get; private set; } = [];
 
     internal readonly HashSet<string> AlreadyGeneratedCHIs = [];
     internal readonly HashSet<string> AlreadyGeneratedANOCHIs = [];
@@ -26,4 +27,12 @@ public class PersonCollection : IPersonCollection
         for (var i = 0; i < numberOfUniqueIndividuals; i++)
             People[i] = new Person(random, this);
     }
+
+    /// <inheritdoc/>
+    public int Count => People.Length;
+
+    /// <inheritdoc/>
+    public IEnumerator<Person> GetEnumerator() => ((IEnumerable<Person>)People).GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => People.GetEnumerator();
 }

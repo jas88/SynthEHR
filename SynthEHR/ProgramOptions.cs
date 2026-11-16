@@ -7,7 +7,7 @@ namespace SynthEHR;
 internal sealed class ProgramOptions
 {
     [Value(0,HelpText = "Output directory to create CSV files in",Required=true)]
-    public string OutputDirectory { get; set; }
+    public string OutputDirectory { get; set; } = string.Empty;
 
     [Value(1,HelpText = "The number of unique patient identifiers to generate up front and then use in test data",Default = 500)]
     public int NumberOfPatients { get;set; }
@@ -16,7 +16,7 @@ internal sealed class ProgramOptions
     public int NumberOfRows {get; set; }
 
     [Option('d',HelpText = "The dataset to generate, must be a class name e.g. 'Demography'")]
-    public string Dataset{get; set; }
+    public string? Dataset { get; set; }
 
     [Option('l', HelpText = "Generate lookup tables for some codes used in the test data")]
     public bool Lookups { get; set; }

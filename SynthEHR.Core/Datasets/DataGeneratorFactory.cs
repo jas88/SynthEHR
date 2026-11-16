@@ -12,13 +12,13 @@ public static class DataGeneratorFactory
     /// <summary>
     /// Trivial type wrapper as workaround for https://github.com/dotnet/sdk/issues/27997
     /// </summary>
-    public readonly struct GeneratorType(Type type)
+    public readonly struct GeneratorType([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type type)
     {
         /// <summary>
         /// Actual generator type
         /// </summary>
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
-        public readonly Type Type = type;
+        public Type Type { get; } = type;
     }
 
     /// <summary>
@@ -64,6 +64,8 @@ public static class DataGeneratorFactory
     /// <returns></returns>
     public static IDataGenerator Create([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type type, Random seed)
     {
-        return (IDataGenerator)Activator.CreateInstance(type, seed);
+        // CreateInstance only returns null for Nullable<T> value types, which can never implement IDataGenerator
+        return (IDataGenerator?)Activator.CreateInstance(type, seed)
+               ?? throw new InvalidOperationException($"Activator returned null when creating '{type}'");
     }
 }

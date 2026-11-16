@@ -49,7 +49,12 @@ public static class Descriptions
             yield break;
 
         foreach (var x in ds.Elements(Ns + "Field"))
-            yield return new KeyValuePair<string, string>(x.Attribute(Ns + "name")?.Value, x.Value);
+        {
+            // a Field without a name attribute cannot be keyed, so skip it rather than yield a null key
+            var name = x.Attribute(Ns + "name")?.Value;
+            if (name is not null)
+                yield return new KeyValuePair<string, string>(name, x.Value);
+        }
     }
 
 
@@ -58,7 +63,7 @@ public static class Descriptions
     /// </summary>
     /// <param name="dataset">Dataset you want the description of</param>
     /// <returns></returns>
-    public static string Get(string dataset)
+    public static string? Get(string dataset)
     {
         return Doc.Root?.Element(Ns + dataset)?.Element(Ns + "summary")?.Value;
     }
@@ -69,7 +74,7 @@ public static class Descriptions
     /// </summary>
     /// <typeparam name="T">Dataset you want the description of</typeparam>
     /// <returns></returns>
-    public static string Get<T>() where T : IDataGenerator
+    public static string? Get<T>() where T : IDataGenerator
     {
         return Get(typeof(T).Name);
     }
@@ -80,7 +85,7 @@ public static class Descriptions
     /// <typeparam name="T"></typeparam>
     /// <param name="field"></param>
     /// <returns></returns>
-    public static string Get<T>(string field) where T : IDataGenerator
+    public static string? Get<T>(string field) where T : IDataGenerator
     {
         return Get(typeof(T).Name, field);
     }
@@ -91,7 +96,7 @@ public static class Descriptions
     /// <param name="dataset"></param>
     /// <param name="field"></param>
     /// <returns></returns>
-    public static string Get(string dataset, string field)
+    public static string? Get(string dataset, string field)
     {
         return
             //return from the dataset fields

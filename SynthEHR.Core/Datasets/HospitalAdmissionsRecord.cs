@@ -29,37 +29,37 @@ public sealed class HospitalAdmissionsRecord
     public string MainCondition { get; private set; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/HospitalAdmissions/Field[@name="OtherCondition1"]'/>
-    public string OtherCondition1 { get; private set; }
+    public string? OtherCondition1 { get; private set; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/HospitalAdmissions/Field[@name="OtherCondition2"]'/>
-    public string OtherCondition2 { get; private set; }
+    public string? OtherCondition2 { get; private set; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/HospitalAdmissions/Field[@name="OtherCondition3"]'/>
-    public string OtherCondition3 { get; private set; }
+    public string? OtherCondition3 { get; private set; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/HospitalAdmissions/Field[@name="MainOperation"]'/>
-    public string MainOperation { get; private set; }
+    public string? MainOperation { get; private set; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/HospitalAdmissions/Field[@name="MainOperationB"]'/>
-    public string MainOperationB { get; private set; }
+    public string? MainOperationB { get; private set; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/HospitalAdmissions/Field[@name="OtherOperation1"]'/>
-    public string OtherOperation1 { get; private set; }
+    public string? OtherOperation1 { get; private set; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/HospitalAdmissions/Field[@name="OtherOperation1B"]'/>
-    public string OtherOperation1B { get; private set; }
+    public string? OtherOperation1B { get; private set; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/HospitalAdmissions/Field[@name="OtherOperation2"]'/>
-    public string OtherOperation2 { get; private set; }
+    public string? OtherOperation2 { get; private set; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/HospitalAdmissions/Field[@name="OtherOperation2B"]'/>
-    public string OtherOperation2B { get; private set; }
+    public string? OtherOperation2B { get; private set; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/HospitalAdmissions/Field[@name="OtherOperation3"]'/>
-    public string OtherOperation3 { get; private set; }
+    public string? OtherOperation3 { get; private set; }
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/HospitalAdmissions/Field[@name="OtherOperation3B"]'/>
-    public string OtherOperation3B { get; private set; }
+    public string? OtherOperation3B { get; private set; }
 
     /// <summary>
     /// The <see cref="Person"/> being admitted to hospital

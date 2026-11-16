@@ -5,6 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace SynthEHR;
 
@@ -12,7 +14,7 @@ namespace SynthEHR;
 /// A factory and collection for <see cref="Person"/>.  Pass around to ensure all datasets share the same
 /// patient identifiers.
 /// </summary>
-public interface IPersonCollection
+public interface IPersonCollection : IReadOnlyCollection<Person>
 {
     /// <summary>
     /// The last set of randomly generated patients
@@ -25,5 +27,17 @@ public interface IPersonCollection
     /// <param name="numberOfUniqueIndividuals">Number of <see cref="People"/> to generate</param>
     /// <param name="random">The seed upon which to generate data</param>
     void GeneratePeople(int numberOfUniqueIndividuals, Random random );
+
+    /// <summary>
+    /// The number of <see cref="People"/> currently generated
+    /// </summary>
+    int IReadOnlyCollection<Person>.Count => People.Length;
+
+    /// <summary>
+    /// Enumerates <see cref="People"/>
+    /// </summary>
+    IEnumerator<Person> IEnumerable<Person>.GetEnumerator() => ((IEnumerable<Person>)People).GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => People.GetEnumerator();
 
 }

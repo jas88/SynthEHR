@@ -14,15 +14,15 @@ public sealed class Biochemistry(Random rand) : DataGenerator(rand)
 {
 
     /// <inheritdoc/>
-    public override object[] GenerateTestDataRow(Person p)
+    public override object?[] GenerateTestDataRow(Person person)
     {
-            var results = new object[13];
+            var results = new object?[13];
 
             var randomSample = new BiochemistryRecord(r);
 
-            results[0] = p.CHI;
+            results[0] = person.CHI;
             results[1] = randomSample.Healthboard;
-            results[2] = p.GetRandomDateDuringLifetime(r);
+            results[2] = person.GetRandomDateDuringLifetime(r);
             results[3] = randomSample.SampleType;
             results[4] = randomSample.TestCode;
             results[5] = randomSample.Result;

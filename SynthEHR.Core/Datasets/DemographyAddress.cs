@@ -32,7 +32,7 @@ public class DemographyAddress
     /// <summary>
     /// Fourth line of the address may be a <see cref="DemographyPostcode.Ward"/> or null
     /// </summary>
-    public string Line4 { get; set; }
+    public string? Line4 { get; set; }
 
     /// <summary>
     /// Randomly generated UK postcode
