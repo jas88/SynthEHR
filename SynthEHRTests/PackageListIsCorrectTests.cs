@@ -105,10 +105,10 @@ public sealed partial class PackageListIsCorrectTests
     /// <returns></returns>
     private static string GetPackagesMarkdown(DirectoryInfo root)
     {
-        var path = root.EnumerateFiles("packages.md", EnumerationOptions).Select(static f => f.FullName)
-            .SingleOrDefault();
-        Assert.That(path, Is.Not.Null, "Could not find packages.md");
-        return path;
+        // Throw rather than Assert.That(path, Is.Not.Null): the compiler cannot tell that the assertion does not
+        // return when path is null, so returning path after it is CS8603 (possible null reference return).
+        return root.EnumerateFiles("packages.md", EnumerationOptions).Select(static f => f.FullName)
+            .SingleOrDefault() ?? throw new AssertionException("Could not find packages.md");
     }
 
     [GeneratedRegex("""
