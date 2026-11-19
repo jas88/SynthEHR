@@ -85,7 +85,7 @@ internal sealed class DescriptionsTests
             Assert.Multiple(() =>
             {
                 Assert.That(Descriptions.Get(g.Name), Is.Not.Null, $"Dataset '{g.Name}' did not have a summary tag");
-                Assert.That($"Dataset '{g.Name}' did not have at least one column description", Is.Not.Empty);
+                Assert.That(Descriptions.GetAll(g.Name), Is.Not.Empty, $"Dataset '{g.Name}' did not have at least one column description");
             });
         }
     }
