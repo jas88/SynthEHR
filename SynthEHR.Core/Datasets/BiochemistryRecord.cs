@@ -145,20 +145,20 @@ public sealed class BiochemistryRecord
         public readonly string QuantityUnit = row.QuantityUnit;
         public double? RangeHighValue = double.TryParse(row.RangeHighValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var rangeLow) ? rangeLow : null;
         public double? RangeLowValue = double.TryParse(row.RangeLowValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var rangeHigh) ? rangeHigh : null;
-        private readonly double? QVAverage = double.TryParse(row.QVAverage, NumberStyles.Any, CultureInfo.InvariantCulture, out var min) ? min : null;
-        private readonly double? QVStandardDev = double.TryParse(row.QVStandardDev, NumberStyles.Any, CultureInfo.InvariantCulture, out var dev) ? dev : null;
+        private readonly double? _qvAverage = double.TryParse(row.QVAverage, NumberStyles.Any, CultureInfo.InvariantCulture, out var min) ? min : null;
+        private readonly double? _qvStandardDev = double.TryParse(row.QVStandardDev, NumberStyles.Any, CultureInfo.InvariantCulture, out var dev) ? dev : null;
 
         /// <summary>
-        /// Returns a new QV value using the <see cref="QVAverage"/> and <see cref="QVStandardDev"/> seeded with the provided
-        /// <paramref name="r"/>.  Returns null if <see cref="QVAverage"/> or <see cref="QVStandardDev"/> are null.
+        /// Returns a new QV value using the <see cref="_qvAverage"/> and <see cref="_qvStandardDev"/> seeded with the provided
+        /// <paramref name="r"/>.  Returns null if <see cref="_qvAverage"/> or <see cref="_qvStandardDev"/> are null.
         /// </summary>
         /// <param name="r"></param>
         /// <returns></returns>
         internal string? GetQVResult(Random r)
         {
-            return !QVAverage.HasValue || !QVStandardDev.HasValue
+            return !_qvAverage.HasValue || !_qvStandardDev.HasValue
                 ? null
-                : new Normal(QVAverage.Value, QVStandardDev.Value, r).Sample().ToString(CultureInfo.InvariantCulture);
+                : new Normal(_qvAverage.Value, _qvStandardDev.Value, r).Sample().ToString(CultureInfo.InvariantCulture);
         }
     }
 }

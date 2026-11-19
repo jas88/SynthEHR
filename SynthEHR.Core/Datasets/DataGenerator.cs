@@ -27,7 +27,7 @@ public abstract class DataGenerator : IDataGenerator
     /// SearchValues for SIMD-accelerated CSV special character detection.
     /// Includes comma, quote, newline, and carriage return characters that require field escaping.
     /// </summary>
-    private static readonly SearchValues<char> _csvSpecialChars =
+    private static readonly SearchValues<char> CsvSpecialChars =
         SearchValues.Create([',', '"', '\n', '\r']);
 
     /// <inheritdoc/>
@@ -106,7 +106,7 @@ public abstract class DataGenerator : IDataGenerator
 
         // SIMD-accelerated single-pass search for CSV special characters
         // Replaces 3-4 separate Contains() calls with vectorized IndexOfAny
-        if (value.AsSpan().IndexOfAny(_csvSpecialChars) >= 0)
+        if (value.AsSpan().IndexOfAny(CsvSpecialChars) >= 0)
             return $"\"{value.Replace("\"", "\"\"")}\"";
         return value;
     }

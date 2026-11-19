@@ -7,7 +7,7 @@ namespace SynthEHR.Datasets;
 /// <inheritdoc/>
 public sealed class Wide(Random rand) : DataGenerator(rand)
 {
-    int autonum = 1;
+    int _autonum = 1;
 
     /// <inheritdoc/>
     public override object?[] GenerateTestDataRow(Person person)
@@ -15,7 +15,7 @@ public sealed class Wide(Random rand) : DataGenerator(rand)
         r.Next();
 
         var array = new object?[980];
-        array[0] = Interlocked.Increment(ref autonum);
+        array[0] = Interlocked.Increment(ref _autonum);
         array[1] = person.CHI;
 
         for (var i = 2; i < array.Length; i++)
