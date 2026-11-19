@@ -664,7 +664,7 @@ chmod +x dotnet-install.sh
 
 # Build
 dotnet build SynthEHR.sln
-dotnet test SynthEHR.sln
+dotnet test --solution SynthEHR.sln
 ```
 
 #### Windows
@@ -674,7 +674,7 @@ dotnet test SynthEHR.sln
 
 # Build
 dotnet build SynthEHR.sln
-dotnet test SynthEHR.sln
+dotnet test --solution SynthEHR.sln
 ```
 
 #### macOS
@@ -684,7 +684,7 @@ brew install dotnet@8
 
 # Build
 dotnet build SynthEHR.sln
-dotnet test SynthEHR.sln
+dotnet test --solution SynthEHR.sln
 ```
 
 ### CI/CD Pipeline
