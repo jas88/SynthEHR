@@ -17,22 +17,22 @@ public class HospitalAdmissions(Random rand) : DataGenerator(rand)
         return
         [
             episode.Person.CHI,
-                episode.Person.DateOfBirth,
-                episode.AdmissionDate,
-                episode.DischargeDate,
-                episode.MainCondition,
-                episode.OtherCondition1,
-                episode.OtherCondition2,
-                episode.OtherCondition3,
-                GetRandomSentence(r),
-                episode.MainOperation,
-                episode.MainOperationB,
-                episode.OtherOperation1,
-                episode.OtherOperation1B,
-                episode.OtherOperation2,
-                episode.OtherOperation2B,
-                episode.OtherOperation3,
-                episode.OtherOperation3B
+            episode.Person.DateOfBirth,
+            episode.AdmissionDate,
+            episode.DischargeDate,
+            episode.MainCondition,
+            episode.OtherCondition1,
+            episode.OtherCondition2,
+            episode.OtherCondition3,
+            GetRandomSentence(r),
+            episode.MainOperation,
+            episode.MainOperationB,
+            episode.OtherOperation1,
+            episode.OtherOperation1B,
+            episode.OtherOperation2,
+            episode.OtherOperation2B,
+            episode.OtherOperation3,
+            episode.OtherOperation3B
         ];
     }
 

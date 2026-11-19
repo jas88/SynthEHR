@@ -275,7 +275,7 @@ public sealed class HospitalAdmissionsRecord
                 tempConditionsToOperationsMap[key] = conditionOps = [];
 
             conditionOps.Add(int.Parse(r.CountOfRecords, CultureInfo.InvariantCulture), [
-                    r.MAINOPERATION,
+                r.MAINOPERATION,
                 r.MAINOPERATIONB,
                 r.OTHEROPERATION1,
                 r.OTHEROPERATION1B,
@@ -283,7 +283,7 @@ public sealed class HospitalAdmissionsRecord
                 r.OTHEROPERATION2B,
                 r.OTHEROPERATION3,
                 r.OTHEROPERATION3B
-                    ]);
+            ]);
         }
 
         // Freeze the ConditionsToOperationsMap
