@@ -661,6 +661,9 @@ wget https://dot.net/v1/dotnet-install.sh
 chmod +x dotnet-install.sh
 ./dotnet-install.sh --channel 11.0
 ./dotnet-install.sh --channel 10.0 --runtime dotnet
+# dotnet-install.sh cannot change this shell's environment
+export DOTNET_ROOT="$HOME/.dotnet"
+export PATH="$DOTNET_ROOT:$PATH"
 
 # Build
 dotnet build SynthEHR.sln
@@ -684,6 +687,9 @@ curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh
 chmod +x dotnet-install.sh
 ./dotnet-install.sh --channel 11.0
 ./dotnet-install.sh --channel 10.0 --runtime dotnet
+# dotnet-install.sh cannot change this shell's environment
+export DOTNET_ROOT="$HOME/.dotnet"
+export PATH="$DOTNET_ROOT:$PATH"
 
 # Build
 dotnet build SynthEHR.sln
@@ -694,7 +700,7 @@ dotnet test --solution SynthEHR.sln
 
 #### GitHub Actions Workflow
 1. **Checkout** code
-2. **Setup** the .NET SDK pinned in `global.json`
+2. **Setup** .NET: the build-test-package and CodeQL jobs install the SDK pinned in `global.json`, and the publish job installs 10.0.x
 3. **Restore** NuGet packages
 4. **Build** solution
 5. **Test** all projects
