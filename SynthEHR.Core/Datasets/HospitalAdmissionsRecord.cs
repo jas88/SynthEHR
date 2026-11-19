@@ -135,7 +135,8 @@ public sealed class HospitalAdmissionsRecord
         }
 
         //if the condition is one that is often treated in a specific way
-        if (!ConditionsToOperationsMap.TryGetValue(MainCondition, out var operationsList)) return;
+        if (!ConditionsToOperationsMap.TryGetValue(MainCondition, out var operationsList))
+            return;
 
         var operations = operationsList.GetRandom(r);
 

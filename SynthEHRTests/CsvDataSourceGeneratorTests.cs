@@ -78,8 +78,10 @@ internal sealed class CsvDataSourceGeneratorTests
             // Mix empty, short repeated (so some get interned) and long unique values.
             switch (r.Next(6))
             {
-                case 0: return string.Empty;
-                case 1: return pool[r.Next(4)];
+                case 0:
+                    return string.Empty;
+                case 1:
+                    return pool[r.Next(4)];
                 default:
                     var sb = new StringBuilder();
                     var len = r.Next(1, 40);

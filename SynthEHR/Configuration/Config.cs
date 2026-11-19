@@ -1,4 +1,4 @@
-﻿namespace SynthEHR.Configuration;
+namespace SynthEHR.Configuration;
 
 internal sealed class Config
 {

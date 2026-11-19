@@ -1,6 +1,6 @@
-﻿using SynthEHR;
-using NUnit.Framework;
 using System;
+using NUnit.Framework;
+using SynthEHR;
 
 namespace SynthEHRTests;
 

@@ -80,7 +80,8 @@ public abstract class DataGenerator : IDataGenerator
             // Write CSV row manually (no CsvHelper dependency in Core)
             sw.WriteLine(string.Join(",", row.Select(EscapeCsvField)));
 
-            if (linesWritten % 1000 != 0) continue;
+            if (linesWritten % 1000 != 0)
+                continue;
 
             RowsGenerated?.Invoke(this, new RowsGeneratedEventArgs(linesWritten + 1, stopwatch.Elapsed, false));
             sw.Flush();//flush every 1000
@@ -100,7 +101,8 @@ public abstract class DataGenerator : IDataGenerator
     {
         // ToString() may legitimately return null for some types, so treat that as empty too
         var value = field?.ToString();
-        if (value is null) return "";
+        if (value is null)
+            return "";
 
         // SIMD-accelerated single-pass search for CSV special characters
         // Replaces 3-4 separate Contains() calls with vectorized IndexOfAny
@@ -116,7 +118,7 @@ public abstract class DataGenerator : IDataGenerator
     /// <param name="people"></param>
     /// <param name="random"></param>
     /// <returns></returns>
-    public Person GetRandomEligiblePerson(Person[] people, Random? random=null)
+    public Person GetRandomEligiblePerson(Person[] people, Random? random = null)
     {
         random ??= r;
 

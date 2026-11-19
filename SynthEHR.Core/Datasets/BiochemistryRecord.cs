@@ -9,8 +9,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
-using Normal = SynthEHR.Statistics.Distributions.Normal;
 using SynthEHR.Core.Data;
+using Normal = SynthEHR.Statistics.Distributions.Normal;
 
 namespace SynthEHR.Datasets;
 

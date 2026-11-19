@@ -14,7 +14,7 @@ namespace SynthEHRTests;
 /// </summary>
 public sealed partial class PackageListIsCorrectTests
 {
-    private static readonly EnumerationOptions EnumerationOptions = new() { RecurseSubdirectories = true,MatchCasing = MatchCasing.CaseInsensitive,IgnoreInaccessible = true};
+    private static readonly EnumerationOptions EnumerationOptions = new() { RecurseSubdirectories = true, MatchCasing = MatchCasing.CaseInsensitive, IgnoreInaccessible = true };
 
     //<PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
     private static readonly Regex RPackageRef = PackageRefRegex();
@@ -31,13 +31,13 @@ public sealed partial class PackageListIsCorrectTests
     [TestCase]
     public void TestPackagesDocumentCorrect(string? rootPath = null)
     {
-        var root= FindRoot(rootPath);
+        var root = FindRoot(rootPath);
         var undocumented = new StringBuilder();
 
         // Extract the named packages from PACKAGES.md
         var packagesMarkdown = File.ReadAllLines(GetPackagesMarkdown(root))
             .Select(static line => RMarkdownEntry.Match(line))
-            .Where(static m=>m.Success)
+            .Where(static m => m.Success)
             .Skip(2)    // Jump over the header
             .Select(static m => m.Groups[1].Value)
             .ToHashSet(StringComparer.InvariantCultureIgnoreCase);
@@ -76,7 +76,8 @@ public sealed partial class PackageListIsCorrectTests
     {
         if (path != null)
         {
-            if (!Path.IsPathRooted(path)) path = Path.Combine(TestContext.CurrentContext.TestDirectory, path);
+            if (!Path.IsPathRooted(path))
+                path = Path.Combine(TestContext.CurrentContext.TestDirectory, path);
             return new DirectoryInfo(path);
         }
         var root = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);

@@ -86,8 +86,10 @@ internal sealed class CodeBuilder
     public CodeBuilder AppendClass(string className, string? baseClass = null, bool isPartial = false, bool isStatic = false)
     {
         var modifiers = "public";
-        if (isPartial) modifiers += " partial";
-        if (isStatic) modifiers += " static";
+        if (isPartial)
+            modifiers += " partial";
+        if (isStatic)
+            modifiers += " static";
 
         if (baseClass != null)
             AppendLine($"{modifiers} class {className} : {baseClass}");

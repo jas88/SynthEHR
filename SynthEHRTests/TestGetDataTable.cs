@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Linq;
+using NUnit.Framework;
 using SynthEHR;
 using SynthEHR.Datasets;
-using NUnit.Framework;
 
 namespace SynthEHRTests;
 
@@ -17,7 +17,7 @@ internal sealed class TestGetDataTable
         var r = new Random(500);
 
         var people = new PersonCollection();
-        people.GeneratePeople(5000,r);
+        people.GeneratePeople(5000, r);
 
         //each dataset
         foreach (var dt in DataGeneratorFactory.GetAvailableGenerators().Select(t => DataGeneratorFactory.Create(t.Type, r))

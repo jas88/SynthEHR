@@ -1,7 +1,7 @@
-﻿using SynthEHR;
-using SynthEHR.Datasets;
-using NUnit.Framework;
 using System.Linq;
+using NUnit.Framework;
+using SynthEHR;
+using SynthEHR.Datasets;
 
 namespace SynthEHRTests;
 
@@ -80,7 +80,7 @@ internal sealed class DescriptionsTests
     [Test]
     public void Test_GetAllDescriptions_AllDatasets()
     {
-        foreach(var g in DataGeneratorFactory.GetAvailableGenerators().Select(static t=>t.Type))
+        foreach (var g in DataGeneratorFactory.GetAvailableGenerators().Select(static t => t.Type))
         {
             Assert.Multiple(() =>
             {

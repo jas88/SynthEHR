@@ -1,4 +1,4 @@
-﻿using FAnsi;
+using FAnsi;
 
 namespace SynthEHR.Configuration;
 

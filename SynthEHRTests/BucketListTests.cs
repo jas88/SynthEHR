@@ -1,6 +1,6 @@
-﻿using System;
-using SynthEHR;
+using System;
 using NUnit.Framework;
+using SynthEHR;
 
 namespace SynthEHRTests;
 
@@ -43,7 +43,7 @@ internal sealed class BucketListTests
 
         for (var i = 0; i < 1000; i++)
         {
-            switch (passIndices ? list.GetRandom(r) : list.GetRandom(ZeroOne,r))
+            switch (passIndices ? list.GetRandom(r) : list.GetRandom(ZeroOne, r))
             {
                 case "red":
                     countRed++;

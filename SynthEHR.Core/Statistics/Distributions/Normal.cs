@@ -1,4 +1,4 @@
-﻿// This is a partial copy of Normal.cs from Mathnet.Numerics 5.0.0
+// This is a partial copy of Normal.cs from Mathnet.Numerics 5.0.0
 // with the unused portions removed for embedding in SynthEHR.
 // (We only use the basic functionality of the Normal distribution.)
 //
@@ -54,9 +54,9 @@ internal sealed class Normal : IContinuousDistribution
     /// <param name="mean">The mean (μ) of the normal distribution.</param>
     /// <param name="stddev">The standard deviation (σ) of the normal distribution. Range: σ ≥ 0.</param>
     /// <param name="randomSource">The random number generator which is used to draw random samples.</param>
-    public Normal(double mean,double stddev,Random randomSource)
+    public Normal(double mean, double stddev, Random randomSource)
     {
-        if (!IsValidParameterSet(mean,stddev))
+        if (!IsValidParameterSet(mean, stddev))
         {
             throw new ArgumentException("Invalid parametrization for the distribution.");
         }
@@ -80,7 +80,7 @@ internal sealed class Normal : IContinuousDistribution
     /// </summary>
     /// <param name="mean">The mean (μ) of the normal distribution.</param>
     /// <param name="stddev">The standard deviation (σ) of the normal distribution. Range: σ ≥ 0.</param>
-    private static bool IsValidParameterSet(double mean,double stddev)
+    private static bool IsValidParameterSet(double mean, double stddev)
     {
         return stddev >= 0.0 && !double.IsNaN(mean);
     }
@@ -98,7 +98,7 @@ internal sealed class Normal : IContinuousDistribution
     /// <summary>
     /// Gets the variance of the normal distribution.
     /// </summary>
-    public double Variance => _stdDev*_stdDev;
+    public double Variance => _stdDev * _stdDev;
 
     /// <summary>
     /// Gets the random number generator which is used to draw random samples.
@@ -147,24 +147,24 @@ internal sealed class Normal : IContinuousDistribution
     /// <returns>a sample from the distribution.</returns>
     public double Sample()
     {
-        return SampleUnchecked(_random,_mean,_stdDev);
+        return SampleUnchecked(_random, _mean, _stdDev);
     }
 
-    internal static double SampleUnchecked(Random rnd,double mean,double stddev)
+    internal static double SampleUnchecked(Random rnd, double mean, double stddev)
     {
         double x;
-        while (!PolarTransform(rnd.NextDouble(),rnd.NextDouble(),out x,out _))
+        while (!PolarTransform(rnd.NextDouble(), rnd.NextDouble(), out x, out _))
         {
         }
 
-        return mean + (stddev*x);
+        return mean + (stddev * x);
     }
 
-    private static bool PolarTransform(double a,double b,out double x,out double y)
+    private static bool PolarTransform(double a, double b, out double x, out double y)
     {
-        var v1 = (2.0*a) - 1.0;
-        var v2 = (2.0*b) - 1.0;
-        var r = (v1*v1) + (v2*v2);
+        var v1 = (2.0 * a) - 1.0;
+        var v2 = (2.0 * b) - 1.0;
+        var r = (v1 * v1) + (v2 * v2);
         if (r >= 1.0 || r == 0.0)
         {
             x = 0;
@@ -172,9 +172,9 @@ internal sealed class Normal : IContinuousDistribution
             return false;
         }
 
-        var fac = Math.Sqrt(-2.0*Math.Log(r)/r);
-        x = v1*fac;
-        y = v2*fac;
+        var fac = Math.Sqrt(-2.0 * Math.Log(r) / r);
+        x = v1 * fac;
+        y = v2 * fac;
         return true;
     }
 }
