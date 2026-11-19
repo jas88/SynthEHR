@@ -77,7 +77,7 @@ public sealed partial class PackageListIsCorrectTests
         if (path != null)
         {
             if (!Path.IsPathRooted(path))
-                path = Path.Combine(TestContext.CurrentContext.TestDirectory, path);
+                path = Path.Join(TestContext.CurrentContext.TestDirectory, path);
             return new DirectoryInfo(path);
         }
         var root = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);

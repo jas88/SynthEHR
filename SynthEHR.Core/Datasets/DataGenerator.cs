@@ -754,7 +754,7 @@ public abstract class DataGenerator : IDataGenerator
     public static void WriteLookups(DirectoryInfo dir)
     {
 
-        File.WriteAllText(Path.Combine(dir.FullName, "z_chiStatus.csv"),
+        File.WriteAllText(Path.Join(dir.FullName, "z_chiStatus.csv"),
 @"Code,Description
 ""C"",""The current record - it contains the approved CHI Number and which contains the GP with whom the patient is currently registered or was last registered with before transfer out of Scotland or death.""
 ""R"",""Redundant records are former records that were cancelled from use, mainly because the date of birth within the number was incorrect.""
@@ -767,7 +767,7 @@ public abstract class DataGenerator : IDataGenerator
 
 
 
-        File.WriteAllText(Path.Combine(dir.FullName, "z_Healthboards.csv"),
+        File.WriteAllText(Path.Join(dir.FullName, "z_Healthboards.csv"),
 @"
 Code,Description
 A,Ayrshire and Arran
@@ -798,7 +798,7 @@ Y,Dumfries and Galloway
 Z,Shetland");
 
 
-        File.WriteAllText(Path.Combine(dir.FullName, "z_PCStenosis.csv"),
+        File.WriteAllText(Path.Join(dir.FullName, "z_PCStenosis.csv"),
 @"Code,CodeValueDescription
 1,Normal
 2,Minimal disease
@@ -808,7 +808,7 @@ Z,Shetland");
 6,Occluded
 9,Unsure");
 
-        File.WriteAllText(Path.Combine(dir.FullName, "z_ICStenosisLookup.csv"),
+        File.WriteAllText(Path.Join(dir.FullName, "z_ICStenosisLookup.csv"),
 @"Code Type Description,Code,CodeValueDescription
 %stenosis Carotid Artery Scan,1,Normal
 %stenosis Carotid Artery Scan,2,Minimal disease
@@ -819,14 +819,14 @@ Z,Shetland");
 %stenosis Carotid Artery Scan,8,See report text
 %stenosis Carotid Artery Scan,9,Unsure");
 
-        File.WriteAllText(Path.Combine(dir.FullName, "z_VertflowLookup.csv"),
+        File.WriteAllText(Path.Join(dir.FullName, "z_VertflowLookup.csv"),
 @"Code,CodeValueDescription
 1,Cephalad
 2,Reversed
 3,Not Detected
 4,See report text");
 
-        File.WriteAllText(Path.Combine(dir.FullName, "z_StenosisLookup.csv"),
+        File.WriteAllText(Path.Join(dir.FullName, "z_StenosisLookup.csv"),
 @"Code,CodeValueDescription
 1,Normal
 2,Minimum
@@ -836,7 +836,7 @@ Z,Shetland");
 9,Not seen
 6,See report text");
 
-        File.WriteAllText(Path.Combine(dir.FullName, "z_PlaqueLookup.csv"),
+        File.WriteAllText(Path.Join(dir.FullName, "z_PlaqueLookup.csv"),
 @"Code,CodeValueDescription
 1,I
 2,II
@@ -845,7 +845,7 @@ Z,Shetland");
 9,Nil
 8,Not applicable");
 
-        File.WriteAllText(Path.Combine(dir.FullName, "z_Specialty.csv"),
+        File.WriteAllText(Path.Join(dir.FullName, "z_Specialty.csv"),
 @"Code,Specialty
 A1,General Medicine
 A11,Acute Medicine
@@ -1014,7 +1014,7 @@ XX,Others"
             );
 
 
-        File.WriteAllText(Path.Combine(dir.FullName, "z_MaritalStatus.csv"),
+        File.WriteAllText(Path.Join(dir.FullName, "z_MaritalStatus.csv"),
 @"Code,Meaning
 A,Never married nor registered civil partnership
 B,Married
