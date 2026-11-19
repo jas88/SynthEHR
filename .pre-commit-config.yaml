@@ -9,7 +9,9 @@ repos:
     rev: v4.6.0
     hooks:
       - id: trailing-whitespace
-        exclude: '\.md$'
+        # Datasets.doc.xml: Descriptions.Get/GetAll return its text nodes verbatim (XElement.Value),
+        # so the whitespace inside them is part of the public API.
+        exclude: '\.md$|^Datasets\.doc\.xml$'
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-json

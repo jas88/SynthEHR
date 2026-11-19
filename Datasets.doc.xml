@@ -11,62 +11,62 @@
 		Tayside and Fife births record.  Contains the parents and children birthed during the admission.  This data is provided in a format based upon the Scottish SMR02 dataset
 	</summary>
   <Field name="MotherCHI">
-		<summary>
+		<summary>  
 			Unique identifier of the pregnant mother of the baby being born
      </summary>
 	</Field>
   <Field name="SendingLocation">
-		<summary>
+		<summary>  
 			This field indicates the location of where the data was sent from. This is not necessarily the same place as where the episode took place.
      </summary>
 	</Field>
   <Field name="EpisodeRecordKey">
-		<summary>
+		<summary>  
 			Unique identifier indicating a specific case record
      </summary>
 	</Field>
   <Field name="MaritalStatus">
-		<summary>
+		<summary>  
 			This field represents the mother's marital status.  At a certain date ISD stopped using numbers in this column and started using letters.  If this field contains a letter (A-Z), see lookup table z_MaritalStatus
      </summary>
 	</Field>
   <Field name="Specialty">
-		<summary>
+		<summary>  
 			A specialty is defined as a division of medicine or dentistry covering a specific area of clinical activity and identified within one of the Royal Colleges or Faculties.
      </summary>
 	</Field>
   <Field name="Location">
-		<summary>
-			This field represents the location code at which health activity takes place. In other words, the location code represents the point of delivery of health care.
+		<summary>  
+			This field represents the location code at which health activity takes place. In other words, the location code represents the point of delivery of health care. 
      </summary>
 	</Field>
   <Field name="Healthboard">
-		<summary>
+		<summary>  
 			Single letter code describing which NHS healthboard the record came from e.g. T for Tayside, F for Fife
         </summary>
 	</Field>
     <Field name="Date">
-		<summary>
+		<summary>  
 			The date of admission to the birthing unit
         </summary>
 	</Field>
     <Field name="PartnerCHI">
-		<summary>
+		<summary>  
 			Unique identifier of the second contributor of genetic material for the babies being born or null if baby is a clone
         </summary>
 	</Field>
         <Field name="BabyCHI1">
-		<summary>
+		<summary>  
 			Unique identifier of the first baby to be born
         </summary>
 	</Field>
         <Field name="BabyCHI2">
-		<summary>
+		<summary>  
 			Unique identifier of the second baby to be born (if twins)
         </summary>
 	</Field>
         <Field name="BabyCHI3">
-		<summary>
+		<summary>  
 			Unique identifier of the third baby to be born (if triplets)
         </summary>
 	</Field>
@@ -76,20 +76,20 @@
       Tayside and Fife labs biochemistry data.  This data is provided in a format based upon the SCI-Store system.
     </summary>
     <Field name="ArithmeticComparator">
-		<summary>
-			This field represents additional information to be used in conjunction with the numeric result field Result.
-			The contents should be interpreted along with the Result, for example, some EGFR results may be reported as Result = 60, with ArithmeticComparator = '>'
+		<summary>  
+			This field represents additional information to be used in conjunction with the numeric result field Result. 
+			The contents should be interpreted along with the Result, for example, some EGFR results may be reported as Result = 60, with ArithmeticComparator = '>'  
 			This means the result is greater than 60.
 		</summary>
 		</Field>
 		<Field name="Interpretation">
-		<summary>
+		<summary>  
       Contains comments regarding the result.
-		</summary>
+		</summary>  
 		</Field>
     <Field name="Healthboard">
       <summary>
-        This is the alpha and/or numeric Health Board code in which the patient CHI information was extracted from.
+        This is the alpha and/or numeric Health Board code in which the patient CHI information was extracted from. 
       </summary>
     </Field>
     <Field name="SampleDate">
@@ -157,7 +157,7 @@
     </Field>
     <Field name="DateOfBirth">
       <summary>
-        Date of birth of the patient, this should match the first 6 digits of the CHI
+        Date of birth of the patient, this should match the first 6 digits of the CHI 
       </summary>
     </Field>
     <Field name="DateOfDeath">
@@ -187,17 +187,17 @@
 	</Field>
 	<Field name="current_record">
 	<summary>
-	1 if the record is still active in the given healthboard (e.g.. Tayside) or 0 if a more recent record exists in another healthboard (i.e. they are known to have moved out of the area or if ISD no longer supplies the record). Note that if your research project only covers Tayside then you would not necessarily get a record with 1 if they moved to Glasgow but would still get the old record from Tayside with 0 for current record.
+	1 if the record is still active in the given healthboard (e.g.. Tayside) or 0 if a more recent record exists in another healthboard (i.e. they are known to have moved out of the area or if ISD no longer supplies the record). Note that if your research project only covers Tayside then you would not necessarily get a record with 1 if they moved to Glasgow but would still get the old record from Tayside with 0 for current record. 
 	</summary>
 	</Field>
 	<Field name="notes">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="chi_num_of_curr_record">
 	<summary>
-	Indicates that the chi number recorded (in the chi field) is out of date and that the person should actually be known by this alias.  This occurs when a patient doesn't know their chi or is unable to
+	Indicates that the chi number recorded (in the chi field) is out of date and that the person should actually be known by this alias.  This occurs when a patient doesn't know their chi or is unable to 
 	supply it (e.g. an emergency appointment while on holiday).
 	</summary>
 	</Field>
@@ -233,7 +233,7 @@
 	</Field>
 	<Field name="current_postcode">
 	<summary>
-	Current patient's Postcode
+	Current patient's Postcode 
 	</summary>
 	</Field>
 	<Field name="source_death">
@@ -248,7 +248,7 @@
 	</Field>
 	<Field name="hb_extract">
 	<summary>
-	This field represents the alpha and/or numeric Health Board code in which the patient CHI information was extracted from.
+	This field represents the alpha and/or numeric Health Board code in which the patient CHI information was extracted from. 
 	</summary>
 	</Field>
 	<Field name="current_gp">
@@ -313,12 +313,12 @@
 	</Field>
 	<Field name="adr">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="current_gp_accept_date">
 	<summary>
-	This is the date when the patient was accepted onto current GP list.
+	This is the date when the patient was accepted onto current GP list. 
 	</summary>
 	</Field>
 	<Field name="previous_gp">
@@ -333,12 +333,12 @@
 	</Field>
 	<Field name="date_into_practice">
 	<summary>
-	This field represents the date when a person came into the health board region and registered with that health board GP.
+	This field represents the date when a person came into the health board region and registered with that health board GP. 
 	</summary>
 	</Field>
 	<Field name="patient_triage_score">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="hic_dataLoadRunID">
@@ -348,8 +348,8 @@
 	</Field>
   </Demography>
   <Prescribing>
-  <summary>
-	Prescription data of prescribed drugs
+  <summary> 
+	Prescription data of prescribed drugs 
   </summary>
   <Field name="ResSeqNo">
       <summary>
@@ -408,94 +408,94 @@
     </Field>
   </Prescribing>
   <CarotidArteryScan>
-  <summary>
+  <summary> 
 	Carotid ultrasound is a procedure that uses sound waves to examine the blood flow through the carotid arteries (in your neck).
 
 Carotid ultrasound tests for blocked or narrowed carotid arteries, which can increase the risk of stroke.
   </summary>
   <Field name="RECORD_NUMBER">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="R_CC_STEN_A">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="R_CC_STEN_B">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="R_CC_STEN_C">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="R_CC_STEN_D">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="R_CC_STEN_S">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="L_IC_STEN_A">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="L_IC_STEN_B">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="L_IC_STEN_C">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="L_IC_STEN_D">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="L_IC_STEN_S">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="R_IC_STEN_A">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="R_IC_STEN_B">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="R_IC_STEN_C">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="R_IC_STEN_D">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="R_IC_STEN_S">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="COMMENT">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="REPORT">
@@ -505,67 +505,67 @@ Carotid ultrasound tests for blocked or narrowed carotid arteries, which can inc
 	</Field>
 	<Field name="id">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="PatientID">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="SUMMARY">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="LAST_AUTH_BY">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="LAST_AUTH_DT">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="CV_FILE">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="L_CC_STEN_S">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="CV_DT">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="PROV_REPT_DT">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="FILE_COPY_DT">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="LAST_UPDATED_DT">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="AUTHORISED_DT">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="REPT_STATUS">
 	<summary>
-	This field represents the report status 0, unlocked unauthorised 1, locked authorised 2, unlocked previously authorised report reopened for amendment
+	This field represents the report status 0, unlocked unauthorised 1, locked authorised 2, unlocked previously authorised report reopened for amendment 
 	</summary>
 	</Field>
 	<Field name="STUDIES">
@@ -575,27 +575,27 @@ Carotid ultrasound tests for blocked or narrowed carotid arteries, which can inc
 	</Field>
 	<Field name="FINAL_REPT_DT">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="hic_dataLoadRunID">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="L_CC_STEN_D">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="L_CC_STEN_B">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="APPT_ID">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="DATE">
@@ -605,7 +605,7 @@ Carotid ultrasound tests for blocked or narrowed carotid arteries, which can inc
 	</Field>
 	<Field name="CHINO">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="L_BD_RATIO">
@@ -615,7 +615,7 @@ Carotid ultrasound tests for blocked or narrowed carotid arteries, which can inc
 	</Field>
 	<Field name="L_AC_RATIO">
 	<summary>
-	This field represents Left IC Peak systolic flow/Left CC Peak systolic flow
+	This field represents Left IC Peak systolic flow/Left CC Peak systolic flow 
 	</summary>
 	</Field>
 	<Field name="R_BD_RATIO">
@@ -630,7 +630,7 @@ Carotid ultrasound tests for blocked or narrowed carotid arteries, which can inc
 	</Field>
 	<Field name="L_CC_STENOSIS">
 	<summary>
-	This field represents Left Common Carotid % StenosisReferences Lookup Table z_PCStenosisLookup
+	This field represents Left Common Carotid % StenosisReferences Lookup Table z_PCStenosisLookup 
 	</summary>
 	</Field>
 	<Field name="L_CC_PEAK_SYS">
@@ -660,7 +660,7 @@ Carotid ultrasound tests for blocked or narrowed carotid arteries, which can inc
 	</Field>
 	<Field name="L_EC_STENOSIS">
 	<summary>
-	This field represents Left External Carotid StenosisReferences Lookup Table z_StenosisLookup
+	This field represents Left External Carotid StenosisReferences Lookup Table z_StenosisLookup 
 	</summary>
 	</Field>
 	<Field name="L_PLAQUE">
@@ -680,12 +680,12 @@ Carotid ultrasound tests for blocked or narrowed carotid arteries, which can inc
 	</Field>
 	<Field name="L_CC_STEN_A">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="ON_STEN_STUDY">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="R_VERT_ARTERY">
@@ -710,7 +710,7 @@ Carotid ultrasound tests for blocked or narrowed carotid arteries, which can inc
 	</Field>
 	<Field name="L_CC_STEN_C">
 	<summary>
-
+	
 	</summary>
 	</Field>
 	<Field name="R_EC_STENOSIS">
@@ -740,7 +740,7 @@ Carotid ultrasound tests for blocked or narrowed carotid arteries, which can inc
 	</Field>
 	<Field name="R_CC_STENOSIS">
 	<summary>
-	This field represents Right Common Carotid % StenosisReferences Lookup Table z_PCStenosisLookup
+	This field represents Right Common Carotid % StenosisReferences Lookup Table z_PCStenosisLookup 
 	</summary>
 	</Field>
 	<Field name="L_VERT_ARTERY">
@@ -753,7 +753,7 @@ Carotid ultrasound tests for blocked or narrowed carotid arteries, which can inc
 	This field represents Right Internal Carotid End Diastolic Flow
 	</summary>
 	</Field>
-  </CarotidArteryScan>
+  </CarotidArteryScan>	
   <HospitalAdmissions>
   <summary>
   Dataset records admissions to hospital and the reason for admission (presenting condition(s)).
@@ -796,12 +796,12 @@ Carotid ultrasound tests for blocked or narrowed carotid arteries, which can inc
 	</Field>
 	<Field name="MainOperation">
 	<summary>
-	The main operation is that selected by the clinician responsible for the care of the patient. Part A is used for single codes or for the primary part of a recognised code-pair.
+	The main operation is that selected by the clinician responsible for the care of the patient. Part A is used for single codes or for the primary part of a recognised code-pair. 
 	</summary>
 	</Field>
 	<Field name="MainOperationB">
 	<summary>
-	The main operation is that selected by the clinician responsible for the care of the patient. Part B is used for Core Approach, Technique, Site or Laterality codes or for the supplementary part of a recognised code-pair.
+	The main operation is that selected by the clinician responsible for the care of the patient. Part B is used for Core Approach, Technique, Site or Laterality codes or for the supplementary part of a recognised code-pair. 
 	</summary>
 	</Field>
 	<Field name="OtherOperation1">
@@ -811,7 +811,7 @@ Carotid ultrasound tests for blocked or narrowed carotid arteries, which can inc
 	</Field>
 	<Field name="OtherOperation1B">
 	<summary>
-	This field represents other operation entered in the order specified by the clinician. Part B is used for Approach, Technique, Site or Laterality codes or for the supplementary part of a recognised code-pair.
+	This field represents other operation entered in the order specified by the clinician. Part B is used for Approach, Technique, Site or Laterality codes or for the supplementary part of a recognised code-pair. 
 	</summary>
 	</Field>
 	<Field name="OtherOperation2">
@@ -821,7 +821,7 @@ Carotid ultrasound tests for blocked or narrowed carotid arteries, which can inc
 	</Field>
 	<Field name="OtherOperation2B">
 	<summary>
-	This field represents other operation entered in the order specified by the clinician. Part B is used for Approach, Technique, Site or Laterality codes or for the supplementary part of a recognised code-pair.
+	This field represents other operation entered in the order specified by the clinician. Part B is used for Approach, Technique, Site or Laterality codes or for the supplementary part of a recognised code-pair. 
 	</summary>
 	</Field>
 	<Field name="OtherOperation3">
@@ -831,7 +831,7 @@ Carotid ultrasound tests for blocked or narrowed carotid arteries, which can inc
 	</Field>
 	<Field name="OtherOperation3B">
 	<summary>
-	This field represents other operation entered in the order specified by the clinician. Part B is used for Approach, Technique, Site or Laterality codes or for the supplementary part of a recognised code-pair.
+	This field represents other operation entered in the order specified by the clinician. Part B is used for Approach, Technique, Site or Laterality codes or for the supplementary part of a recognised code-pair. 
 	</summary>
 	</Field>
   </HospitalAdmissions>
