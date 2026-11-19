@@ -34,6 +34,13 @@ repos:
 
   - repo: local
     hooks:
+      - id: build-source-generators
+        name: build source generators (dotnet format needs their DLLs)
+        entry: dotnet build SynthEHR.SourceGenerators/SynthEHR.SourceGenerators.csproj -v q --nologo
+        language: system
+        types: [c#]
+        pass_filenames: false
+
       - id: dotnet-format
         name: dotnet format
         entry: dotnet format --verify-no-changes
