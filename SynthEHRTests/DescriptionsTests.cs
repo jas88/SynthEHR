@@ -77,6 +77,23 @@ internal sealed class DescriptionsTests
         }
     }
 
+    /// <summary>
+    /// Descriptions returns the text in Datasets.doc.xml verbatim, whitespace included, which is why the
+    /// trailing-whitespace hook skips that file. Maternity's Location description has both the two spaces that
+    /// follow some &lt;summary&gt; tags and a space before a line break.
+    /// </summary>
+    [Test]
+    public void Test_GetDescription_ReturnsTextVerbatim()
+    {
+        const string expected = "  \n\t\t\tThis field represents the location code at which health activity takes place. "
+                                + "In other words, the location code represents the point of delivery of health care. \n     ";
+        Assert.Multiple(static () =>
+        {
+            Assert.That(Descriptions.Get<Maternity>("Location"), Is.EqualTo(expected));
+            Assert.That(Descriptions.GetAll<Maternity>().Single(static kvp => kvp.Key == "Location").Value, Is.EqualTo(expected));
+        });
+    }
+
     [Test]
     public void Test_GetAllDescriptions_AllDatasets()
     {
