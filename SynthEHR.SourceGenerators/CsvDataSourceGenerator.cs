@@ -339,13 +339,8 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         int internId = 0;
 
         // Intern strings that appear >= threshold times
-        foreach (var kvp in frequency.OrderByDescending(x => x.Value))
-        {
-            if (kvp.Value >= threshold)
-            {
-                pool[kvp.Key] = internId++;
-            }
-        }
+        foreach (var kvp in frequency.Where(x => x.Value >= threshold).OrderByDescending(x => x.Value))
+            pool[kvp.Key] = internId++;
 
         return pool;
     }
