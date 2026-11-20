@@ -23,10 +23,7 @@ public sealed class Demography(Random rand) : DataGenerator(rand)
         var dtCreated = GetRandomDateAfter(person.DateOfBirth, r);//all records must have been created after the person was born
         values[1] = dtCreated;
 
-        if (r.Next(0, 2) == 0)
-            values[2] = true;
-        else
-            values[2] = false;
+        values[2] = r.Next(0, 2) == 0;
 
         values[3] = "Random record";
 
