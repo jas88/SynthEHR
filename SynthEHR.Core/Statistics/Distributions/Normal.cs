@@ -155,6 +155,7 @@ internal sealed class Normal : IContinuousDistribution
         double x;
         while (!PolarTransform(rnd.NextDouble(), rnd.NextDouble(), out x, out _))
         {
+            // Rejection sampling: the pair fell outside the unit circle or on its centre, so draw another
         }
 
         return mean + (stddev * x);
