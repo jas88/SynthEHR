@@ -36,15 +36,10 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
                 if (string.IsNullOrEmpty(content))
                     return (string.Empty, Array.Empty<string>(), Array.Empty<string[]>());
 
-                try
-                {
-                    var csvData = CsvDataParser.Parse(content, fileName);
-                    return (fileName, csvData.Headers, csvData.Rows);
-                }
-                catch
-                {
-                    return (string.Empty, Array.Empty<string>(), Array.Empty<string[]>());
-                }
+                // Parse accepts any text, so anything it throws is a bug: the compiler reports that as a
+                // generator failure (CS8785) instead of the data class silently going missing.
+                var csvData = CsvDataParser.Parse(content, fileName);
+                return (fileName, csvData.Headers, csvData.Rows);
             });
 
         // Generate code for each CSV file
