@@ -24,12 +24,14 @@
 ### Performance Results
 
 **Test Configuration:**
+
 - 1,000,000 Person creations
 - .NET 9.0 Runtime
 - Release build with optimizations
 - macOS ARM64
 
 **Results:**
+
 - **Total Time:** 406 ms
 - **Average Time:** 0.41 μs per person
 - **Throughput:** 2,458,461 persons/second
@@ -37,11 +39,13 @@
 ### Memory Efficiency
 
 **Before (StringBuilder/String Interpolation):**
+
 - Heap allocations for each CHI/ANOCHI generation
 - StringBuilder overhead and resizing
 - String concatenation allocations
 
 **After (Span<char>):**
+
 - Zero heap allocations (stack-only)
 - No StringBuilder overhead
 - Fixed-size buffers eliminate resizing
@@ -50,6 +54,7 @@
 ### Correctness Verification
 
 All tests passed with identical output:
+
 - CHI format: 10 characters (DDMMYY + 2 random + gender + check)
 - ANOCHI format: 12 characters (10 random digits + "_A")
 - Date of birth correctly encoded in CHI
@@ -59,6 +64,7 @@ All tests passed with identical output:
 ### Expected Impact
 
 Based on the optimization pattern:
+
 - **2-3x faster** CHI/ANOCHI generation
 - **Zero allocations** for ID generation
 - **Reduced GC pressure** in high-volume scenarios
@@ -67,6 +73,7 @@ Based on the optimization pattern:
 ### Code Examples
 
 **Before:**
+
 ```csharp
 private static string GenerateANOCHI(Random r)
 {
@@ -79,6 +86,7 @@ private static string GenerateANOCHI(Random r)
 ```
 
 **After:**
+
 ```csharp
 private static string GenerateANOCHI(Random r)
 {
@@ -100,12 +108,14 @@ private static string GenerateANOCHI(Random r)
 ### Related Work
 
 This optimization follows the pattern established in:
+
 - DateOnly formatting optimization (PR #XXX)
 - Other Span<char> modernizations across the codebase
 
 ### Testing
 
 Run the benchmark:
+
 ```bash
 dotnet run --project tests/CHIBenchmark.csproj --configuration Release
 ```

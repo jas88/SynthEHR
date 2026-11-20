@@ -36,16 +36,19 @@ The codebase has no critical bugs or correctness issues identified in this audit
 **Location**: `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/Datasets/PrescribingRecord.cs:91`
 
 **Current Code**:
+
 ```csharp
 var row = WeightToRow.First(kvp => kvp.Key > weightToGet).Value;
 ```
 
 **Issue**:
+
 - `.First()` with predicate performs a linear search through `FrozenDictionary`
 - Called once per prescription record generation (potentially millions of times)
 - Allocates delegate closure
 
 **Recommended Fix**:
+
 ```csharp
 // Option 1: Manual loop (fastest)
 private static PrescribingData.Row GetRandomRowUsingWeight(Random r)
@@ -66,6 +69,7 @@ private static PrescribingData.Row GetRandomRowUsingWeight(Random r)
 ```
 
 **Impact**:
+
 - Performance: 40-60% faster for this method (hot path)
 - Eliminates delegate allocation
 - Better cache locality
@@ -79,6 +83,7 @@ private static PrescribingData.Row GetRandomRowUsingWeight(Random r)
 **Location**: `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/Datasets/DataGenerator.cs:87-94`
 
 **Current Code**:
+
 ```csharp
 private static string EscapeCsvField(object field)
 {
@@ -91,12 +96,14 @@ private static string EscapeCsvField(object field)
 ```
 
 **Issues**:
+
 - `.Contains()` without `StringComparison` (uses current culture)
 - `.Replace()` allocates new string even if no replacements needed
 - `.ToString()` on objects in hot path
 - Called for every cell in every row
 
 **Recommended Fix**:
+
 ```csharp
 private static string EscapeCsvField(object field)
 {
@@ -132,6 +139,7 @@ private static string EscapeCsvField(object field)
 ```
 
 **Impact**:
+
 - Performance: 3-5x faster for fields requiring escaping
 - Zero allocation for fields without special characters
 - Uses `string.Create` for minimal allocation when needed
@@ -145,6 +153,7 @@ private static string EscapeCsvField(object field)
 **Location**: `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/BucketList.cs:53-69`
 
 **Current Code**:
+
 ```csharp
 public T GetRandom(IEnumerable<int> usingOnlyIndices, Random r)
 {
@@ -166,11 +175,13 @@ public T GetRandom(IEnumerable<int> usingOnlyIndices, Random r)
 ```
 
 **Issues**:
+
 - `.ToList()` forces materialization of IEnumerable (allocation + copy)
 - `.Sum()` iterates the list again (double enumeration)
 - Generic `Exception` instead of specific type
 
 **Recommended Fix**:
+
 ```csharp
 public T GetRandom(IEnumerable<int> usingOnlyIndices, Random r)
 {
@@ -195,6 +206,7 @@ public T GetRandom(IEnumerable<int> usingOnlyIndices, Random r)
 ```
 
 **Impact**:
+
 - Performance: 25-30% faster
 - Eliminates unnecessary allocation if input is already a list
 - Better exception semantics
@@ -210,16 +222,19 @@ public T GetRandom(IEnumerable<int> usingOnlyIndices, Random r)
 **Location**: `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/Datasets/BiochemistryRecord.cs:85-86`
 
 **Current Code**:
+
 ```csharp
 RangeHighValue = row.RangeHighValue.HasValue ? row.RangeHighValue.ToString() : "NULL";
 RangeLowValue = row.RangeLowValue.HasValue ? row.RangeLowValue.ToString() : "NULL";
 ```
 
 **Issue**:
+
 - Allocates string on every instantiation
 - Could use pre-calculated or interpolated string for common values
 
 **Recommended Fix**:
+
 ```csharp
 // Option 1: Cache "NULL" constant
 private const string NULL_VALUE = "NULL";
@@ -241,6 +256,7 @@ RangeLowValue = row.RangeLowValue?.ToString() ?? NULL_VALUE;
 **Location**: `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/BucketList.cs:15-24`
 
 **Current Code**:
+
 ```csharp
 private Lazy<int> _total;
 
@@ -255,10 +271,12 @@ if (_total.IsValueCreated)
 ```
 
 **Issue**:
+
 - Creating new `Lazy<T>` instances on mutation is expensive
 - Could use simpler field-based caching
 
 **Recommended Fix**:
+
 ```csharp
 private int _total = -1; // -1 indicates not calculated
 
@@ -283,6 +301,7 @@ public T GetRandom(Random r)
 ```
 
 **Impact**:
+
 - Eliminates `Lazy<T>` allocation overhead
 - Simpler code
 - Same thread-safety characteristics (reads are atomic for int)
@@ -296,16 +315,19 @@ public T GetRandom(Random r)
 **Location**: `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/Datasets/Demography.cs:66-67`
 
 **Current Code**:
+
 ```csharp
 while (values[8].ToString()?.Length < 10)
     values[8] = $"{values[8]} ";
 ```
 
 **Issues**:
+
 - String interpolation in loop creates multiple intermediate strings
 - `.ToString()` called repeatedly on same object
 
 **Recommended Fix**:
+
 ```csharp
 if ((char)values[18] == 'A' && values[8] is string name)
 {
@@ -315,6 +337,7 @@ if ((char)values[18] == 'A' && values[8] is string name)
 ```
 
 **Impact**:
+
 - Eliminates all intermediate string allocations
 - Much cleaner code
 - Uses built-in `PadRight()` optimized method
@@ -328,16 +351,19 @@ if ((char)values[18] == 'A' && values[8] is string name)
 **Location**: `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/Datasets/DataGenerator.cs:43-44`
 
 **Current Code**:
+
 ```csharp
 throw new Exception("Could not GetRandom");
 ```
 
 **Issues**:
+
 - Generic exception type
 - No context about failure
 - Hard to debug
 
 **Recommended Fix**:
+
 ```csharp
 throw new InvalidOperationException(
     $"Could not select random bucket. Total probability: {_total.Value}, " +
@@ -355,6 +381,7 @@ throw new InvalidOperationException(
 **Location**: `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/Datasets/Demography.cs:44-48`
 
 **Current Code**:
+
 ```csharp
 values[10] = person.DateOfDeath != null && (DateTime)values[1]>person.DateOfDeath ? person.Address.Line1 : randomAddress.Line1;
 values[11] = person.DateOfDeath != null && (DateTime)values[1]>person.DateOfDeath ? person.Address.Line2 : randomAddress.Line2;
@@ -364,10 +391,12 @@ values[14] = person.DateOfDeath != null && (DateTime)values[1]>person.DateOfDeat
 ```
 
 **Issues**:
+
 - Repeated null check and condition
 - Code duplication
 
 **Recommended Fix**:
+
 ```csharp
 var dtCreated = (DateTime)values[1];
 var usePersonAddress = person.DateOfDeath != null && dtCreated > person.DateOfDeath;
@@ -381,6 +410,7 @@ values[14] = addressToUse.Postcode.Value;
 ```
 
 **Impact**:
+
 - Cleaner, more maintainable code
 - Single evaluation of condition
 - More readable
@@ -394,6 +424,7 @@ values[14] = addressToUse.Postcode.Value;
 **Location**: `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/Datasets/Demography.cs:24-27`
 
 **Current Code**:
+
 ```csharp
 if (r.Next(0,2) == 0)
     values[2] = true;
@@ -404,6 +435,7 @@ else
 **Issue**: Verbose boolean assignment
 
 **Recommended Fix**:
+
 ```csharp
 values[2] = r.Next(0, 2) == 0;
 ```
@@ -419,6 +451,7 @@ values[2] = r.Next(0, 2) == 0;
 **Location**: `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/Datasets/Demography.cs:139-148`
 
 **Current Code**:
+
 ```csharp
 private static DateTime GetMinimum(DateTime? date1, DateTime date2)
 {
@@ -433,10 +466,12 @@ private static DateTime GetMinimum(DateTime? date1, DateTime date2)
 ```
 
 **Issue**:
+
 - Custom implementation when `DateTimeExtensions.Min()` exists
 - Forces nullable unwrapping
 
 **Recommended Fix**:
+
 ```csharp
 // Use existing extension method
 private static DateTime GetMinimum(DateTime? date1, DateTime date2)
@@ -458,6 +493,7 @@ private static DateTime GetMinimum(DateTime? date1, DateTime date2)
 **Location**: `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/Person.cs:78-81, 90-91`
 
 **Current Code**:
+
 ```csharp
 if (r.Next(10) == 0)
     DateOfDeath = DataGenerator.GetRandomDateAfter(DateOfBirth,r);
@@ -469,6 +505,7 @@ if (r.Next(10) != 0)
 **Issue**: Magic numbers without named constants
 
 **Recommended Fix**:
+
 ```csharp
 private const int DEATH_PROBABILITY = 10; // 1 in 10 chance
 private const int PREVIOUS_ADDRESS_PROBABILITY = 10; // 9 in 10 chance
@@ -491,11 +528,13 @@ if (r.Next(PREVIOUS_ADDRESS_PROBABILITY) != 0)
 **Location**: Multiple locations
 
 **Current Code**:
+
 ```csharp
 return new string(buffer);
 ```
 
 **Potential Improvement**:
+
 ```csharp
 // If return type is known, can use:
 return new(buffer);
@@ -522,6 +561,7 @@ return new(buffer);
 **Location**: `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/Person.cs:65-70`
 
 **Current Code**:
+
 ```csharp
 Gender = r.Next(2) switch
 {
@@ -534,6 +574,7 @@ Gender = r.Next(2) switch
 **Issue**: Default arm returns uninitialized field
 
 **Recommended Fix**:
+
 ```csharp
 Gender = r.Next(2) switch
 {
@@ -600,7 +641,7 @@ The following common anti-patterns were **NOT** found in this codebase:
 ## Summary Statistics
 
 | Priority | Count | Total Estimated Effort |
-|----------|-------|------------------------|
+| ---------- | ------- | ------------------------ |
 | P0 (Critical) | 0 | 0 hours |
 | P1 (High) | 3 | 2 hours |
 | P2 (Medium) | 7 | 1.5 hours |
@@ -612,6 +653,7 @@ The following common anti-patterns were **NOT** found in this codebase:
 ## Recommended Action Plan
 
 ### Phase 1: High-Impact Quick Wins (Week 1)
+
 1. Fix LINQ `.First()` in PrescribingRecord (30 min)
 2. Optimize CSV escaping in DataGenerator (1 hour)
 3. Fix double enumeration in BucketList (20 min)
@@ -619,16 +661,18 @@ The following common anti-patterns were **NOT** found in this codebase:
 **Expected Impact**: 20-30% performance improvement in data generation
 
 ### Phase 2: Code Quality Improvements (Week 2)
-4. String allocation optimizations (30 min)
-5. Refactor duplicate code in Demography.cs (20 min)
-6. Improve exception messages (15 min)
+
+1. String allocation optimizations (30 min)
+2. Refactor duplicate code in Demography.cs (20 min)
+3. Improve exception messages (15 min)
 
 **Expected Impact**: Better maintainability and debuggability
 
 ### Phase 3: Polish (Ongoing)
-7. Address P3 items during regular refactoring
-8. Add XML documentation for public APIs
-9. Consider adding benchmarks for hot paths
+
+1. Address P3 items during regular refactoring
+2. Add XML documentation for public APIs
+3. Consider adding benchmarks for hot paths
 
 ---
 
@@ -637,6 +681,7 @@ The following common anti-patterns were **NOT** found in this codebase:
 The SynthEHR codebase demonstrates **excellent engineering quality** with modern C# patterns and performance-conscious design. The identified improvements are mostly optimizations rather than fixes for serious issues.
 
 **Key Strengths**:
+
 - Extensive use of modern C# features (Span, stackalloc, records, pattern matching)
 - Performance-aware design (FrozenDictionary, source generators)
 - AOT-compatible

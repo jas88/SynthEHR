@@ -9,6 +9,7 @@ This document outlines the comprehensive strategy for replacing runtime CSV pars
 ### 1.1 Current State
 
 **Embedded Resources:**
+
 - `Aggregates.zip` containing:
   - `Prescribing.csv` (4.5 MB, ~71k rows)
   - `Biochemistry.csv` (638 KB, ~9k rows)
@@ -17,6 +18,7 @@ This document outlines the comprehensive strategy for replacing runtime CSV pars
 - `Maternity.csv` (direct embedded resource)
 
 **Key Components:**
+
 1. `DataGenerator.EmbeddedCsvToDataTable()` - Runtime CSV parsing from embedded resources
 2. `PrescribingRecord` - Uses weighted distribution based on frequency column
 3. `BiochemistryRecord` - Uses BucketList with weighted sampling
@@ -24,6 +26,7 @@ This document outlines the comprehensive strategy for replacing runtime CSV pars
 5. `MaternityRecord` - Location and demographic code distributions
 
 **Runtime Dependencies:**
+
 - CsvHelper for parsing at runtime
 - System.Data.DataTable for holding parsed data
 - System.IO.Compression for zip extraction
@@ -31,6 +34,7 @@ This document outlines the comprehensive strategy for replacing runtime CSV pars
 ### 1.2 Performance Bottlenecks
 
 Current approach incurs:
+
 - ZIP decompression overhead on first access
 - CSV parsing overhead (CsvHelper processing)
 - DataTable allocation and population
@@ -40,7 +44,7 @@ Current approach incurs:
 
 ### 2.1 Source Generator Project Structure
 
-```
+```text
 SynthEHR.SourceGenerators/
 ├── SynthEHR.SourceGenerators.csproj
 ├── CsvDataGenerator.cs              # Main generator
@@ -64,6 +68,7 @@ SynthEHR.SourceGenerators/
 ### 2.2 Project Configuration
 
 **SynthEHR.SourceGenerators.csproj:**
+
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
@@ -96,6 +101,7 @@ SynthEHR.SourceGenerators/
 ```
 
 **SynthEHR.Core.csproj modifications:**
+
 ```xml
 <ItemGroup>
   <!-- Remove embedded resources -->
@@ -334,6 +340,7 @@ public class DistributionMetadata
 ### 4.1 Prescribing - Weighted Distribution Pattern
 
 **Generated Code:**
+
 ```csharp
 // SynthEHR.Core/Generated/PrescribingGeneratedData.g.cs
 namespace SynthEHR.Datasets.Generated;
@@ -408,6 +415,7 @@ public readonly struct PrescribingRecordData
 ### 4.2 Biochemistry - BucketList Pattern
 
 **Generated Code:**
+
 ```csharp
 // SynthEHR.Core/Generated/BiochemistryGeneratedData.g.cs
 namespace SynthEHR.Datasets.Generated;
@@ -475,6 +483,7 @@ public readonly struct BiochemistryRecordData
 ### 4.3 HospitalAdmissions - Month-Based Distribution
 
 **Generated Code:**
+
 ```csharp
 // SynthEHR.Core/Generated/HospitalAdmissionsGeneratedData.g.cs
 namespace SynthEHR.Datasets.Generated;
@@ -702,6 +711,7 @@ public readonly struct OperationSet
 ### 5.1 Update Record Classes
 
 **Before (PrescribingRecord.cs):**
+
 ```csharp
 static PrescribingRecord()
 {
@@ -718,6 +728,7 @@ public PrescribingRecord(Random r)
 ```
 
 **After (PrescribingRecord.cs):**
+
 ```csharp
 using SynthEHR.Datasets.Generated;
 
@@ -751,6 +762,7 @@ public PrescribingRecord(Random r)
 ### 5.2 Update BiochemistryRecord
 
 **After (BiochemistryRecord.cs):**
+
 ```csharp
 using SynthEHR.Datasets.Generated;
 
@@ -783,6 +795,7 @@ public BiochemistryRecord(Random r)
 ### 5.3 Update HospitalAdmissionsRecord
 
 **After (HospitalAdmissionsRecord.cs):**
+
 ```csharp
 using SynthEHR.Datasets.Generated;
 
@@ -1069,11 +1082,13 @@ public void GeneratedData_MatchesOriginalData()
 ### 8.1 Memory Optimization
 
 **Parallel Arrays vs Objects:**
+
 - Use parallel arrays instead of array of objects for better cache locality
 - Reduces memory overhead (no object headers per record)
 - Improves iteration performance
 
 **String Interning:**
+
 ```csharp
 // For frequently repeated strings
 private static readonly string[] InternedStrings;
@@ -1086,6 +1101,7 @@ static PrescribingData()
 ```
 
 **ReadOnlySpan for Temporary Data:**
+
 ```csharp
 public static ReadOnlySpan<BiochemistryRecordData> GetRecordsSpan()
 {
@@ -1096,6 +1112,7 @@ public static ReadOnlySpan<BiochemistryRecordData> GetRecordsSpan()
 ### 8.2 Startup Performance
 
 **Lazy Initialization (if needed):**
+
 ```csharp
 private static class LazyHolder
 {
@@ -1110,6 +1127,7 @@ private static class LazyHolder
 ```
 
 **Parallel Initialization:**
+
 ```csharp
 static HospitalAdmissionsData()
 {
@@ -1124,6 +1142,7 @@ static HospitalAdmissionsData()
 ### 8.3 Compilation Time
 
 **Incremental Code Generation:**
+
 - Only regenerate if CSV files change
 - Use content-based hashing to detect changes
 - Cache parsed CSV structure
@@ -1178,6 +1197,7 @@ private static int BinarySearchWeighted(ReadOnlySpan<int> weights, int target)
 ## 9. Implementation Roadmap
 
 ### Phase 1: Foundation (Week 1-2)
+
 1. Create SynthEHR.SourceGenerators project
 2. Implement CsvDataGenerator skeleton
 3. Implement CsvStructureAnalyzer
@@ -1185,29 +1205,34 @@ private static int BinarySearchWeighted(ReadOnlySpan<int> weights, int target)
 5. Write unit tests for CSV parsing
 
 ### Phase 2: Simple Generators (Week 3)
+
 1. Implement SimpleDistributionGenerator (for Maternity)
 2. Test end-to-end with Maternity.csv
 3. Update MaternityRecord to use generated data
 4. Verify functionality with existing tests
 
 ### Phase 3: Weighted Distribution (Week 4)
+
 1. Implement WeightedDistributionGenerator (for Prescribing)
 2. Generate code with parallel arrays and cumulative frequencies
 3. Update PrescribingRecord
 4. Performance benchmarking
 
 ### Phase 4: BucketList Pattern (Week 5)
+
 1. Implement BucketListGenerator (for Biochemistry)
 2. Update BiochemistryRecord
 3. Test weighted sampling correctness
 
 ### Phase 5: Complex Patterns (Week 6-7)
+
 1. Implement MonthHashMapGenerator (for HospitalAdmissions)
 2. Implement OperationMappingGenerator (for HospitalAdmissionsOperations)
 3. Update HospitalAdmissionsRecord
 4. Comprehensive testing
 
 ### Phase 6: Cleanup and Optimization (Week 8)
+
 1. Remove CsvHelper from SynthEHR.Core
 2. Remove Aggregates.zip
 3. Remove EmbeddedCsvToDataTable method
@@ -1216,12 +1241,14 @@ private static int BinarySearchWeighted(ReadOnlySpan<int> weights, int target)
 6. Documentation updates
 
 ### Phase 7: Testing and Validation (Week 9)
+
 1. Run full test suite
 2. Performance benchmarking (before/after comparison)
 3. Memory profiling
 4. Integration testing with CLI
 
 ### Phase 8: Release (Week 10)
+
 1. Code review
 2. Update CHANGELOG
 3. Create migration guide
@@ -1234,6 +1261,7 @@ private static int BinarySearchWeighted(ReadOnlySpan<int> weights, int target)
 
 **Risk:** Generated data might not exactly match original CSV data
 **Mitigation:**
+
 - Comprehensive validation tests comparing old vs new
 - Hash-based verification of data content
 - Statistical tests for distribution correctness
@@ -1242,6 +1270,7 @@ private static int BinarySearchWeighted(ReadOnlySpan<int> weights, int target)
 
 **Risk:** Generated code might be slower than runtime parsing
 **Mitigation:**
+
 - Detailed benchmarking before finalizing design
 - Multiple pattern implementations to choose optimal one
 - Profile-guided optimization
@@ -1250,6 +1279,7 @@ private static int BinarySearchWeighted(ReadOnlySpan<int> weights, int target)
 
 **Risk:** Source generator might significantly increase build time
 **Mitigation:**
+
 - Incremental generation with caching
 - Parallel processing where possible
 - Only regenerate on CSV file changes
@@ -1259,6 +1289,7 @@ private static int BinarySearchWeighted(ReadOnlySpan<int> weights, int target)
 
 **Risk:** CSV updates require manual intervention
 **Mitigation:**
+
 - Automated tests that verify generated code
 - Clear documentation on update process
 - Scripts to extract and update CSV files
@@ -1269,12 +1300,14 @@ private static int BinarySearchWeighted(ReadOnlySpan<int> weights, int target)
 ### 11.1 Performance Metrics
 
 **Target Improvements:**
+
 - 80% reduction in first-use latency (no ZIP decompression)
 - 60% reduction in memory allocation per record
 - 40% faster record generation after warmup
 - 50% reduction in overall memory footprint
 
 **Measurement:**
+
 ```csharp
 [MemoryDiagnoser]
 [SimpleJob(warmupCount: 3, targetCount: 10)]
@@ -1306,6 +1339,7 @@ public class PerformanceComparison
 ### 12.1 Compression
 
 For very large datasets, consider column compression:
+
 ```csharp
 // Dictionary encoding for low-cardinality columns
 private static readonly string[] HealthboardDictionary = new[] { "A", "B", "C", ... };
@@ -1315,6 +1349,7 @@ private static readonly byte[] HealthboardIndices = new byte[] { 0, 1, 2, ... };
 ### 12.2 SIMD Optimization
 
 For numerical operations:
+
 ```csharp
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
@@ -1325,6 +1360,7 @@ using System.Runtime.Intrinsics.X86;
 ### 12.3 Native AOT Support
 
 Ensure full compatibility with .NET Native AOT:
+
 - No reflection in generated code
 - All types known at compile time
 - Trimmer-friendly design
@@ -1332,6 +1368,7 @@ Ensure full compatibility with .NET Native AOT:
 ### 12.4 Hot Reload Support
 
 Support design-time CSV updates:
+
 ```csharp
 #if DEBUG
 [ModuleInitializer]
@@ -1348,6 +1385,7 @@ internal static void RegisterFileWatcher()
 ### 13.1 Developer Documentation
 
 Create documentation covering:
+
 - How source generators work
 - How to update CSV data
 - How to add new datasets
@@ -1357,6 +1395,7 @@ Create documentation covering:
 ### 13.2 API Documentation
 
 Update XML documentation:
+
 ```csharp
 /// <summary>
 /// Represents a prescribing record generated from pre-analyzed CSV data.
@@ -1375,15 +1414,17 @@ public sealed class PrescribingRecord
 ## 14. Appendix: Example Generated Code Size
 
 **Estimated Generated Code Sizes:**
+
 - Prescribing: ~8 MB C# source (71k records × ~120 bytes/record)
 - Biochemistry: ~1.2 MB C# source (9k records)
 - HospitalAdmissions: ~3 MB C# source (24k records + month hashmap)
 - HospitalAdmissionsOperations: ~2 MB C# source (17k records)
 - Maternity: ~200 KB C# source
 
-**Total: ~15 MB of generated C# code**
+Total: ~15 MB of generated C# code
 
 After compilation:
+
 - IL size: ~5-7 MB
 - Runtime memory: ~8-10 MB (vs current ~15-20 MB with DataTable overhead)
 
@@ -1392,6 +1433,7 @@ After compilation:
 This migration strategy provides a comprehensive path to eliminating runtime CSV parsing while maintaining backward compatibility and improving performance. The source generator approach leverages compile-time processing to create optimized, strongly-typed data structures that are faster, more memory-efficient, and better suited for modern .NET AOT scenarios.
 
 Key benefits:
+
 - **Performance**: 40-80% improvement in various metrics
 - **Type Safety**: Strongly-typed access to all data
 - **AOT Compatible**: Full Native AOT support
