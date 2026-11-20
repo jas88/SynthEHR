@@ -20,25 +20,25 @@ public class Prescribing(Random rand) : DataGenerator(rand)
     /// <returns></returns>
     public override object?[] GenerateTestDataRow(Person person)
     {
-            var values = new object?[12];
+        var values = new object?[12];
 
-            var prescription = new PrescribingRecord(r);
+        var prescription = new PrescribingRecord(r);
 
-            values[0] = person.CHI;
-            values[1] = person.GetRandomDateDuringLifetime(r);
-            values[2] = prescription.Quantity;
-            values[3] = prescription.Strength;
-            values[4] = prescription.StrengthNumerical;
-            values[5] = prescription.FormulationCode;
-            values[6] = prescription.MeasureCode;
-            values[7] = prescription.Name;
-            values[8] = prescription.ApprovedName;
-            values[9] = prescription.BnfCode;
-            values[10] = prescription.FormattedBnfCode;
-            values[11] = prescription.BnfDescription;
+        values[0] = person.CHI;
+        values[1] = person.GetRandomDateDuringLifetime(r);
+        values[2] = prescription.Quantity;
+        values[3] = prescription.Strength;
+        values[4] = prescription.StrengthNumerical;
+        values[5] = prescription.FormulationCode;
+        values[6] = prescription.MeasureCode;
+        values[7] = prescription.Name;
+        values[8] = prescription.ApprovedName;
+        values[9] = prescription.BnfCode;
+        values[10] = prescription.FormattedBnfCode;
+        values[11] = prescription.BnfDescription;
 
-            return values;
-        }
+        return values;
+    }
 
     /// <inheritdoc/>
     protected override string[] GetHeaders() =>

@@ -1,15 +1,15 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using SynthEHR.Configuration;
-using SynthEHR.Datasets;
 using CommandLine;
 using FAnsi.Discovery;
 using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
 using FAnsi.Implementations.PostgreSql;
+using SynthEHR.Configuration;
+using SynthEHR.Datasets;
 using YamlDotNet.Serialization;
 
 namespace SynthEHR;
@@ -67,22 +67,22 @@ internal static class Program
         try
         {
             //if user wants to write out the lookups generate those too
-            if(opts.Lookups)
+            if (opts.Lookups)
                 DataGenerator.WriteLookups(dir);
 
             var r = opts.Seed == -1 ? new Random() : new Random(opts.Seed);
 
             //create a cohort of people
             var identifiers = new PersonCollection();
-            identifiers.GeneratePeople(opts.NumberOfPatients,r);
+            identifiers.GeneratePeople(opts.NumberOfPatients, r);
 
             var generators = DataGeneratorFactory.GetAvailableGenerators().ToList();
 
             //if the user only wants to extract a single dataset
-            if(!string.IsNullOrEmpty(opts.Dataset))
+            if (!string.IsNullOrEmpty(opts.Dataset))
             {
                 var match = generators.FirstOrDefault(g => g.Type.Name.Equals(opts.Dataset, StringComparison.Ordinal));
-                if(match.Type == null)
+                if (match.Type == null)
                 {
                     Console.WriteLine($"Could not find dataset called '{opts.Dataset}'");
                     Console.WriteLine(
@@ -91,7 +91,7 @@ internal static class Program
                     return;
                 }
 
-                generators = [..new[] { match }];
+                generators = [.. new[] { match }];
             }
 
             // if we are not going to write out to a database
@@ -102,7 +102,7 @@ internal static class Program
                     //for each generator
                     foreach (var instance in generators.Select(([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] g) => DataGeneratorFactory.Create(g.Type, r)))
                     {
-                        _returnCode = Math.Min(RunDatabaseTarget(identifiers,config.Database, instance,opts.NumberOfRows),_returnCode);
+                        _returnCode = Math.Min(RunDatabaseTarget(identifiers, config.Database, instance, opts.NumberOfRows), _returnCode);
                     }
 
                     return;
@@ -137,7 +137,7 @@ internal static class Program
         _returnCode = 0;
     }
 
-    private static int RunDatabaseTarget(IPersonCollection cohort,TargetDatabase configDatabase, IDataGenerator generator, int numberOfRows)
+    private static int RunDatabaseTarget(IPersonCollection cohort, TargetDatabase configDatabase, IDataGenerator generator, int numberOfRows)
     {
 
         // Explicitly register each implementation rather than relying on auto-registration,
@@ -181,12 +181,12 @@ internal static class Program
 
         var tblName = generator.GetType().Name;
 
-        if(db.ExpectTable(tblName).Exists())
+        if (db.ExpectTable(tblName).Exists())
         {
 
             Console.WriteLine($"Found Existing Table '{tblName}'");
 
-            if(configDatabase.DropTables)
+            if (configDatabase.DropTables)
                 db.ExpectTable(tblName).Drop();
             else
             {

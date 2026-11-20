@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Diagnostics;
+using NUnit.Framework;
 using SynthEHR;
 using SynthEHR.Datasets;
-using NUnit.Framework;
 
 namespace SynthEHRTests;
 
@@ -18,7 +18,7 @@ public sealed class TestAdmissionTests
         var person = new Person(r);
 
         //Create test data for that person
-        var a = new HospitalAdmissionsRecord(person,person.DateOfBirth,r);
+        var a = new HospitalAdmissionsRecord(person, person.DateOfBirth, r);
 
         Assert.Multiple(() =>
         {
@@ -37,14 +37,14 @@ public sealed class TestAdmissionTests
 
         var swSetup = Stopwatch.StartNew();
         //first is always slow
-        _= new HospitalAdmissionsRecord(person,person.DateOfBirth,r);
+        _ = new HospitalAdmissionsRecord(person, person.DateOfBirth, r);
 
         Console.WriteLine($"Setup took{swSetup.ElapsedMilliseconds}ms");
 
         var sw = Stopwatch.StartNew();
         for (var i = 0; i < 100000; i++)
         {
-            _=new HospitalAdmissionsRecord(person,person.DateOfBirth,r);
+            _ = new HospitalAdmissionsRecord(person, person.DateOfBirth, r);
         }
 
         Console.WriteLine($"Remainder took:{sw.ElapsedMilliseconds}ms");

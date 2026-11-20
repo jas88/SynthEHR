@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -24,16 +24,16 @@ public sealed class MaternityRecord
     /// <summary>
     /// Sorted array of (cumulative weight, value) tuples for O(log n) binary search lookup.
     /// </summary>
-    private static readonly (int CumulativeWeight, string Value)[] _locations;
+    private static readonly (int CumulativeWeight, string Value)[] Locations;
     private static int _locationsMaxWeight;
 
-    private static readonly (int CumulativeWeight, string Value)[] _maritalStatusOld;
+    private static readonly (int CumulativeWeight, string Value)[] MaritalStatusOld;
     private static int _maritalStatusOldMaxWeight;
 
-    private static readonly (int CumulativeWeight, string Value)[] _maritalStatusNew;
+    private static readonly (int CumulativeWeight, string Value)[] MaritalStatusNew;
     private static int _maritalStatusNewMaxWeight;
 
-    private static readonly (int CumulativeWeight, string Value)[] _specialties;
+    private static readonly (int CumulativeWeight, string Value)[] Specialties;
     private static int _specialtiesMaxWeight;
 
     /// <include file='../../Datasets.doc.xml' path='Datasets/Maternity/Field[@name="Location"]'/>
@@ -85,11 +85,11 @@ public sealed class MaternityRecord
         // If they died younger than 18 or were born less than 18 years into the past
         Date = youngest > oldest ? oldest : DataGenerator.GetRandomDate(youngest, oldest, r);
 
-        Location = GetRandomFromWeightedArray(_locations, _locationsMaxWeight, r);
-        SendingLocation = GetRandomFromWeightedArray(_locations, _locationsMaxWeight, r);
+        Location = GetRandomFromWeightedArray(Locations, _locationsMaxWeight, r);
+        SendingLocation = GetRandomFromWeightedArray(Locations, _locationsMaxWeight, r);
         MaritalStatus = Date < MaritalStatusSwitchover
-            ? GetRandomFromWeightedArray(_maritalStatusOld, _maritalStatusOldMaxWeight, r)
-            : GetRandomFromWeightedArray(_maritalStatusNew, _maritalStatusNewMaxWeight, r);
+            ? GetRandomFromWeightedArray(MaritalStatusOld, _maritalStatusOldMaxWeight, r)
+            : GetRandomFromWeightedArray(MaritalStatusNew, _maritalStatusNewMaxWeight, r);
 
         BabyChi[0] = new Person(r) { DateOfBirth = Date }.GetRandomCHI(r);
 
@@ -103,7 +103,7 @@ public sealed class MaternityRecord
                 BabyChi[2] = new Person(r) { DateOfBirth = Date }.GetRandomCHI(r);
         }
 
-        Specialty = GetRandomFromWeightedArray(_specialties, _specialtiesMaxWeight, r);
+        Specialty = GetRandomFromWeightedArray(Specialties, _specialtiesMaxWeight, r);
     }
 
     static MaternityRecord()
@@ -126,16 +126,16 @@ public sealed class MaternityRecord
         }
 
         // Convert to arrays and store max weights
-        _locations = locationsBuilder.ToArray();
+        Locations = locationsBuilder.ToArray();
         _locationsMaxWeight = locationsBuilder.Count > 0 ? locationsBuilder[^1].Item1 : 0;
 
-        _maritalStatusOld = maritalStatusOldBuilder.ToArray();
+        MaritalStatusOld = maritalStatusOldBuilder.ToArray();
         _maritalStatusOldMaxWeight = maritalStatusOldBuilder.Count > 0 ? maritalStatusOldBuilder[^1].Item1 : 0;
 
-        _maritalStatusNew = maritalStatusNewBuilder.ToArray();
+        MaritalStatusNew = maritalStatusNewBuilder.ToArray();
         _maritalStatusNewMaxWeight = maritalStatusNewBuilder.Count > 0 ? maritalStatusNewBuilder[^1].Item1 : 0;
 
-        _specialties = specialtiesBuilder.ToArray();
+        Specialties = specialtiesBuilder.ToArray();
         _specialtiesMaxWeight = specialtiesBuilder.Count > 0 ? specialtiesBuilder[^1].Item1 : 0;
     }
 

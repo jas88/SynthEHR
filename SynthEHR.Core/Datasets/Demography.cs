@@ -20,17 +20,17 @@ public sealed class Demography(Random rand) : DataGenerator(rand)
         var values = new object?[39];
 
         values[0] = person.CHI;
-        var dtCreated = GetRandomDateAfter(person.DateOfBirth,r);//all records must have been created after the person was born
+        var dtCreated = GetRandomDateAfter(person.DateOfBirth, r);//all records must have been created after the person was born
         values[1] = dtCreated;
 
-        if (r.Next(0,2) == 0)
+        if (r.Next(0, 2) == 0)
             values[2] = true;
         else
             values[2] = false;
 
         values[3] = "Random record";
 
-        if (r.Next(0,10)== 0)//one in 10 records has one of these (an ALIAS chi)
+        if (r.Next(0, 10) == 0)//one in 10 records has one of these (an ALIAS chi)
             values[4] = person.GetRandomCHI(r);
 
         values[5] = GetRandomCHIStatus(r);
@@ -43,11 +43,11 @@ public sealed class Demography(Random rand) : DataGenerator(rand)
         var randomAddress = new DemographyAddress(r);
 
         //if person is dead and dtCreated is after they died use the same address otherwise use a random one (all records after a person dies have same address)
-        values[10] = person.DateOfDeath != null && dtCreated>person.DateOfDeath ? person.Address.Line1 : randomAddress.Line1;
-        values[11] = person.DateOfDeath != null && dtCreated>person.DateOfDeath ? person.Address.Line2 : randomAddress.Line2;
-        values[12] = person.DateOfDeath != null && dtCreated>person.DateOfDeath ? person.Address.Line3 : randomAddress.Line3;
-        values[13] = person.DateOfDeath != null && dtCreated>person.DateOfDeath ? person.Address.Line4 : randomAddress.Line4;
-        values[14] = person.DateOfDeath != null && dtCreated>person.DateOfDeath ? person.Address.Postcode.Value : randomAddress.Postcode.Value;
+        values[10] = person.DateOfDeath != null && dtCreated > person.DateOfDeath ? person.Address.Line1 : randomAddress.Line1;
+        values[11] = person.DateOfDeath != null && dtCreated > person.DateOfDeath ? person.Address.Line2 : randomAddress.Line2;
+        values[12] = person.DateOfDeath != null && dtCreated > person.DateOfDeath ? person.Address.Line3 : randomAddress.Line3;
+        values[13] = person.DateOfDeath != null && dtCreated > person.DateOfDeath ? person.Address.Line4 : randomAddress.Line4;
+        values[14] = person.DateOfDeath != null && dtCreated > person.DateOfDeath ? person.Address.Postcode.Value : randomAddress.Postcode.Value;
 
         //if the person is dead and the dtCreated of the record is greater than the date of death populate it
         values[15] = person.GetDateOfDeathOrNullOn(dtCreated); //pass record creation date and get isdead date back
@@ -60,7 +60,7 @@ public sealed class Demography(Random rand) : DataGenerator(rand)
         if (!string.IsNullOrWhiteSpace(person.Address.Postcode.District))
             values[17] = person.Address.Postcode.District[..1];
 
-        var healthboard = GetRandomLetter(true,r);
+        var healthboard = GetRandomLetter(true, r);
         values[18] = healthboard;
 
         //healthboard 'A' use padding on the name field (to a length of 10!)
@@ -77,22 +77,22 @@ public sealed class Demography(Random rand) : DataGenerator(rand)
         values[19] = GetRandomGPCode(r);
 
         //birth surname and previous surname fields, sparsely populated
-        if (r.Next(0,10) == 0)
+        if (r.Next(0, 10) == 0)
             values[20] = Person.GetRandomSurname(r);
-        if (r.Next(0,10) == 0)
+        if (r.Next(0, 10) == 0)
             values[21] = Person.GetRandomSurname(r);
 
-        if (r.Next(0,3) == 0)
+        if (r.Next(0, 3) == 0)
             values[22] = person.GetRandomForename(r); //random gender appropriate middle name for 1 person in 3
 
-        if (r.Next(0,5) == 0)
+        if (r.Next(0, 5) == 0)
             values[23] = person.GetRandomForename(r); //alternate forename
 
-        if (r.Next(0,3)==0)
-            values[24] = GetRandomLetter(true,r);  //one in 3 has an initial
+        if (r.Next(0, 3) == 0)
+            values[24] = GetRandomLetter(true, r);  //one in 3 has an initial
 
         //people only have previous addresses if they are alive
-        if (r.Next(0,2) == 0 && person.DateOfDeath != null)
+        if (r.Next(0, 2) == 0 && person.DateOfDeath != null)
         {
             var randomAddress2 = new DemographyAddress(r);
 
@@ -103,9 +103,9 @@ public sealed class Demography(Random rand) : DataGenerator(rand)
             values[29] = randomAddress2.Postcode.Value;
 
             //date of address change is unknown for 50% of records
-            if (r.Next(0,2) == 0)
+            if (r.Next(0, 2) == 0)
                 //get after birth but before dtCreated/date of death
-                values[30] = GetRandomDate(person.DateOfBirth,GetMinimum(person.DateOfDeath,dtCreated),r);
+                values[30] = GetRandomDate(person.DateOfBirth, GetMinimum(person.DateOfDeath, dtCreated), r);
         }
 
         //an always null field, why not?!
@@ -121,13 +121,13 @@ public sealed class Demography(Random rand) : DataGenerator(rand)
         if (gpAcceptDate.Year < 1980 && r.Next(gpAcceptDate.Year - Person.MinimumYearOfBirth) == 0) //the farther back you go the more likely they are to be missing a forename
             values[8] = null; //some people are randomly missing a forename
 
-        if (r.Next(0,3) == 0)
+        if (r.Next(0, 3) == 0)
         {
             values[33] = GetRandomGPCode(r);
-            values[34] = GetRandomDateAfter(gpAcceptDate,r);
+            values[34] = GetRandomDateAfter(gpAcceptDate, r);
         }
 
-        values[35] = GetRandomDate(person.DateOfBirth,GetMinimum(person.DateOfDeath,dtCreated),r);
+        values[35] = GetRandomDate(person.DateOfBirth, GetMinimum(person.DateOfDeath, dtCreated), r);
         values[36] = person.DateOfBirth;
         values[37] = GetRandomDouble(r);
 

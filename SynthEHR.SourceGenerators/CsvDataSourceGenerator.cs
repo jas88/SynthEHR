@@ -207,14 +207,16 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
         {
             ColumnDataType.Int => rows.OrderByDescending(row =>
             {
-                if (sortColumnIndex >= row.Length) return int.MinValue;
+                if (sortColumnIndex >= row.Length)
+                    return int.MinValue;
                 var value = row[sortColumnIndex];
                 return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result) ? result : int.MinValue;
             }).ToArray(),
 
             ColumnDataType.Double => rows.OrderByDescending(row =>
             {
-                if (sortColumnIndex >= row.Length) return double.MinValue;
+                if (sortColumnIndex >= row.Length)
+                    return double.MinValue;
                 var value = row[sortColumnIndex];
                 return double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var result)
                     ? result : double.MinValue;
@@ -260,10 +262,14 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
             }
 
             ColumnDataType type;
-            if (allInt) type = ColumnDataType.Int;
-            else if (allDouble) type = ColumnDataType.Double;
-            else if (allBool) type = ColumnDataType.Bool;
-            else type = ColumnDataType.String;
+            if (allInt)
+                type = ColumnDataType.Int;
+            else if (allDouble)
+                type = ColumnDataType.Double;
+            else if (allBool)
+                type = ColumnDataType.Bool;
+            else
+                type = ColumnDataType.String;
 
             columnTypes[colIndex] = new ColumnTypeInfo(type, hasNull);
         }

@@ -54,7 +54,7 @@ Generate clinically realistic synthetic medical data for testing, development, a
 ## 2. Technology Stack
 
 ### Primary Language
-- **C# / .NET 8.0**
+- **C# / .NET 10 and .NET 11** (SynthEHR.Core targets net10.0 and net11.0; the CLI and tests net10.0)
 
 ### Frameworks & Libraries
 
@@ -87,8 +87,8 @@ Generate clinically realistic synthetic medical data for testing, development, a
 - **Microsoft.NET.Test.Sdk** (v17.13.0)
 
 ### Build Tools
-- **MSBuild 15+** (Visual Studio 2017+)
-- **.NET 8.0 SDK**
+- **MSBuild** (included with the .NET SDK)
+- **.NET 11 SDK** (11.0.100 or later, pinned in `global.json`)
 - **GitHub Actions** for CI/CD
 
 ### Platform Support
@@ -599,13 +599,12 @@ Each medical domain has dedicated generators:
 ### Build Requirements
 
 #### Required Tools
-1. **.NET 8.0 SDK**
-   - Latest stable version
-   - Cross-platform support
+1. **.NET 11 SDK**
+   - 11.0.100 or later, as pinned in `global.json` (`rollForward: latestMinor`)
+   - Plus the **.NET 10 runtime**, to run the CLI and the tests, which target net10.0
 
-2. **MSBuild 15+**
-   - Visual Studio 2017 or later
-   - Or .NET Core build tools
+2. **MSBuild**
+   - Included with the .NET SDK
 
 3. **Git**
    - For source control
@@ -640,7 +639,7 @@ Each medical domain has dedicated generators:
 ### Build Configuration
 
 #### Project Settings
-- **Target Framework:** .NET 8.0
+- **Target Frameworks:** net10.0 and net11.0 (SynthEHR.Core), net10.0 (CLI and tests), netstandard2.0 (source generator)
 - **Output Type:** Library (Core), Executable (CLI)
 - **Language Version:** Latest
 - **Nullable:** Enabled
@@ -657,41 +656,51 @@ Each medical domain has dedicated generators:
 
 #### Linux (Ubuntu 22.04+)
 ```bash
-# Install .NET SDK
+# Install the .NET 11 SDK and the .NET 10 runtime
 wget https://dot.net/v1/dotnet-install.sh
 chmod +x dotnet-install.sh
-./dotnet-install.sh --channel 8.0
+./dotnet-install.sh --channel 11.0
+./dotnet-install.sh --channel 10.0 --runtime dotnet
+# dotnet-install.sh cannot change this shell's environment
+export DOTNET_ROOT="$HOME/.dotnet"
+export PATH="$DOTNET_ROOT:$PATH"
 
 # Build
 dotnet build SynthEHR.sln
-dotnet test SynthEHR.sln
+dotnet test --solution SynthEHR.sln
 ```
 
 #### Windows
 ```powershell
-# Install via Visual Studio Installer
-# Or download .NET 8.0 SDK from microsoft.com
+# Download the .NET 11 SDK and the .NET 10 runtime from https://dot.net
+# (or install them with winget)
 
 # Build
 dotnet build SynthEHR.sln
-dotnet test SynthEHR.sln
+dotnet test --solution SynthEHR.sln
 ```
 
 #### macOS
 ```bash
-# Install via Homebrew
-brew install dotnet@8
+# Install the .NET 11 SDK and the .NET 10 runtime
+curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh
+chmod +x dotnet-install.sh
+./dotnet-install.sh --channel 11.0
+./dotnet-install.sh --channel 10.0 --runtime dotnet
+# dotnet-install.sh cannot change this shell's environment
+export DOTNET_ROOT="$HOME/.dotnet"
+export PATH="$DOTNET_ROOT:$PATH"
 
 # Build
 dotnet build SynthEHR.sln
-dotnet test SynthEHR.sln
+dotnet test --solution SynthEHR.sln
 ```
 
 ### CI/CD Pipeline
 
 #### GitHub Actions Workflow
 1. **Checkout** code
-2. **Setup** .NET 8.0.x
+2. **Setup** .NET: the build-test-package and CodeQL jobs install the SDK pinned in `global.json`, and the publish job installs 10.0.x
 3. **Restore** NuGet packages
 4. **Build** solution
 5. **Test** all projects

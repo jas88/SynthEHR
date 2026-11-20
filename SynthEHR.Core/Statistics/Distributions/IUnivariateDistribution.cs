@@ -1,4 +1,4 @@
-﻿// <copyright file="IUnivariateDistribution.cs" company="Math.NET">
+// <copyright file="IUnivariateDistribution.cs" company="Math.NET">
 // Math.NET Numerics, part of the Math.NET Project
 // http://numerics.mathdotnet.com
 // http://github.com/mathnet/mathnet-numerics
@@ -32,7 +32,7 @@ namespace SynthEHR.Statistics.Distributions;
 /// <summary>
 /// Univariate Probability Distribution.
 /// </summary>
-internal interface IUnivariateDistribution:IDistribution
+internal interface IUnivariateDistribution : IDistribution
 {
     /// <summary>
     /// Gets the mean of the distribution.

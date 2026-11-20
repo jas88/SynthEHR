@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,17 +10,17 @@ namespace SynthEHR;
 /// Picks random object of Type T based on a specified probability for each element.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public sealed class BucketList<T> : IEnumerable<(T item,int probability)>
+public sealed class BucketList<T> : IEnumerable<(T item, int probability)>
 {
     private Lazy<int> _total;
-    private readonly List<(T item, int probability)> _list=[];
+    private readonly List<(T item, int probability)> _list = [];
 
     /// <summary>
     /// Construct an empty BucketList
     /// </summary>
     public BucketList()
     {
-        _total = new Lazy<int>(GetTotal,LazyThreadSafetyMode.ExecutionAndPublication);
+        _total = new Lazy<int>(GetTotal, LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     private int GetTotal() => _list.Sum(static t => t.probability);
@@ -78,7 +78,7 @@ public sealed class BucketList<T> : IEnumerable<(T item,int probability)>
     /// <param name="toAdd"></param>
     public void Add(int probability, T toAdd)
     {
-        _list.Add((toAdd,probability));
+        _list.Add((toAdd, probability));
         if (_total.IsValueCreated)
             _total = new Lazy<int>(GetTotal, LazyThreadSafetyMode.ExecutionAndPublication);
     }

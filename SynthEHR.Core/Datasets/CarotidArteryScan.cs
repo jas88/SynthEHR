@@ -20,81 +20,81 @@ public class CarotidArteryScan(Random rand) : DataGenerator(rand)
     /// <inheritdoc/>
     public override object?[] GenerateTestDataRow(Person person)
     {
-            var results = new object?[68];
+        var results = new object?[68];
 
-            var appointment = new Appointment(person,r);
+        var appointment = new Appointment(person, r);
 
-            results[0] = appointment.Identifier; //RECORD_NUMBER
-            results[1] = 0; //R_CC_STEN_A
-            results[2] = 0; //R_CC_STEN_B
-            results[3] = 0; //R_CC_STEN_C
-            results[4] = 0; //R_CC_STEN_D
-            results[5] = 0; //R_CC_STEN_S
-            results[6] = 0; //L_IC_STEN_A
-            results[7] = 0; //L_IC_STEN_B
-            results[8] = 0; //L_IC_STEN_C
-            results[9] = 0; //L_IC_STEN_D
-            results[10] = 0; //L_IC_STEN_S
-            results[11] = 0; //R_IC_STEN_A
-            results[12] = 0; //R_IC_STEN_B
-            results[13] = 0; //R_IC_STEN_C
-            results[14] = 0; //R_IC_STEN_D
-            results[15] = 0; //R_IC_STEN_S
-            results[16] = Concat(r,0,3,()=>GetRandomSentence(r),Environment.NewLine + Environment.NewLine); //COMMENT
-            results[17] = GetRandomSentence(r); //REPORT
-            results[18] = _id++; //id
-            results[19] = person.CHI; //PatientID
-            results[20] = 0; //SUMMARY
-            results[21] = r.Next(0,99999); //LAST_AUTH_BY
-            results[22] = GetRandomDateAfter(appointment.StartDate,r); //LAST_AUTH_DT
-            results[23] = 0; //CV_FILE
-            results[24] = 0; //L_CC_STEN_S
-            results[25] = 0; //CV_DT
-            results[26] = 0; //PROV_REPT_DT
-            results[27] = 0; //FILE_COPY_DT
-            results[28] = 0; //LAST_UPDATED_DT
-            results[29] = 0; //AUTHORISED_DT
-            results[30] = r.Next(0,3); //REPT_STATUS
-            results[31] = GetGaussian(0,3); //STUDIES
-            results[32] = 0; //FINAL_REPT_DT
-            results[33] = 0; //hic_dataLoadRunID
-            results[34] = 0; //L_CC_STEN_D
-            results[35] = 0; //L_CC_STEN_B
-            results[36] = 0; //APPT_ID
-            results[37] = appointment.StartDate; //DATE
-            results[38] = person.CHI; //CHINO
-            results[39] = GetGaussian(0,5); //L_BD_RATIO
-            results[40] = GetGaussian(0,3); //L_AC_RATIO
-            results[41] = GetGaussian(0,10); //R_BD_RATIO
-            results[42] = GetGaussian(0,5); //R_AC_RATIO
-            results[43] = Swap(Math.Max(1, GetGaussianInt(-5, 9)), Enumerable.Range(6,3), 1); //L_CC_STENOSIS   (lots of 1's some non ones but no 6,7 or 8s
-            results[44] = GetGaussian(0,2); //L_CC_PEAK_SYS
-            results[45] = GetGaussian(0,0.09); //L_GetGaussian(0,2);
-            results[46] = Swap(GetGaussianInt(1,8),Enumerable.Range(7,1),9); //L_IC_STENOSIS
-            results[47] = GetGaussian(0,4); //L_IC_PEAK_SYS
-            results[48] = GetGaussian(0,4); //L_IC_END_DIA
-            results[49] = Math.Max(1, GetGaussianInt(0, 9)); //L_EC_STENOSIS
-            results[50] = Swap(Math.Max(1, GetGaussianInt(0, 9)), Enumerable.Range(5,3), 9); //L_PLAQUE
-            results[51] = Math.Min(GetGaussianInt(1, 20), 8); //L_SYMPTOMS
-            results[52] = 0; //L_BRUIT
-            results[53] = 0; //L_CC_STEN_A
-            results[54] = 0; //ON_STEN_STUDY
-            results[55] = Math.Max(1, GetGaussianInt(-5, 4)); //R_VERT_ARTERY
-            results[56] = 0; //R_BRUIT
-            results[57] = Math.Min(GetGaussianInt(1, 20), 8); //R_SYMPTOMS
-            results[58] = Swap(Math.Max(1, GetGaussianInt(0, 9)), Enumerable.Range(5, 3), 9);//R_PLAQUE
-            results[59] = 0; //L_CC_STEN_C
-            results[60] = Math.Max(1, GetGaussianInt(-5, 9)); //R_EC_STENOSIS
-            results[61] = 0; //R_IC_PEAK_SYS
-            results[62] = Swap(GetGaussianInt(1, 8),Enumerable.Range(7,1),9); //R_IC_STENOSIS
-            results[63] = GetGaussian(0,0.2); //R_CC_END_DIA
-            results[64] = GetGaussian(0, 2); //R_CC_PEAK_SYS
-            results[65] = Swap(Math.Max(1, GetGaussianInt(-5, 9)), Enumerable.Range(6, 3),1); //R_CC_STENOSIS
-            results[66] = Math.Max(1, GetGaussianInt(-5, 4)); //L_VERT_ARTERY
-            results[67] = GetGaussian(0, 2); //R_IC_END_DIA
+        results[0] = appointment.Identifier; //RECORD_NUMBER
+        results[1] = 0; //R_CC_STEN_A
+        results[2] = 0; //R_CC_STEN_B
+        results[3] = 0; //R_CC_STEN_C
+        results[4] = 0; //R_CC_STEN_D
+        results[5] = 0; //R_CC_STEN_S
+        results[6] = 0; //L_IC_STEN_A
+        results[7] = 0; //L_IC_STEN_B
+        results[8] = 0; //L_IC_STEN_C
+        results[9] = 0; //L_IC_STEN_D
+        results[10] = 0; //L_IC_STEN_S
+        results[11] = 0; //R_IC_STEN_A
+        results[12] = 0; //R_IC_STEN_B
+        results[13] = 0; //R_IC_STEN_C
+        results[14] = 0; //R_IC_STEN_D
+        results[15] = 0; //R_IC_STEN_S
+        results[16] = Concat(r, 0, 3, () => GetRandomSentence(r), Environment.NewLine + Environment.NewLine); //COMMENT
+        results[17] = GetRandomSentence(r); //REPORT
+        results[18] = _id++; //id
+        results[19] = person.CHI; //PatientID
+        results[20] = 0; //SUMMARY
+        results[21] = r.Next(0, 99999); //LAST_AUTH_BY
+        results[22] = GetRandomDateAfter(appointment.StartDate, r); //LAST_AUTH_DT
+        results[23] = 0; //CV_FILE
+        results[24] = 0; //L_CC_STEN_S
+        results[25] = 0; //CV_DT
+        results[26] = 0; //PROV_REPT_DT
+        results[27] = 0; //FILE_COPY_DT
+        results[28] = 0; //LAST_UPDATED_DT
+        results[29] = 0; //AUTHORISED_DT
+        results[30] = r.Next(0, 3); //REPT_STATUS
+        results[31] = GetGaussian(0, 3); //STUDIES
+        results[32] = 0; //FINAL_REPT_DT
+        results[33] = 0; //hic_dataLoadRunID
+        results[34] = 0; //L_CC_STEN_D
+        results[35] = 0; //L_CC_STEN_B
+        results[36] = 0; //APPT_ID
+        results[37] = appointment.StartDate; //DATE
+        results[38] = person.CHI; //CHINO
+        results[39] = GetGaussian(0, 5); //L_BD_RATIO
+        results[40] = GetGaussian(0, 3); //L_AC_RATIO
+        results[41] = GetGaussian(0, 10); //R_BD_RATIO
+        results[42] = GetGaussian(0, 5); //R_AC_RATIO
+        results[43] = Swap(Math.Max(1, GetGaussianInt(-5, 9)), Enumerable.Range(6, 3), 1); //L_CC_STENOSIS   (lots of 1's some non ones but no 6,7 or 8s
+        results[44] = GetGaussian(0, 2); //L_CC_PEAK_SYS
+        results[45] = GetGaussian(0, 0.09); //L_GetGaussian(0,2);
+        results[46] = Swap(GetGaussianInt(1, 8), Enumerable.Range(7, 1), 9); //L_IC_STENOSIS
+        results[47] = GetGaussian(0, 4); //L_IC_PEAK_SYS
+        results[48] = GetGaussian(0, 4); //L_IC_END_DIA
+        results[49] = Math.Max(1, GetGaussianInt(0, 9)); //L_EC_STENOSIS
+        results[50] = Swap(Math.Max(1, GetGaussianInt(0, 9)), Enumerable.Range(5, 3), 9); //L_PLAQUE
+        results[51] = Math.Min(GetGaussianInt(1, 20), 8); //L_SYMPTOMS
+        results[52] = 0; //L_BRUIT
+        results[53] = 0; //L_CC_STEN_A
+        results[54] = 0; //ON_STEN_STUDY
+        results[55] = Math.Max(1, GetGaussianInt(-5, 4)); //R_VERT_ARTERY
+        results[56] = 0; //R_BRUIT
+        results[57] = Math.Min(GetGaussianInt(1, 20), 8); //R_SYMPTOMS
+        results[58] = Swap(Math.Max(1, GetGaussianInt(0, 9)), Enumerable.Range(5, 3), 9);//R_PLAQUE
+        results[59] = 0; //L_CC_STEN_C
+        results[60] = Math.Max(1, GetGaussianInt(-5, 9)); //R_EC_STENOSIS
+        results[61] = 0; //R_IC_PEAK_SYS
+        results[62] = Swap(GetGaussianInt(1, 8), Enumerable.Range(7, 1), 9); //R_IC_STENOSIS
+        results[63] = GetGaussian(0, 0.2); //R_CC_END_DIA
+        results[64] = GetGaussian(0, 2); //R_CC_PEAK_SYS
+        results[65] = Swap(Math.Max(1, GetGaussianInt(-5, 9)), Enumerable.Range(6, 3), 1); //R_CC_STENOSIS
+        results[66] = Math.Max(1, GetGaussianInt(-5, 4)); //L_VERT_ARTERY
+        results[67] = GetGaussian(0, 2); //R_IC_END_DIA
 
-            return results;
-        }
+        return results;
+    }
 
 
     /// <inheritdoc/>

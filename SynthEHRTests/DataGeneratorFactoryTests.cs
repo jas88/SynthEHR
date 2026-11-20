@@ -1,6 +1,6 @@
-﻿using System.Linq;
-using SynthEHR.Datasets;
+using System.Linq;
 using NUnit.Framework;
+using SynthEHR.Datasets;
 
 namespace SynthEHRTests;
 
@@ -13,8 +13,8 @@ file sealed class DataGeneratorFactoryTests
         var fromReflection = typeof(IDataGenerator).Assembly.GetExportedTypes()
             .Where(static t => typeof(IDataGenerator).IsAssignableFrom(t)
                                && !t.IsAbstract
-                               && t.IsClass).Select(static t=>new DataGeneratorFactory.GeneratorType(t));
+                               && t.IsClass).Select(static t => new DataGeneratorFactory.GeneratorType(t));
 
-        Assert.That(DataGeneratorFactory.GetAvailableGenerators(),Is.EquivalentTo(fromReflection));
+        Assert.That(DataGeneratorFactory.GetAvailableGenerators(), Is.EquivalentTo(fromReflection));
     }
 }

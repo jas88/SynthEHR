@@ -16,27 +16,27 @@ public sealed class Biochemistry(Random rand) : DataGenerator(rand)
     /// <inheritdoc/>
     public override object?[] GenerateTestDataRow(Person person)
     {
-            var results = new object?[13];
+        var results = new object?[13];
 
-            var randomSample = new BiochemistryRecord(r);
+        var randomSample = new BiochemistryRecord(r);
 
-            results[0] = person.CHI;
-            results[1] = randomSample.Healthboard;
-            results[2] = person.GetRandomDateDuringLifetime(r);
-            results[3] = randomSample.SampleType;
-            results[4] = randomSample.TestCode;
-            results[5] = randomSample.Result;
-            results[6] = randomSample.LabNumber;
-            results[7] = randomSample.QuantityUnit;
-            results[8] = randomSample.ReadCodeValue;
-            results[9] = randomSample.ArithmeticComparator;
-            results[10] = randomSample.Interpretation;
-            results[11] = randomSample.RangeHighValue;
-            results[12] = randomSample.RangeLowValue;
+        results[0] = person.CHI;
+        results[1] = randomSample.Healthboard;
+        results[2] = person.GetRandomDateDuringLifetime(r);
+        results[3] = randomSample.SampleType;
+        results[4] = randomSample.TestCode;
+        results[5] = randomSample.Result;
+        results[6] = randomSample.LabNumber;
+        results[7] = randomSample.QuantityUnit;
+        results[8] = randomSample.ReadCodeValue;
+        results[9] = randomSample.ArithmeticComparator;
+        results[10] = randomSample.Interpretation;
+        results[11] = randomSample.RangeHighValue;
+        results[12] = randomSample.RangeLowValue;
 
-            return results;
+        return results;
 
-        }
+    }
 
     /// <inheritdoc/>
     protected override string[] GetHeaders() =>

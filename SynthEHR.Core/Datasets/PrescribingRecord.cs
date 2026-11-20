@@ -76,9 +76,9 @@ public sealed class PrescribingRecord
             Quantity = ((int)(r.NextDouble() * (max - min) + min)).ToString(CultureInfo.InvariantCulture);//it is a number
         else
             if (r.Next(0, 2) == 0)
-            Quantity = row.MinQuantity;//it isn't a number, randomly select max or min
-        else
-            Quantity = row.MaxQuantity;
+                Quantity = row.MinQuantity;//it isn't a number, randomly select max or min
+            else
+                Quantity = row.MaxQuantity;
 
     }
 

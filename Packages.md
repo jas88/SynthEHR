@@ -14,4 +14,3 @@
 | Microsoft.CodeAnalysis.Analyzers | [GitHub](https://github.com/dotnet/roslyn-analyzers) | [MIT](https://opensource.org/licenses/MIT) | Roslyn analyzer infrastructure for source generators |
 | Microsoft.CodeAnalysis.CSharp | [GitHub](https://github.com/dotnet/roslyn) | [MIT](https://opensource.org/licenses/MIT) | Used by source generator for compile-time code generation |
 | YamlDotNet | [GitHub](https://github.com/aaubry/YamlDotNet) | [MIT](https://opensource.org/licenses/MIT) | Loading configuration files |
-

@@ -1,9 +1,9 @@
-﻿using SynthEHR;
-using SynthEHR.Datasets;
-using NUnit.Framework;
 using System;
 using System.Data;
 using System.Linq;
+using NUnit.Framework;
+using SynthEHR;
+using SynthEHR.Datasets;
 
 namespace SynthEHRTests;
 
@@ -14,7 +14,7 @@ internal sealed class MaternityTests
     {
         var r = new Random(100);
         var pc = new PersonCollection();
-        pc.GeneratePeople(100,r);
+        pc.GeneratePeople(100, r);
 
         var m = new Maternity(r);
 
@@ -32,10 +32,10 @@ internal sealed class MaternityTests
         var m = new Maternity(r);
 
         var pc = new PersonCollection();
-        pc.GeneratePeople(100,r);
+        pc.GeneratePeople(100, r);
 
         //get 50k records
-        var dt = m.GetDataTable(pc,50000);
+        var dt = m.GetDataTable(pc, 50000);
         Assert.That(dt.Rows, Has.Count.EqualTo(50000));
 
         var countFromPopularLocation = dt.Rows.Cast<DataRow>().Count(static row => row["SendingLocation"].Equals("T101H"));
@@ -61,10 +61,10 @@ internal sealed class MaternityTests
         var m = new Maternity(r);
 
         var pc = new PersonCollection();
-        pc.GeneratePeople(100,r);
+        pc.GeneratePeople(100, r);
 
         var eligible = pc.People.Where(m.IsEligible);
-        var dict = eligible.ToDictionary(static k=>k,v=>new MaternityRecord(v,r));
+        var dict = eligible.ToDictionary(static k => k, v => new MaternityRecord(v, r));
 
         Assert.Multiple(() =>
         {

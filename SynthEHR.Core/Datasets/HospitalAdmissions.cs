@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace SynthEHR.Datasets;
 
@@ -12,29 +12,29 @@ public class HospitalAdmissions(Random rand) : DataGenerator(rand)
     /// <inheritdoc/>
     public override object?[] GenerateTestDataRow(Person person)
     {
-            var episode = new HospitalAdmissionsRecord(person,person.DateOfBirth, r);
+        var episode = new HospitalAdmissionsRecord(person, person.DateOfBirth, r);
 
-            return
-            [
-                episode.Person.CHI,
-                episode.Person.DateOfBirth,
-                episode.AdmissionDate,
-                episode.DischargeDate,
-                episode.MainCondition,
-                episode.OtherCondition1,
-                episode.OtherCondition2,
-                episode.OtherCondition3,
-                GetRandomSentence(r),
-                episode.MainOperation,
-                episode.MainOperationB,
-                episode.OtherOperation1,
-                episode.OtherOperation1B,
-                episode.OtherOperation2,
-                episode.OtherOperation2B,
-                episode.OtherOperation3,
-                episode.OtherOperation3B
-            ];
-        }
+        return
+        [
+            episode.Person.CHI,
+            episode.Person.DateOfBirth,
+            episode.AdmissionDate,
+            episode.DischargeDate,
+            episode.MainCondition,
+            episode.OtherCondition1,
+            episode.OtherCondition2,
+            episode.OtherCondition3,
+            GetRandomSentence(r),
+            episode.MainOperation,
+            episode.MainOperationB,
+            episode.OtherOperation1,
+            episode.OtherOperation1B,
+            episode.OtherOperation2,
+            episode.OtherOperation2B,
+            episode.OtherOperation3,
+            episode.OtherOperation3B
+        ];
+    }
 
     /// <inheritdoc/>
     protected override string[] GetHeaders() =>

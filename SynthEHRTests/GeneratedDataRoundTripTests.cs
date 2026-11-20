@@ -19,7 +19,7 @@ namespace SynthEHRTests;
 /// </summary>
 internal sealed class GeneratedDataRoundTripTests
 {
-    private static readonly string DataDirectory = Path.Combine(TestContext.CurrentContext.TestDirectory, "data");
+    private static readonly string DataDirectory = Path.Join(TestContext.CurrentContext.TestDirectory, "data");
 
     private static IEnumerable<string> CsvFiles() =>
         Directory.GetFiles(DataDirectory, "*.csv").Select(Path.GetFileNameWithoutExtension).Order(StringComparer.Ordinal)!;
@@ -100,7 +100,7 @@ internal sealed class GeneratedDataRoundTripTests
 
     private static void AssertRoundTrip(string dataset)
     {
-        var (headers, expectedRows) = ReadCsv(Path.Combine(DataDirectory, dataset + ".csv"));
+        var (headers, expectedRows) = ReadCsv(Path.Join(DataDirectory, dataset + ".csv"));
 
         var dataType = typeof(PrescribingData).Assembly.GetType($"SynthEHR.Core.Data.{SanitizeIdentifier(dataset)}Data");
         Assert.That(dataType, Is.Not.Null, $"no generated class for {dataset}.csv");

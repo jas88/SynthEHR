@@ -1,7 +1,7 @@
-﻿using System;
+using System;
+using NUnit.Framework;
 using SynthEHR;
 using SynthEHR.Datasets;
-using NUnit.Framework;
 
 namespace SynthEHRTests;
 
@@ -52,22 +52,22 @@ internal sealed class TestBiochemistry
         var persons3 = new PersonCollection();
 
         //take one from each random number generator
-        persons1.GeneratePeople(500,r1);
-        persons2.GeneratePeople(500,r2);
-        persons3.GeneratePeople(500,r3);
+        persons1.GeneratePeople(500, r1);
+        persons2.GeneratePeople(500, r2);
+        persons3.GeneratePeople(500, r3);
 
         var generator1 = DataGeneratorFactory.Create<Biochemistry>(r1);
         var generator2 = DataGeneratorFactory.Create<Biochemistry>(r2);
         var generator3 = new Biochemistry(r3);
 
 
-        for(var i = 0 ; i < 500;i++)
+        for (var i = 0; i < 500; i++)
         {
             var row1 = generator1.GenerateTestDataRow(persons1.People[r1.Next(persons1.People.Length)]);
             var row2 = generator2.GenerateTestDataRow(persons2.People[r2.Next(persons2.People.Length)]);
             var row3 = generator3.GenerateTestDataRow(persons3.People[r3.Next(persons3.People.Length)]);
 
-            for(var cell = 0;cell < row1.Length;cell++)
+            for (var cell = 0; cell < row1.Length; cell++)
             {
                 Assert.Multiple(() =>
                 {

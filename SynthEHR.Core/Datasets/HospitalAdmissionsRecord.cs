@@ -135,7 +135,8 @@ public sealed class HospitalAdmissionsRecord
         }
 
         //if the condition is one that is often treated in a specific way
-        if (!ConditionsToOperationsMap.TryGetValue(MainCondition, out var operationsList)) return;
+        if (!ConditionsToOperationsMap.TryGetValue(MainCondition, out var operationsList))
+            return;
 
         var operations = operationsList.GetRandom(r);
 
@@ -274,7 +275,7 @@ public sealed class HospitalAdmissionsRecord
                 tempConditionsToOperationsMap[key] = conditionOps = [];
 
             conditionOps.Add(int.Parse(r.CountOfRecords, CultureInfo.InvariantCulture), [
-                    r.MAINOPERATION,
+                r.MAINOPERATION,
                 r.MAINOPERATIONB,
                 r.OTHEROPERATION1,
                 r.OTHEROPERATION1B,
@@ -282,7 +283,7 @@ public sealed class HospitalAdmissionsRecord
                 r.OTHEROPERATION2B,
                 r.OTHEROPERATION3,
                 r.OTHEROPERATION3B
-                    ]);
+            ]);
         }
 
         // Freeze the ConditionsToOperationsMap

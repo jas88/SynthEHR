@@ -1,7 +1,7 @@
-﻿using System;
+using System;
+using NUnit.Framework;
 using SynthEHR;
 using SynthEHR.Datasets;
-using NUnit.Framework;
 
 namespace SynthEHRTests;
 

@@ -14,45 +14,45 @@ public sealed class Maternity(Random rand) : DataGenerator(rand)
     /// <returns></returns>
     public override bool IsEligible(Person p)
     {
-            if( p.Gender != 'F')
-                return false;
+        if (p.Gender != 'F')
+            return false;
 
-            // if died must have lived for at least 18 years
-            if(p.DateOfDeath.HasValue)
-                return p.DateOfDeath.Value.Subtract(p.DateOfBirth) > TimeSpan.FromDays(MaternityRecord.MinAge * 366); // lets round up for leap years
+        // if died must have lived for at least 18 years
+        if (p.DateOfDeath.HasValue)
+            return p.DateOfDeath.Value.Subtract(p.DateOfBirth) > TimeSpan.FromDays(MaternityRecord.MinAge * 366); // lets round up for leap years
 
-            //if alive must be older than minimum age to give birth
-            return p.DateOfBirth < Now.AddYears(MaternityRecord.MinAge);
-        }
+        //if alive must be older than minimum age to give birth
+        return p.DateOfBirth < Now.AddYears(MaternityRecord.MinAge);
+    }
 
     /// <inheritdoc/>
     public override object?[] GenerateTestDataRow(Person person)
     {
-            var record = new MaternityRecord(person,r);
+        var record = new MaternityRecord(person, r);
 
-            var results = new object?[12];
+        var results = new object?[12];
 
-            results[0] = person.CHI;
-            results[1] = r.Next(2) == 0 ? 'T': 'F';
+        results[0] = person.CHI;
+        results[1] = r.Next(2) == 0 ? 'T' : 'F';
 
-            results[2] = record.Date;
+        results[2] = record.Date;
 
-            // Partner CHI
-            results[3] = new Person(r).GetRandomCHI(r);
+        // Partner CHI
+        results[3] = new Person(r).GetRandomCHI(r);
 
-            // Baby CHIs
-            results[4] = record.BabyChi[0];
-            results[5] = record.BabyChi[1];
-            results[6] = record.BabyChi[2];
+        // Baby CHIs
+        results[4] = record.BabyChi[0];
+        results[5] = record.BabyChi[1];
+        results[6] = record.BabyChi[2];
 
-            results[7] = record.SendingLocation;
-            results[8] = GenerateDeterministicGuid().ToString();
-            results[9] = record.Location;
-            results[10] = record.MaritalStatus;
-            results[11] = record.Specialty;
+        results[7] = record.SendingLocation;
+        results[8] = GenerateDeterministicGuid().ToString();
+        results[9] = record.Location;
+        results[10] = record.MaritalStatus;
+        results[11] = record.Specialty;
 
-            return results;
-        }
+        return results;
+    }
 
     /// <inheritdoc/>
     protected override string[] GetHeaders() =>
