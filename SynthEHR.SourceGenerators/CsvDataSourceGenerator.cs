@@ -311,7 +311,7 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
 
         if (stringColumns.Count > 0)
         {
-            GenerateInternedStringStorage(code, rows, stringColumns, internedStrings);
+            StringStorageWriter.Write(code, rows, stringColumns, internedStrings);
         }
 
         return internedStrings;
@@ -343,103 +343,6 @@ public sealed class CsvDataSourceGenerator : IIncrementalGenerator
             pool[kvp.Key] = internId++;
 
         return pool;
-    }
-
-    private static void GenerateInternedStringStorage(CodeBuilder code, string[][] rows, List<int> stringColumns, Dictionary<string, int> internedStrings)
-    {
-        var stringBlob = new StringBuilder();
-        // Offsets index the UTF-8 bytes of the blob, not its UTF-16 chars: any non-ASCII text would
-        // otherwise shift every later value.
-        var offsets = new List<int>();
-        var byteOffset = 0;
-        var internedIndices = new List<int>(); // -1 = not interned, >= 0 = interned string ID
-
-        for (int rowIndex = 0; rowIndex < rows.Length; rowIndex++)
-        {
-            var row = rows[rowIndex];
-            foreach (var colIndex in stringColumns)
-            {
-                offsets.Add(byteOffset);
-                var value = colIndex < row.Length ? (row[colIndex] ?? string.Empty) : string.Empty;
-
-                // Check if this string should be interned
-                if (internedStrings.TryGetValue(value, out int internId))
-                {
-                    internedIndices.Add(internId);
-                    // Add marker to blob (empty string with special offset handling)
-                    stringBlob.Append('\0');
-                    byteOffset += 1;
-                }
-                else
-                {
-                    internedIndices.Add(-1);
-                    // Keep "NULL" as-is for string columns - tests expect this literal
-                    stringBlob.Append(value);
-                    stringBlob.Append('\0');
-                    byteOffset += Encoding.UTF8.GetByteCount(value) + 1;
-                }
-            }
-        }
-        offsets.Add(byteOffset); // Final offset for bounds
-
-        code.AppendXmlDocComment("UTF8 string data blob for non-interned string columns");
-        var blobBytes = Encoding.UTF8.GetBytes(stringBlob.ToString());
-        if (blobBytes.Length != byteOffset)
-            throw new InvalidOperationException(FormattableString.Invariant($"String blob is {blobBytes.Length} bytes but offsets end at {byteOffset}"));
-        code.AppendLine($"private static ReadOnlySpan<byte> _stringData => new byte[]");
-        code.OpenBrace();
-
-        // Write bytes in chunks of 20 per line for readability
-        for (int i = 0; i < blobBytes.Length; i++)
-        {
-            if (i > 0 && i % 20 == 0)
-            {
-                code.AppendLine();
-            }
-
-            if (i > 0 && i % 20 != 0)
-                code.Append(" ");
-
-            code.Append(blobBytes[i].ToString(CultureInfo.InvariantCulture));
-
-            if (i < blobBytes.Length - 1)
-                code.Append(",");
-        }
-
-        if (blobBytes.Length > 0)
-            code.AppendLine();
-
-        code.CloseBrace(semicolon: true);
-        code.AppendLine();
-
-        code.AppendXmlDocComment("Offsets into string data blob");
-        code.AppendLine($"private static ReadOnlySpan<int> _stringOffsets => new int[]");
-        code.OpenBrace();
-
-        for (int i = 0; i < offsets.Count; i++)
-        {
-            var isLast = i == offsets.Count - 1;
-            code.AppendLine(FormattableString.Invariant($"{offsets[i]}{(isLast ? "" : ",")}"));
-        }
-
-        code.CloseBrace(semicolon: true);
-        code.AppendLine();
-
-        code.AppendXmlDocComment("Interned string indices (-1 = not interned, >= 0 = interned string ID)");
-        code.AppendLine($"private static ReadOnlySpan<int> _internedIndices => new int[]");
-        code.OpenBrace();
-
-        for (int i = 0; i < internedIndices.Count; i++)
-        {
-            var isLast = i == internedIndices.Count - 1;
-            code.AppendLine(FormattableString.Invariant($"{internedIndices[i]}{(isLast ? "" : ",")}"));
-        }
-
-        code.CloseBrace(semicolon: true);
-        code.AppendLine();
-
-        code.AppendLine(FormattableString.Invariant($"private const int StringColumnsCount = {stringColumns.Count};"));
-        code.AppendLine();
     }
 
     private static void GenerateGetRowMethod(CodeBuilder code, string[] headers, Dictionary<string, int> internedStrings)
