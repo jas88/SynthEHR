@@ -8,6 +8,7 @@
 ## Executive Summary
 
 The SynthEHR codebase is already well-positioned for .NET 8, using modern features like:
+
 - Collection expressions (`[]` syntax) - extensively used
 - Primary constructors - used in several classes
 - `Random.Shared` - already adopted
@@ -16,6 +17,7 @@ The SynthEHR codebase is already well-positioned for .NET 8, using modern featur
 - Nullable reference types enabled
 
 However, there are **significant opportunities** for performance optimization and further modernization, particularly around:
+
 1. String handling and memory allocations
 2. Collection operations and LINQ usage
 3. Span-based APIs for performance-critical paths
@@ -33,6 +35,7 @@ However, there are **significant opportunities** for performance optimization an
 **Performance Gain:** 30-50% memory reduction for large datasets
 
 #### Current Implementation
+
 **File:** `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/Person.cs` (Lines 203-515)
 
 ```csharp
@@ -46,6 +49,7 @@ private static readonly string[] CommonSurnames = [
 ```
 
 #### Recommended Approach
+
 ```csharp
 // Use string.Intern() or compile-time string literals that are automatically interned
 private static readonly string[] CommonGirlForenames = [
@@ -63,6 +67,7 @@ static Person()
 **Why It Matters:** When generating thousands of `Person` objects, forename and surname strings are repeated frequently. String interning ensures only one instance exists in memory, dramatically reducing allocation pressure.
 
 **Estimated Impact:**
+
 - Memory: -40% for string storage
 - GC pressure: -35%
 - Allocation rate: Reduced by ~30%
@@ -76,6 +81,7 @@ static Person()
 **Performance Gain:** 2-3x faster for CHI/ANOCHI generation
 
 #### Current Implementation
+
 **File:** `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/Person.cs` (Lines 162-199)
 
 ```csharp
@@ -97,6 +103,7 @@ public string GetRandomCHI(Random r)
 ```
 
 #### Recommended Approach
+
 ```csharp
 // Use stackalloc for small fixed-size buffers (zero heap allocation)
 private static string GenerateANOCHI(Random r)
@@ -138,11 +145,13 @@ public string GetRandomCHI(Random r)
 ```
 
 **Why It Matters:**
+
 - `StringBuilder` allocates on heap
 - `stackalloc` uses stack memory (much faster, zero GC)
 - CHI/ANOCHI generation happens millions of times
 
 **Estimated Impact:**
+
 - Speed: 2.5-3x faster for ID generation
 - Allocations: Eliminated entirely
 - GC: No collections triggered
@@ -156,6 +165,7 @@ public string GetRandomCHI(Random r)
 **Performance Gain:** 20-30% faster lookups
 
 #### Current Implementation
+
 **File:** `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/PersonCollection.cs` (Lines 18-19)
 
 ```csharp
@@ -164,6 +174,7 @@ internal readonly HashSet<string> AlreadyGeneratedANOCHIs = [];
 ```
 
 #### Recommended Approach
+
 ```csharp
 using System.Collections.Frozen;
 
@@ -184,6 +195,7 @@ public void FreezeForLookups()
 **Why It Matters:** `FrozenSet<T>` is optimized for read-only lookups with better cache locality and faster Contains() checks.
 
 **Estimated Impact:**
+
 - Lookup speed: +25% faster
 - Memory: Slightly better cache efficiency
 
@@ -196,6 +208,7 @@ public void FreezeForLookups()
 **Performance Gain:** 10-30x faster for certain string searches
 
 #### Current Implementation
+
 **File:** `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/Datasets/DataGenerator.cs` (Line 91)
 
 ```csharp
@@ -210,6 +223,7 @@ private static string EscapeCsvField(object field)
 ```
 
 #### Recommended Approach
+
 ```csharp
 using System.Buffers;
 
@@ -232,6 +246,7 @@ private static string EscapeCsvField(object? field)
 **Why It Matters:** `SearchValues<char>` uses SIMD instructions when available, dramatically accelerating character searches.
 
 **Estimated Impact:**
+
 - Speed: 10-30x faster for contains checks
 - Throughput: Significant improvement for large CSV generation
 
@@ -244,6 +259,7 @@ private static string EscapeCsvField(object? field)
 **Performance Gain:** Better testability and consistency
 
 #### Current Implementation
+
 **File:** `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/Datasets/DataGenerator.cs` (Line 36)
 
 ```csharp
@@ -251,6 +267,7 @@ public static DateTime Now { get; } = new(2019, 7, 5, 23, 59, 59);
 ```
 
 #### Recommended Approach
+
 ```csharp
 // Use TimeProvider abstraction (new in .NET 8)
 public class DataGenerator
@@ -269,11 +286,13 @@ var generator = new Biochemistry(random)
 ```
 
 **Why It Matters:**
+
 - Better testability
 - Modern .NET 8 pattern
 - Can swap implementations easily
 
 **Estimated Impact:**
+
 - Code quality: Significant improvement
 - Testability: Much better
 - Performance: Neutral
@@ -289,6 +308,7 @@ var generator = new Biochemistry(random)
 **Performance Gain:** Marginal, mostly readability
 
 #### Current State
+
 The codebase already uses collection expressions extensively. A few remaining opportunities:
 
 **File:** `/Users/jas88/Developer/SynthEHR/SynthEHR/Program.cs` (Line 95)
@@ -298,11 +318,13 @@ generators = [..new[] { match }];
 ```
 
 #### Recommended
+
 ```csharp
 generators = [match]; // Simpler, no intermediate array
 ```
 
 **Estimated Impact:**
+
 - Readability: +10%
 - Performance: Negligible
 
@@ -315,6 +337,7 @@ generators = [match]; // Simpler, no intermediate array
 **Performance Gain:** 15-20% for repeated formatting
 
 #### Current Implementation
+
 **File:** `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/Person.cs` (Line 181)
 
 ```csharp
@@ -322,6 +345,7 @@ var toReturn = DateOfBirth.ToString($"ddMMyy{r.Next(10, 99)}");
 ```
 
 #### Recommended Approach
+
 ```csharp
 // For frequently used formats:
 private static readonly CompositeFormat ChiDateFormat =
@@ -335,6 +359,7 @@ var toReturn = string.Format(null, ChiDateFormat,
 **Note:** This is only beneficial if the same format is used thousands of times. For occasional use, the current approach is fine.
 
 **Estimated Impact:**
+
 - Speed: +15% for hot paths
 - Complexity: Slight increase
 
@@ -347,9 +372,11 @@ var toReturn = string.Format(null, ChiDateFormat,
 **Performance Gain:** Code simplification
 
 #### Current Usage
+
 Already well-adopted (e.g., `Biochemistry`, `DataGeneratorFactory.GeneratorType`).
 
 #### Opportunities
+
 **File:** `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/BucketList.cs` (Lines 15-24)
 
 ```csharp
@@ -366,6 +393,7 @@ public sealed class BucketList<T> : IEnumerable<(T item,int probability)>
 ```
 
 #### Recommended
+
 ```csharp
 public sealed class BucketList<T>() : IEnumerable<(T item, int probability)>
 {
@@ -377,6 +405,7 @@ public sealed class BucketList<T>() : IEnumerable<(T item, int probability)>
 ```
 
 **Estimated Impact:**
+
 - Lines of code: -5%
 - Readability: Better
 
@@ -389,6 +418,7 @@ public sealed class BucketList<T>() : IEnumerable<(T item, int probability)>
 **Performance Gain:** Better readability
 
 #### Current Implementation
+
 **File:** `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/Datasets/DataGenerator.cs` (Lines 732-1004)
 
 ```csharp
@@ -400,6 +430,7 @@ File.WriteAllText(Path.Combine(dir.FullName, "z_chiStatus.csv"),
 ```
 
 #### Recommended
+
 ```csharp
 File.WriteAllText(Path.Combine(dir.FullName, "z_chiStatus.csv"),
     """
@@ -412,6 +443,7 @@ File.WriteAllText(Path.Combine(dir.FullName, "z_chiStatus.csv"),
 **Why It Matters:** Raw string literals eliminate escaping confusion.
 
 **Estimated Impact:**
+
 - Readability: Much better
 - Maintenance: Easier
 
@@ -424,6 +456,7 @@ File.WriteAllText(Path.Combine(dir.FullName, "z_chiStatus.csv"),
 **Performance Gain:** Variable
 
 #### Analysis
+
 The codebase is already efficient - minimal LINQ usage detected. Most operations use direct loops/arrays.
 
 **File:** `/Users/jas88/Developer/SynthEHR/SynthEHR.SourceGenerators/CsvDataSourceGenerator.cs` (Lines 206-224)
@@ -442,6 +475,7 @@ return columnType.Type switch
 ```
 
 #### Potential Optimization
+
 ```csharp
 // Consider Array.Sort with custom comparer for better performance:
 Array.Sort(rows, (a, b) =>
@@ -454,6 +488,7 @@ return rows;
 ```
 
 **Estimated Impact:**
+
 - Speed: +20-30% for sorting
 - Memory: Eliminates LINQ overhead
 
@@ -467,6 +502,7 @@ return rows;
 **Complexity:** 🟢 Low
 
 #### Current Implementation
+
 **File:** `/Users/jas88/Developer/SynthEHR/SynthEHR.Core/Person.cs` (Lines 19-27)
 
 ```csharp
@@ -480,6 +516,7 @@ public sealed record Person
 ```
 
 #### Recommended
+
 ```csharp
 public sealed record Person
 {
@@ -493,6 +530,7 @@ public sealed record Person
 **Why It Matters:** Compile-time safety for required initialization.
 
 **Estimated Impact:**
+
 - Safety: Better
 - Breaking change: Yes (careful)
 
@@ -504,6 +542,7 @@ public sealed record Person
 **Complexity:** 🟢 Low
 
 #### Opportunity
+
 **File:** `/Users/jas88/Developer/SynthEHR/SynthEHR.SourceGenerators/CsvDataParser.cs` (Lines 158-170)
 
 ```csharp
@@ -517,6 +556,7 @@ internal sealed class CsvData
 ```
 
 #### Recommended
+
 ```csharp
 file sealed class CsvData
 {
@@ -530,6 +570,7 @@ file sealed class CsvData
 **Why It Matters:** Prevents accidental usage outside file scope.
 
 **Estimated Impact:**
+
 - Encapsulation: Better
 - Performance: None
 
@@ -544,6 +585,7 @@ file sealed class CsvData
 **Performance Gain:** Faster builds
 
 #### Current State
+
 **File:** `/Users/jas88/Developer/SynthEHR/SynthEHR.SourceGenerators/CsvDataSourceGenerator.cs`
 
 The generator is already incremental, which is excellent. However:
@@ -551,26 +593,30 @@ The generator is already incremental, which is excellent. However:
 #### Recommendations
 
 1. **Add Caching for Type Inference**
-```csharp
-// Cache column type analysis results
-private static readonly Dictionary<string, ColumnTypeInfo[]> TypeInferenceCache = new();
-```
+
+   ```csharp
+   // Cache column type analysis results
+   private static readonly Dictionary<string, ColumnTypeInfo[]> TypeInferenceCache = new();
+   ```
 
 2. **Use Immutable Collections in Pipeline**
-```csharp
-var csvFiles = context.AdditionalTextsProvider
-    .Where(static file => file.Path.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
-    .Select(static (file, cancellationToken) => /* ... */)
-    .WithComparer(CsvFileComparer.Instance); // Add custom comparer
-```
+
+   ```csharp
+   var csvFiles = context.AdditionalTextsProvider
+       .Where(static file => file.Path.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
+       .Select(static (file, cancellationToken) => /* ... */)
+       .WithComparer(CsvFileComparer.Instance); // Add custom comparer
+   ```
 
 3. **Reduce String Allocations in Code Generation**
-```csharp
-// Use ArrayPool for temporary buffers
-private static readonly ArrayPool<char> CharPool = ArrayPool<char>.Shared;
-```
+
+   ```csharp
+   // Use ArrayPool for temporary buffers
+   private static readonly ArrayPool<char> CharPool = ArrayPool<char>.Shared;
+   ```
 
 **Estimated Impact:**
+
 - Build time: -30% for incremental builds
 - Memory: -20% during compilation
 
@@ -582,6 +628,7 @@ private static readonly ArrayPool<char> CharPool = ArrayPool<char>.Shared;
 **Complexity:** 🟡 Medium
 
 #### Current Generation
+
 Generated code creates strings without interning. For frequently repeated values:
 
 ```csharp
@@ -594,6 +641,7 @@ code.AppendLine($"];");
 ```
 
 **Estimated Impact:**
+
 - Runtime memory: -30% for repeated strings
 - Generation time: +5%
 
@@ -602,6 +650,7 @@ code.AppendLine($"];");
 ## IMPLEMENTATION PRIORITY
 
 ### Phase 1: Immediate Wins (1-2 weeks)
+
 1. ✅ String interning for name arrays (HIGH impact, LOW complexity)
 2. ✅ `SearchValues` for CSV escaping (HIGH impact, LOW complexity)
 3. ✅ `Span<T>` for CHI/ANOCHI generation (VERY HIGH impact, MEDIUM complexity)
@@ -612,6 +661,7 @@ code.AppendLine($"];");
 ---
 
 ### Phase 2: Strategic Improvements (2-4 weeks)
+
 1. ✅ `FrozenSet/FrozenDictionary` evaluation (HIGH impact, LOW complexity)
 2. ✅ `TimeProvider` abstraction (HIGH impact, MEDIUM complexity)
 3. ✅ Source generator optimizations (HIGH impact, MEDIUM complexity)
@@ -622,6 +672,7 @@ code.AppendLine($"];");
 ---
 
 ### Phase 3: Polish & Future-Proofing (4-6 weeks)
+
 1. ✅ LINQ optimization review (MEDIUM impact, MEDIUM complexity)
 2. ✅ `CompositeFormat` for hot paths (MEDIUM impact, LOW complexity)
 3. ✅ Required members (LOW impact, LOW complexity, BREAKING)
@@ -665,6 +716,7 @@ public class SynthEHRBenchmarks
 ```
 
 **Target Metrics:**
+
 - Person generation: < 50ms for 10K people
 - CHI generation: < 1ms for 100K CHIs
 - CSV escaping: < 5ms for 100K fields
@@ -674,6 +726,7 @@ public class SynthEHRBenchmarks
 ## RISK ASSESSMENT
 
 ### Low Risk ✅
+
 - String interning
 - SearchValues
 - Collection expressions
@@ -681,11 +734,13 @@ public class SynthEHRBenchmarks
 - File-scoped types
 
 ### Medium Risk ⚠️
+
 - Span-based refactoring (requires careful testing)
 - FrozenSet/FrozenDictionary (behavioral changes possible)
 - Source generator changes (build-time impact)
 
 ### High Risk 🛑
+
 - Required members (BREAKING CHANGE - requires major version bump)
 - TimeProvider (architectural change, needs careful migration)
 
@@ -694,12 +749,14 @@ public class SynthEHRBenchmarks
 ## TOOLING & VALIDATION
 
 ### Recommended Tools
+
 1. **BenchmarkDotNet** - Performance measurement
 2. **dotMemory** - Memory profiling
 3. **PerfView** - ETW tracing
 4. **JetBrains Rider/ReSharper** - Code analysis
 
 ### Validation Checklist
+
 - [ ] All existing tests pass
 - [ ] Benchmarks show expected improvements
 - [ ] Memory profiler confirms reduced allocations
@@ -727,7 +784,7 @@ The codebase's AOT compatibility goals are well-served by these improvements, as
 ## APPENDIX: Code Size Analysis
 
 | Component | Files | Lines | Modernization Level |
-|-----------|-------|-------|---------------------|
+| ----------- | ------- | ------- | --------------------- |
 | SynthEHR.Core | 24 | ~3,500 | 85% modern |
 | SynthEHR CLI | 4 | ~500 | 90% modern |
 | Source Generators | 3 | ~700 | 95% modern |

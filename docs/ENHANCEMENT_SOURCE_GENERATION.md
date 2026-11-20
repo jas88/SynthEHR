@@ -27,6 +27,7 @@ Source generator creates strongly-typed classes for each CSV file:
 - `PrescribingData` - 4.3 MB, ~150K rows
 
 **Generated Structure:**
+
 ```csharp
 namespace SynthEHR.Core.Data;
 
@@ -56,6 +57,7 @@ Migrated 4 Record classes from runtime CSV parsing to generated data:
 - **PrescribingRecord.cs**: Uses `PrescribingData.AllRows`
 
 **Before:**
+
 ```csharp
 static BiochemistryRecord()
 {
@@ -68,6 +70,7 @@ static BiochemistryRecord()
 ```
 
 **After:**
+
 ```csharp
 using SynthEHR.Core.Data;
 
@@ -88,7 +91,7 @@ static BiochemistryRecord()
 
 ### 5. Project Structure
 
-```
+```text
 SynthEHR/
 ├── data/                           # CSV source files (extracted from zip)
 │   ├── Biochemistry.csv
@@ -112,16 +115,19 @@ SynthEHR/
 ## Benefits
 
 ### Performance Improvements
+
 - **Startup time**: Eliminated runtime CSV parsing overhead
 - **Memory**: No DataTable objects in memory
 - **Build time**: CSV parsing happens once at compile time
 
 ### Code Quality
+
 - **Type safety**: Direct property access instead of string-based lookups
 - **IntelliSense**: Full IDE support for generated properties
 - **Compile-time errors**: Catch data issues during build, not runtime
 
 ### Maintainability
+
 - **Reduced dependencies**: CsvHelper only in CLI project
 - **Cleaner code**: No `DataRow` casting or null checks
 - **Future-proof**: Easy to extend generator for new features
@@ -134,6 +140,7 @@ SynthEHR/
 ✅ **Backward Compatibility**: All existing functionality preserved
 
 **CLI Test:**
+
 ```bash
 $ SynthEHR/bin/Debug/net8.0/SynthEHR -d Biochemistry /tmp/test 100 500
 $ head -3 /tmp/test/Biochemistry.csv
@@ -145,9 +152,11 @@ chi,Healthboard,SampleDate,SampleType,TestCode,Result,Labnumber,QuantityUnit,Rea
 ## Migration Guide for Developers
 
 ### For Library Users
+
 No changes required! The public API remains identical.
 
 ### For Contributors
+
 To add new CSV datasets:
 
 1. Add CSV file to `/data/` directory
@@ -156,6 +165,7 @@ To add new CSV datasets:
 4. Access data: `var rows = YourDatasetData.AllRows;`
 
 ### Deprecated API
+
 ```csharp
 // OLD - Don't use
 DataGenerator.EmbeddedCsvToDataTable(typeof(Foo), "Bar.csv");
@@ -168,12 +178,14 @@ var rows = BarData.AllRows;
 ## Technical Implementation Details
 
 ### Source Generator Pipeline
+
 1. AdditionalFiles (.csv) → CsvDataParser → CsvData objects
 2. CsvData → CsvDataSourceGenerator → C# code strings
 3. C# code → Roslyn compiler → Compiled types
 4. Generated code available at compile time in consuming projects
 
 ### Generated Code Features
+
 - `[CompilerGenerated]` and `[GeneratedCode]` attributes
 - XML documentation for all types and members
 - File-scoped namespaces (C# 10+)
@@ -181,6 +193,7 @@ var rows = BarData.AllRows;
 - Helper methods for common operations
 
 ### Build Integration
+
 ```xml
 <ItemGroup>
   <!-- Reference generator as analyzer -->
@@ -208,5 +221,5 @@ Potential improvements for the source generator:
 
 This enhancement successfully modernizes SynthEHR's data loading architecture while maintaining full backward compatibility. The migration from runtime CSV parsing to compile-time source generation provides immediate performance benefits and improved developer experience.
 
-**Repository**: https://github.com/jas88/SynthEHR  
+**Repository**: <https://github.com/jas88/SynthEHR>  
 **Commit**: Ready for commit after review
