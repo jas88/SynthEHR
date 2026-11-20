@@ -11,6 +11,7 @@ using FAnsi.Implementations.PostgreSql;
 using SynthEHR.Configuration;
 using SynthEHR.Datasets;
 using YamlDotNet.Serialization;
+using YamlException = YamlDotNet.Core.YamlException;
 
 namespace SynthEHR;
 
@@ -52,10 +53,12 @@ internal static class Program
                 var d = new Deserializer();
                 config = d.Deserialize<Config>(File.ReadAllText(ConfigFile));
             }
-            catch (Exception e)
+            // The file can't be read, or isn't valid YAML for Config (YamlDotNet wraps every other
+            // deserialization failure in a YamlException)
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException or YamlException)
             {
                 Console.WriteLine($"Error deserializing '{ConfigFile}'");
-                Console.Write(e.ToString());
+                Console.Write(e);
                 _returnCode = -1;
                 return;
             }

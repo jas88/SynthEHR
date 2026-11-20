@@ -155,6 +155,7 @@ internal sealed class Normal : IContinuousDistribution
         double x;
         while (!PolarTransform(rnd.NextDouble(), rnd.NextDouble(), out x, out _))
         {
+            // Rejection sampling: the pair fell outside the unit circle or on its centre, so draw another
         }
 
         return mean + (stddev * x);
@@ -165,7 +166,8 @@ internal sealed class Normal : IContinuousDistribution
         var v1 = (2.0 * a) - 1.0;
         var v2 = (2.0 * b) - 1.0;
         var r = (v1 * v1) + (v2 * v2);
-        if (r >= 1.0 || r == 0.0)
+        // r is a sum of squares, so it is never negative: r <= 0 only when r is exactly 0.
+        if (r >= 1.0 || r <= 0.0)
         {
             x = 0;
             y = 0;

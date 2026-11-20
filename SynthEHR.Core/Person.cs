@@ -75,10 +75,7 @@ public sealed record Person
         DateOfBirth = DataGenerator.GetRandomDate(new DateTime(MinimumYearOfBirth, 1, 1), new DateTime(MaximumYearOfBirth, 1, 1), r);
 
         //1 in 10 patients is dead
-        if (r.Next(10) == 0)
-            DateOfDeath = DataGenerator.GetRandomDateAfter(DateOfBirth, r);
-        else
-            DateOfDeath = null;
+        DateOfDeath = r.Next(10) == 0 ? DataGenerator.GetRandomDateAfter(DateOfBirth, r) : null;
 
         CHI = GetNovelCHI(r);
 

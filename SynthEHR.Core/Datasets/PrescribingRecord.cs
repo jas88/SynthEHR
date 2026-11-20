@@ -13,7 +13,10 @@ using SynthEHR.Core.Data;
 
 namespace SynthEHR.Datasets;
 
-/// <include file='../../Datasets.doc.xml' path='Datasets/Prescribing'/>
+/// <summary>
+/// Data class representing a single randomly chosen prescription (drug and quantity) in <see cref="Prescribing"/> (use if you
+/// want to use randomly generated data directly rather than generate it into a file).
+/// </summary>
 public sealed class PrescribingRecord
 {
     /// <summary>
