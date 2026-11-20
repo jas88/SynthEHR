@@ -1,11 +1,8 @@
 name: "CodeQL Config"
 
-paths-ignore:
-  - '**/obj/**'
-  - '**/bin/**'
-  - '**/*.g.cs'
-  - '**/GeneratedFiles/**'
-  - 'SynthEHR.SourceGenerators/**'
+# No paths-ignore: CodeQL only applies it to code it analyzes without building (build-mode none), and this
+# repository's C# is analyzed from a traced build, so it never excluded anything. Results in build output
+# (bin/ and obj/) are removed in the workflow's "Remove build output from the results" step instead.
 
 queries:
   - uses: security-and-quality

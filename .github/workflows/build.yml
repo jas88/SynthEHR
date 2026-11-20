@@ -107,9 +107,29 @@ jobs:
           # Uses stub data classes from CodeQLStubs.cs instead
           DISABLE_SOURCE_GENERATOR: true
 
+      # Uploaded by the last step, once build output is filtered out ("failure-only" is the setting for
+      # post-processing the SARIF: debugging information is still uploaded if analysis fails).
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
         with:
+          category: "/language:csharp"
+          upload: failure-only
+          output: sarif-results
+
+      # The traced build makes the compiler write source-generated files under obj/ (such as the regex
+      # generator's output in SynthEHRTests), which CodeQL extracts and reports on, and paths-ignore doesn't
+      # apply to C# that is built. Drop results located in build output: bin/ and obj/ are git-ignored, so no
+      # tracked source is in them.
+      - name: Remove build output from the results
+        run: |
+          jq '.runs[].results |= (. // [] | map(select((.locations[0].physicalLocation.artifactLocation.uri // "") | test("(^|/)(bin|obj)/"; "i") | not)))' \
+            sarif-results/csharp.sarif > csharp-filtered.sarif
+          mv csharp-filtered.sarif sarif-results/csharp.sarif
+
+      - name: Upload CodeQL results
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: sarif-results/csharp.sarif
           category: "/language:csharp"
 
   # Runs only for v* tags, in its own job, so PR/branch builds never hold
