@@ -135,8 +135,7 @@ internal static class CsvDataParser
             }
             else if (c == '_' || c == ' ')
             {
-                if (!firstChar)
-                    firstChar = true; // Next char should be uppercase
+                firstChar = true; // Next char should be uppercase
             }
         }
 
