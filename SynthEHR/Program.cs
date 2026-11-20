@@ -55,7 +55,7 @@ internal static class Program
             catch (Exception e)
             {
                 Console.WriteLine($"Error deserializing '{ConfigFile}'");
-                Console.Write(e.ToString());
+                Console.Write(e);
                 _returnCode = -1;
                 return;
             }
