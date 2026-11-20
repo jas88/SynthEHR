@@ -143,8 +143,8 @@ public sealed class BiochemistryRecord
         public readonly string ArithmeticComparator = row.ArithmeticComparator;
         public readonly string Interpretation = row.Interpretation;
         public readonly string QuantityUnit = row.QuantityUnit;
-        public double? RangeHighValue = double.TryParse(row.RangeHighValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var rangeLow) ? rangeLow : null;
-        public double? RangeLowValue = double.TryParse(row.RangeLowValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var rangeHigh) ? rangeHigh : null;
+        public readonly double? RangeHighValue = double.TryParse(row.RangeHighValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var rangeLow) ? rangeLow : null;
+        public readonly double? RangeLowValue = double.TryParse(row.RangeLowValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var rangeHigh) ? rangeHigh : null;
         private readonly double? _qvAverage = double.TryParse(row.QVAverage, NumberStyles.Any, CultureInfo.InvariantCulture, out var min) ? min : null;
         private readonly double? _qvStandardDev = double.TryParse(row.QVStandardDev, NumberStyles.Any, CultureInfo.InvariantCulture, out var dev) ? dev : null;
 
